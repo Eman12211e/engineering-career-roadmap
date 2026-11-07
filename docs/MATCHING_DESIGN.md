@@ -430,3 +430,20 @@ importance. Unknown words are never inserted inside an alias.
   until the owner approves it.
 - **Stopping rule.** Any critical error on round 8 stops implementation. A scope-narrowing
   proposal then goes to the owner. There is no further remediation cycle.
+
+## R4.7 Clarifications (coordinator, after the round-8 seal and before implementation)
+
+The sealed set avoids all of these phrasings, so the rulings don't affect its labels.
+1. **Where the first item starts.** After a negation cue, the first item starts after the
+   cue and any `negation_fillers`, and runs to the first coordinator. This is the
+   conservative model, and it matches R4.2's "No PLC experience, proficient in SQL". So
+   "without new tooling by applying kaizen and 5S" negates the whole list. With no
+   coordinator, there is no list, and the R2 gap rule applies.
+2. **Postfix cues.** A postfix cue binds every skill in the list just before it in the same
+   clause. Items may contain non-skill words ("MoveIt exposure is a must", "Python
+   scripting, preferred").
+3. **`negation_after`** binds the whole list just before it in the same clause
+   ("X, Y or Z is not required").
+4. **More coordinators.** "&", "and/or" and "as well as" are coordinators too, as in the
+   existing `list_connectors` data.
+5. **"except"** remains a contrast that ends a list. It is not a negation cue.
