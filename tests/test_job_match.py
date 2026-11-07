@@ -247,3 +247,35 @@ def test_not_required_stops_at_clause_break():
 def test_plural_only_after_uppercase():
     assert req("PLCs and SAPs") == ["PLC Programming", "ERP Systems"]
     assert req("MLS listings; 500 mls of fluid") == []
+
+
+# ---- third review: bullet markers, plain lines in skip sections, trailing "a plus" ----
+def test_plain_line_stays_in_skip_section():
+    r = match_posting("Benefits\nFree lunch\n- Python lunch-and-learns", "x")
+    assert not r.required and not r.preferred and r.score is None
+
+
+def test_unicode_bullets_under_benefits_are_ignored():
+    r = match_posting("Benefits\n• Medical, dental, vision\n• Python lunch-and-learns", "x")
+    assert not r.required and not r.preferred
+    r = match_posting("Benefits\n• Annual learning stipend for SQL and Python courses", "x")
+    assert not r.required
+
+
+@pytest.mark.parametrize("b", ["•", "·", "▪", "◦", "–"])
+def test_bullets_do_not_open_sections(b):
+    r = match_posting(f"Requirements\n{b} SolidWorks\nPreferred\n{b} Strong communicator\n{b} FEA\n{b} PLC", "x")
+    assert names(r.required) == ["SolidWorks"]
+    assert names(r.preferred) == ["Finite Element Analysis", "PLC Programming"]
+
+
+def test_inline_bullets_in_one_line():
+    r = match_posting("Preferred\n• Strong communicator • FEA • PLC", "x")
+    assert len(r.preferred) == 2 and not r.required
+
+
+def test_trailing_plus_is_preferred():
+    r = match_posting("Qualifications\n- Experience with SPC and lean manufacturing a plus\n- SolidWorks", "x")
+    assert names(r.required) == ["SolidWorks"]
+    assert set(names(r.preferred)) == {"Statistical Process Control", "Lean Manufacturing"}
+    assert names(match_posting("Requirements\n- FEA (a plus)\n- Python preferred", "x").required) == []

@@ -52,7 +52,18 @@ _SENTENCE_PUNCT = re.compile(r"[.!?;](?:\s|$)")
 
 
 def _is_bullet(line: str) -> bool:
-    return line.startswith(("-", "–", "—", ">")) or line.startswith("* ")
+    return line.startswith(("-", "–", "—", ">", "•", "·", "▪", "◦")) or line.startswith("* ")
+
+
+_SMALL_WORDS = {"a", "an", "the", "of", "for", "to", "and", "or", "in", "on", "at", "with", "you", "your"}
+_TRAIL_PREF = re.compile(
+    r"(?:\(?(?:(?:is|are)\s+)?a\s+plus\)?|preferred|nice\s+to\s+have|(?:is\s+)?a\s+bonus)[\W_]*$", re.I)
+
+
+def _title_like(label: str) -> bool:
+    """Title Case / UPPER heading ("The Position"), unlike a plain line ("Free lunch")."""
+    words = [w for w in label.split() if w.lower() not in _SMALL_WORDS]
+    return bool(words) and all(w[0].isupper() or not w[0].isalpha() for w in words)
 
 
 def _clean_label(text: str) -> str:
@@ -68,7 +79,16 @@ def _classify(label: str) -> str | None:
 
 
 def _lines(text: str) -> list[str]:
-    return [p.strip() for p in re.split(r"[\r\n•·]+", text) if p.strip()]
+    """Split on newlines; inline bullet characters start new pieces that keep their marker."""
+    out = []
+    for ln in re.split(r"[\r\n]+", text):
+        parts = re.split("([•·▪◦])", ln)
+        if parts[0].strip():
+            out.append(parts[0].strip())
+        for i in range(1, len(parts), 2):
+            if parts[i + 1].strip():
+                out.append(parts[i] + " " + parts[i + 1].strip())
+    return out
 
 
 def _check(text: str, name: str) -> None:
@@ -111,10 +131,14 @@ def split_posting_requirements(posting: str, _skills=None) -> tuple[list[str], l
                     if kind is None and (label and len(label) <= 45 and not _SENTENCE_PUNCT.search(label)
                             and not re.search(r"[\d$%]", label) and not has_skill(label)):
                         kind = "required"  # unknown heading
+                        # inside a skip section a plain line ("Free lunch") is not a heading
+                        if section == "skip" and not (line.endswith(":") or line.startswith(("#", "**"))
+                                                      or _title_like(label)):
+                            kind = None
                     if kind:
                         section = kind
                         continue
-            if section == "preferred":
+            if section == "preferred" or (section == "required" and _TRAIL_PREF.search(line)):
                 preferred.append(line)
             elif section == "required":
                 required.append(line)
