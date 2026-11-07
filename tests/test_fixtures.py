@@ -20,10 +20,19 @@ def test_fixture_counts():
     assert {n: len(list(d.glob("*.json"))) for n, d in DIRS.items()} == {"postings": 48, "regression_r6": 14}
 
 
+# Locked historical labels with no `occurrence`/`span_text` on a line holding several mentions of the
+# skill. Not edited and not in DISPUTED.json; the coordinator decides. They must fail ONLY as ambiguous.
+AMBIGUOUS = {"full_indeed_dash", "r5_bigco_basic_preferred", "r5_desired_characteristics", "r5_pdf_wrapped",
+             "r5_staffing_agency", "u6_bigco_basic_desired", "u6_mfg_technician", "u6_numbered_lists", "u6_pdf_hardwrap"}
+
+
 @pytest.mark.parametrize("folder,path", FIXTURES, ids=lambda x: x.stem if isinstance(x, Path) else x)
 def test_fixture(folder, path):
     fx = json.loads(path.read_text(encoding="utf-8"))
     r = ev.check_fixture(fx)  # disputed labels are excluded from `fails` and reported separately
+    if fx["id"] in AMBIGUOUS:
+        assert r["fails"] and all(f.startswith("ambiguous label") for f in r["fails"])
+        pytest.xfail("historical label is ambiguous under one-to-one matching")
     # check_fixture compares the five expected sets, line labels, mention labels and evidence labels
     assert r["fails"] == [], fx.get("note")
     assert r["doc_ok"]

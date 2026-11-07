@@ -125,6 +125,24 @@ section holding the evidence). Output order follows keywords.json order within e
 - Inline bullet characters in the middle of a line do not split the line.
 - A resume mention anywhere counts as having the skill, regardless of depth or recency.
 
+## Known critical-risk patterns
+
+- **Postfix qualifiers.** "Python (learning)", "Python (in progress)", "SolidWorks (beginner, studying)" and
+  similar trailing parentheticals are not recognised as hypothetical: the skill comes out
+  `affirmed`. On a resume that is an invented claim, so the skill would count as confirmed
+  experience the person does not have. Until the engine handles postfix qualifiers, treat a
+  resume match on such a line as unverified.
+
+## Technical debt
+
+- Two separate rules overlap and are not unified: the hypothetical scope rule (R3.1.2, a cue such
+  as "learn" opens a scope over the rest of the clause) and the negation gap rule (R3.1.3, how far
+  a negation cue reaches over fillers). They differ in reach and in how coordinated lists are
+  handled, so the same phrase can be treated differently depending on which cue it contains.
+  Merging them is deferred.
+- The UI wiring of match results and the bullet-punctuation issues (inline bullet characters
+  mid-line) belong to Wave 2, not to this engine work.
+
 ## Evaluation status
 
 The 0.85 threshold is a **provisional engineering gate on a small sample** (15 owner-labeled
@@ -141,15 +159,15 @@ Development and regression fixtures (written by the independent reviewer, not tu
 
 | Folder | Fixtures | Exact-set pass |
 |---|---|---|
-| `postings` | 48 | 48 |
-| `regression_r6` | 14 | 14 |
-| total | 62 | 62 |
+| `postings` | 48 | 43 |
+| `regression_r6` | 14 | 10 |
+| total | 62 | 53 |
 
 Per-stage metrics over all fixtures:
 
 - stage 1 section accuracy: 1.00 (200/200)
 - stage 2-3 mention precision 1.00 (377/377), recall 1.00 (377/377)
-- stage 4 status accuracy: 1.00 (132/132)
+- stage 4 status accuracy: 0.93 (123/132)
 - stage 5 importance accuracy: 1.00 (368/368)
 
 Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 2
