@@ -8,12 +8,6 @@ import pytest
 from engine.job_match import compute_coverage_score, match_posting, split_posting_requirements
 
 ROOT = Path(__file__).resolve().parent.parent
-SHORT = [  # skills the shipped keyword file lacks, to exercise short-acronym guards
-    {"canonical": "R", "aliases": ["R"], "category": "programming"},
-    {"canonical": "C", "aliases": ["C"], "category": "programming"},
-    {"canonical": "CAN", "aliases": ["CAN"], "category": "controls"},
-    {"canonical": "Excel", "aliases": ["Excel"], "category": "tools"},
-]
 
 
 def names(matches):
@@ -39,70 +33,97 @@ def test_score_neither_is_none_not_zero():
     assert match_posting("We are a friendly team.", "I like cats.").score is None
 
 
-# ---- sections ----
-def test_split_sections():
+def test_score_rejects_bad_counts():
+    with pytest.raises(ValueError):
+        compute_coverage_score(3, 2, 0, 0)
+
+
+# ---- sections and the extended contract ----
+def test_split_wrapper():
     p = "About us:\nGreat place, uses Python\nRequirements:\n- SolidWorks\nNice to have:\n- ANSYS\n"
     assert split_posting_requirements(p) == (["- SolidWorks"], ["- ANSYS"])
 
 
-def test_no_sections_all_required():
+def test_headingless_posting_is_unscored_with_score_none():
     r = match_posting("Need SolidWorks and Python.", "Python dev")
-    assert names(r.required) == ["SolidWorks", "Python"] and not r.preferred
+    assert not r.required and not r.preferred and r.score is None
+    assert names(r.unscored) == ["SolidWorks", "Python"]
+    assert [m.found for m in r.unscored] == [False, True]
+    assert all(m.requirement == "unscored" for m in r.unscored)
 
 
-def test_heading_with_inline_text_and_both_sections_count_once():
-    r = match_posting("Requirements: SolidWorks\nPreferred: SolidWorks, Python", "SolidWorks")
+def test_skill_in_both_sections_counts_once_as_required():
+    r = match_posting("Requirements:\n- SolidWorks\nPreferred:\n- SolidWorks\n- Python", "SolidWorks")
     assert names(r.required) == ["SolidWorks"] and names(r.preferred) == ["Python"]
 
 
 def test_required_and_preferred_score():
-    r = match_posting("Requirements:\nSolidWorks\nPreferred:\nPython", "SolidWorks")
+    r = match_posting("Requirements:\n- SolidWorks\nPreferred:\n- Python", "SolidWorks")
     assert r.score == pytest.approx(80)
+
+
+def test_excluded_section_never_scores():
+    r = match_posting("Requirements:\n- SolidWorks\nBenefits:\n- Python training", "Python, SolidWorks")
+    assert names(r.excluded) == ["Python"] and r.excluded[0].requirement == "excluded"
+    assert names(r.required) == ["SolidWorks"] and r.score == 100
+
+
+def test_new_fields_have_defaults():
+    r = match_posting("Requirements:\n- SolidWorks", "SolidWorks")
+    assert r.unscored == () and r.excluded == ()
+    m = r.required[0]
+    assert m.section == "required" and m.requirement == "required"
 
 
 # ---- negation ----
 @pytest.mark.parametrize("line", ["No FEA experience required", "no FEA experience", "FEA is not required"])
 def test_negated_posting_not_a_requirement(line):
-    r = match_posting(f"Requirements:\n{line}\nSolidWorks", "SolidWorks")
-    assert names(r.required) == ["SolidWorks"]
+    r = match_posting(f"Requirements:\n- {line}\n- SolidWorks", "SolidWorks")
+    assert names(r.required) == ["SolidWorks"] and not r.unscored
 
 
 def test_negated_resume_not_a_match():
-    r = match_posting("Requirements:\nFEA", "No experience with FEA")
+    r = match_posting("Requirements:\n- FEA", "No experience with FEA")
     assert not r.required[0].found and r.required[0].resume_line is None
 
 
-# ---- false matches ----
-@pytest.mark.parametrize("text", ["We can do it", "R&D team", "C-suite access", "Core cable carrier", "a can of paint"])
-def test_short_acronyms_do_not_false_match(text):
-    assert match_posting(text, "x", _skills=SHORT).score is None
+@pytest.mark.parametrize("resume", ["Achieved zero defects using FEA and SolidWorks",
+                                    "Tools: no-code automation, SolidWorks", "Not only PLC but also SolidWorks"])
+def test_resume_negation_is_narrow(resume):
+    r = match_posting("Requirements:\n- SolidWorks", resume)
+    assert r.required[0].found
 
 
-def test_short_acronyms_match_when_real():
-    r = match_posting("Know R, C and CAN.", "x", _skills=SHORT)
-    assert names(r.required) == ["R", "C", "CAN"]
+# ---- false matches, with the real keyword data ----
+@pytest.mark.parametrize("text", ["We can do it", "R&D team", "C-suite access", "Core cable carrier",
+                                  "a can of paint", "MLS listings", "Measure 500 ml of coolant"])
+def test_ordinary_words_do_not_match(text):
+    assert match_posting(f"Requirements:\n- {text}", "x").score is None
 
 
-def test_excel_at_is_not_excel():
-    assert match_posting("Candidates excel at teamwork", "x", _skills=SHORT).score is None
-    assert names(match_posting("Proficient in Excel", "x", _skills=SHORT).required) == ["Excel"]
+def test_case_sensitive_skill_from_data():
+    assert names(match_posting("Requirements:\n- ROS", "x").required) == ["ROS"]
+    assert match_posting("Requirements:\n- ros", "x").score is None
 
 
 def test_solid_works_variant_and_plc_acronym():
-    r = match_posting("Experience with Solid Works and PLC.", "Used SOLIDWORKS daily; plc programming")
+    r = match_posting("Requirements:\n- Experience with Solid Works and PLC.",
+                      "Used SOLIDWORKS daily; plc programming")
     assert [(m.skill, m.found) for m in r.required] == [("SolidWorks", True), ("PLC Programming", True)]
 
 
 # ---- attribution, order, errors ----
-def test_lines_attributed():
-    r = match_posting("Requirements:\nSolidWorks expert\nANSYS", "Intro\nDesigned parts in SolidWorks")
-    a, b = r.required
+def test_lines_and_spans_attributed():
+    post = "Requirements:\nSolidWorks expert\nANSYS"
+    res = "Intro\nDesigned parts in SolidWorks"
+    a, b = match_posting(post, res).required
     assert a.posting_line == "SolidWorks expert" and a.resume_line == "Designed parts in SolidWorks"
-    assert not b.found and b.posting_line == "ANSYS" and b.resume_line is None
+    assert post[slice(*a.posting_span)] == "SolidWorks" and res[slice(*a.resume_span)] == "SolidWorks"
+    assert not b.found and b.posting_line == "ANSYS" and b.resume_line is None and b.resume_span is None
 
 
 def test_deterministic_order():
-    p, res = "Python, SolidWorks, SQL", "SQL"
+    p, res = "Requirements:\n- Python, SolidWorks, SQL", "SQL"
     assert match_posting(p, res) == match_posting(p, res)
     assert names(match_posting(p, res).required) == ["SolidWorks", "Python", "SQL"]
 
@@ -118,164 +139,70 @@ def test_error_does_not_echo_text():
     with pytest.raises(ValueError) as e:
         match_posting("SECRETPOSTING", "  ")
     assert "SECRETPOSTING" not in str(e.value)
+    with pytest.raises(ValueError) as e:
+        split_posting_requirements(" ")
+    assert "text is empty" in str(e.value)
+
+
+def test_long_line_snippet_is_capped_and_span_exact():
+    line = "word " * 100 + "SolidWorks " + "word " * 100
+    post = "Requirements:\n" + line
+    m = match_posting(post, line).required[0]
+    assert len(m.posting_line) <= 200 and len(m.resume_line) <= 200
+    assert "SolidWorks" in m.posting_line and m.posting_line.startswith("…")
+    assert post[slice(*m.posting_span)] == "SolidWorks"
 
 
 # ---- evaluation script ----
-def _run(d):
-    return subprocess.run([sys.executable, str(ROOT / "scripts" / "evaluate_matching.py"), "--dir", str(d)],
+def _run(*args):
+    return subprocess.run([sys.executable, str(ROOT / "scripts" / "evaluate_matching.py"), *args],
                           capture_output=True, text=True, cwd=ROOT)
 
 
-def test_eval_script_no_pairs(tmp_path):
+def _pair(pid, split, required=("SolidWorks",)):
+    return {"id": pid, "split": split, "posting_text": "Requirements:\n- SolidWorks\nPreferred:\n- ANSYS",
+            "resume_text": "I know SecretResumeWord, SolidWorks and ANSYS.", "required_skills": list(required),
+            "preferred_skills": ["ANSYS"], "resume_has": ["SolidWorks", "ANSYS"]}
+
+
+def _write(tmp_path, pairs):
+    (tmp_path / "a.json").write_text(json.dumps({"pairs": pairs}))
+
+
+def test_eval_empty_owner_dir_is_pending_exit_2(tmp_path):
     (tmp_path / "EXAMPLE.schema.json").write_text("not even json")
-    p = _run(tmp_path)
-    assert p.returncode == 0 and "no evaluation pairs yet" in p.stdout
+    p = _run("--dir", str(tmp_path))
+    assert p.returncode == 2 and "PENDING" in p.stdout and "no evaluation pairs yet" in p.stdout
 
 
-def test_eval_script_synthetic_pair(tmp_path):
-    pair = {"id": "t1", "split": "tune", "posting_text": "Requirements:\nSolidWorks\nANSYS",
-            "resume_text": "I know SecretResumeWord and SolidWorks.", "required_skills": ["SolidWorks"],
-            "preferred_skills": [], "resume_has": ["SolidWorks"]}
-    (tmp_path / "a.json").write_text(json.dumps({"pairs": [pair]}))
-    p = _run(tmp_path)
-    assert p.returncode == 0, p.stderr
-    assert "tune (n=1" in p.stdout and "holdout (n=0" in p.stdout
-    assert "precision 0.50" in p.stdout and "recall 1.00" in p.stdout
-    assert "SecretResumeWord" not in p.stdout
+def test_eval_default_dir_is_pending():
+    p = _run()
+    assert p.returncode == 2 and "PENDING" in p.stdout
 
 
-# ---- review fixes: real keywords, sections, negation, snippets ----
-def req(posting, resume="x"):
-    return names(match_posting(posting, resume).required)
+def test_eval_too_few_pairs_pending_and_no_text_leak(tmp_path):
+    _write(tmp_path, [_pair("t1", "tune", required=("SolidWorks", "Creo"))])
+    p = _run("--dir", str(tmp_path))
+    assert p.returncode == 2 and "PENDING" in p.stdout
+    assert "tune: n=1" in p.stdout and "holdout (aggregate only): n=0" in p.stdout
+    assert "missed Creo" in p.stdout and "SecretResumeWord" not in p.stdout
 
 
-def test_real_acronyms_with_separators_case_and_plurals():
-    assert set(req("FEA/CFD experience; PLC/HMI programming; SQL/Python")) == {
-        "Finite Element Analysis", "CFD", "PLC Programming", "Python", "SQL"}
-    assert set(req("plc, fea, cfd, sql")) == {"Finite Element Analysis", "CFD", "PLC Programming", "SQL"}
-    assert req("PLC-based control systems") == ["PLC Programming"]
-    assert req("Experience programming PLCs") == ["PLC Programming"]
-    assert req("Strong sql skills; Sql Server") == ["SQL"]
-    r = match_posting("PLC and SQL", "plc and sql databases, fea")
-    assert all(m.found for m in r.required)
+def test_eval_pass_exit_0(tmp_path):
+    _write(tmp_path, [_pair(f"t{i}", "tune") for i in range(10)] + [_pair(f"h{i}", "holdout") for i in range(5)])
+    p = _run("--dir", str(tmp_path))
+    assert p.returncode == 0 and "PASS" in p.stdout
 
 
-def test_unlabeled_and_unknown_sections_are_required():
-    p = ("About us\nWe build robots.\nResponsibilities\n- Design parts in SolidWorks\n- Run FEA on brackets\n"
-         "- Program PLC logic\nRequirements\n- BS in Mechanical Engineering\n- 3+ years experience")
-    assert set(req(p)) == {"SolidWorks", "Finite Element Analysis", "PLC Programming"}
+def test_eval_fail_exit_1_holdout_aggregate_only(tmp_path):
+    pairs = [_pair(f"t{i}", "tune") for i in range(10)]
+    pairs += [_pair(f"h{i}", "holdout", required=("SolidWorks", "Creo")) for i in range(5)]
+    _write(tmp_path, pairs)
+    p = _run("--dir", str(tmp_path))
+    assert p.returncode == 1 and "FAIL" in p.stdout
+    assert "h0" not in p.stdout and "Creo" not in p.stdout  # no per-item holdout detail
 
 
-def test_skills_then_preferred():
-    r = match_posting("Skills\n- SolidWorks\n- FEA\nPreferred\n- PLC", "x")
-    assert len(r.required) == 2 and names(r.preferred) == ["PLC Programming"]
-
-
-def test_about_you_is_kept_benefits_dropped():
-    assert set(req("Requirements\n- SolidWorks\nAbout you\n- FEA expert")) == {"SolidWorks", "Finite Element Analysis"}
-    assert req("Benefits\n- Free Python lessons\nRequirements\n- SolidWorks") == ["SolidWorks"]
-
-
-def test_negation_scope():
-    r = match_posting("No prior PLC experience necessary but SolidWorks required", "x")
-    assert names(r.required) == ["SolidWorks"]
-    assert req("PLC experience not required") == []
-
-
-@pytest.mark.parametrize("resume", ["Achieved zero defects using FEA and SolidWorks",
-                                    "Tools: no-code automation, SolidWorks", "Not only PLC but also SolidWorks"])
-def test_resume_negation_is_narrow(resume):
-    r = match_posting("SolidWorks, FEA, PLC", resume)
-    got = {m.skill: m.found for m in r.required}
-    assert got["SolidWorks"]
-    if "FEA" in resume:
-        assert got["Finite Element Analysis"]
-    if "PLC" in resume:
-        assert got["PLC Programming"]
-
-
-def test_resume_not_familiar():
-    assert not match_posting("PLC", "Not familiar with PLC").required[0].found
-
-
-def test_inline_preferred_and_bullet_plus():
-    r = match_posting("Required: SolidWorks. Preferred: Python", "x")
-    assert names(r.required) == ["SolidWorks"] and names(r.preferred) == ["Python"]
-    assert req("Requirements\n- Plus\n- SolidWorks") == ["SolidWorks"]
-    assert names(match_posting("Bonus points\n- Python", "x").preferred) == ["Python"]
-
-
-def test_long_line_is_capped_around_match():
-    line = "word " * 100 + "SolidWorks " + "word " * 100
-    m = match_posting(line, line).required[0]
-    assert len(m.posting_line) <= 202 and "SolidWorks" in m.posting_line
-    assert m.posting_line.startswith("…") and m.posting_line.endswith("…")
-
-
-# ---- second review: skip sections end, bonus, markdown, clauses, plurals ----
-def test_unknown_heading_ends_skip_section():
-    assert set(req("About Us\nAcme.\nWhat We're Looking For\n- SolidWorks, FEA, PLC")) == {
-        "SolidWorks", "Finite Element Analysis", "PLC Programming"}
-    p = ("About Us\nWe build robots.\nThe Position\n- SolidWorks\n- FEA\nBenefits\n- Python lunch-and-learns\n"
-         "Your Toolbox\n- SQL\n- ROS")
-    assert set(req(p)) == {"SolidWorks", "Finite Element Analysis", "SQL", "ROS"}
-
-
-def test_skip_label_drops_only_its_line():
-    assert set(req("Requirements\n- FEA\nSalary: Competitive, FEA a must\n- SolidWorks")) == {
-        "Finite Element Analysis", "SolidWorks"}
-    assert req("Requirements\n- FEA\nSalary: Competitive, Python a must") == ["Finite Element Analysis"]
-
-
-def test_bare_bonus_is_pay_not_preferred():
-    r = match_posting("Requirements\n- FEA\nCompensation\nBase $90k\nBonus: 10% target\n"
-                      "- Python lunch-and-learns\n- SolidWorks seat for home use", "x")
-    assert names(r.required) == ["Finite Element Analysis"] and not r.preferred
-
-
-def test_markdown_headings_and_bullets():
-    r = match_posting("**Requirements**\n- SolidWorks\n**Preferred**\n- FEA", "x")
-    assert names(r.required) == ["SolidWorks"] and names(r.preferred) == ["Finite Element Analysis"]
-    assert split_posting_requirements("Preferred\n* Nice to have") == ([], ["* Nice to have"])
-
-
-def test_not_required_stops_at_clause_break():
-    assert req("SolidWorks skills and degree not required") == ["SolidWorks"]
-    assert req("SolidWorks, degree not required") == ["SolidWorks"]
-
-
-def test_plural_only_after_uppercase():
-    assert req("PLCs and SAPs") == ["PLC Programming", "ERP Systems"]
-    assert req("MLS listings; 500 mls of fluid") == []
-
-
-# ---- third review: bullet markers, plain lines in skip sections, trailing "a plus" ----
-def test_plain_line_stays_in_skip_section():
-    r = match_posting("Benefits\nFree lunch\n- Python lunch-and-learns", "x")
-    assert not r.required and not r.preferred and r.score is None
-
-
-def test_unicode_bullets_under_benefits_are_ignored():
-    r = match_posting("Benefits\n• Medical, dental, vision\n• Python lunch-and-learns", "x")
-    assert not r.required and not r.preferred
-    r = match_posting("Benefits\n• Annual learning stipend for SQL and Python courses", "x")
-    assert not r.required
-
-
-@pytest.mark.parametrize("b", ["•", "·", "▪", "◦", "–"])
-def test_bullets_do_not_open_sections(b):
-    r = match_posting(f"Requirements\n{b} SolidWorks\nPreferred\n{b} Strong communicator\n{b} FEA\n{b} PLC", "x")
-    assert names(r.required) == ["SolidWorks"]
-    assert names(r.preferred) == ["Finite Element Analysis", "PLC Programming"]
-
-
-def test_inline_bullets_in_one_line():
-    r = match_posting("Preferred\n• Strong communicator • FEA • PLC", "x")
-    assert len(r.preferred) == 2 and not r.required
-
-
-def test_trailing_plus_is_preferred():
-    r = match_posting("Qualifications\n- Experience with SPC and lean manufacturing a plus\n- SolidWorks", "x")
-    assert names(r.required) == ["SolidWorks"]
-    assert set(names(r.preferred)) == {"Statistical Process Control", "Lean Manufacturing"}
-    assert names(match_posting("Requirements\n- FEA (a plus)\n- Python preferred", "x").required) == []
+def test_eval_fixtures_report():
+    p = _run("--fixtures", str(ROOT / "tests" / "fixtures" / "postings"))
+    assert p.returncode == 0 and "document-level exact sets" in p.stdout and "section accuracy" in p.stdout

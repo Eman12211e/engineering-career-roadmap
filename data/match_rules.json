@@ -1,0 +1,76 @@
+{
+  "headings": {
+    "posting": {
+      "required": [
+        "requirements", "requirement", "required", "required qualifications", "required skills",
+        "required experience", "minimum requirements", "minimum qualifications", "basic requirements",
+        "basic qualifications", "key requirements", "qualifications", "must have", "must haves",
+        "what we're looking for", "what you need", "what you'll need", "what you will need",
+        "what you bring", "who you are", "about you", "requirements and qualifications"
+      ],
+      "preferred": [
+        "preferred", "preferred qualifications", "preferred skills", "preferred requirements",
+        "preferred experience", "nice to have", "nice to haves", "nice-to-have", "bonus points",
+        "bonus skills", "desired qualifications", "desired skills", "additional qualifications",
+        "additional skills", "a plus", "plus", "pluses"
+      ],
+      "responsibilities": [
+        "responsibilities", "key responsibilities", "duties", "job duties", "what you'll do",
+        "what you will do", "what you do", "the role", "job description", "description",
+        "your role", "day to day"
+      ],
+      "skills": [
+        "skills", "key skills", "technical skills", "core competencies", "tools", "technologies",
+        "tech stack", "tools and technologies"
+      ],
+      "experience": ["experience", "work experience", "professional experience"],
+      "excluded": [
+        "benefits", "perks", "perks and benefits", "benefits and perks", "compensation",
+        "compensation and benefits", "salary", "pay", "pay and benefits", "what we offer",
+        "we offer", "about us", "about the company", "about company", "who we are", "our company",
+        "equal opportunity", "equal opportunity employer", "eeo", "eeo statement"
+      ]
+    },
+    "resume": {
+      "skills": [
+        "skills", "technical skills", "key skills", "core competencies", "tools", "technologies",
+        "skills and tools"
+      ],
+      "experience": [
+        "experience", "work experience", "professional experience", "employment history",
+        "projects", "relevant experience", "engineering experience"
+      ],
+      "responsibilities": [],
+      "required": [],
+      "preferred": [],
+      "excluded": ["references", "interests", "hobbies"]
+    }
+  },
+  "bullets": {
+    "always": ["\u2022", "\u00b7", "\u25aa", "\u25e6"],
+    "with_space": ["-", "*", "\u2013", "\u2014", ">"]
+  },
+  "negation": [
+    "no", "not", "without", "never", "lack of", "lacking", "lacks", "none", "don't have",
+    "do not have", "don't need", "do not need"
+  ],
+  "negation_after": [
+    "not required", "not needed", "not necessary", "not essential", "isn't required",
+    "isn't needed", "aren't required", "aren't needed"
+  ],
+  "hypothetical": [
+    "learn", "learning", "planning to", "plan to", "plans to", "willingness to", "willing to",
+    "studying", "hope to", "hoping to", "aspire to"
+  ],
+  "required_cues": [
+    "required", "requires", "must have", "must", "mandatory", "essential", "a must"
+  ],
+  "preferred_cues": [
+    "a plus", "nice to have", "preferred", "preferably", "desirable", "desired", "helpful",
+    "ideally", "bonus points", "a bonus", "beneficial"
+  ],
+  "clause_breaks": [
+    ",", ";", "!", "\\?", "\\.(?=\\s|$)", "\\bbut\\b", "\\bhowever\\b", "\\bexcept\\b",
+    "\\balthough\\b", "\\s[\u2013\u2014-]\\s", "\\|"
+  ]
+}

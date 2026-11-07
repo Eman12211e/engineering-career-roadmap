@@ -1,103 +1,93 @@
-# Scoring (engine/job_match.py)
+# Scoring and matching (engine/job_match.py, engine/match_stages.py)
 
-The score is **skill coverage**: how many of the posting's recognized skills the
-resume shows. It is not a hiring probability or a fit prediction.
+The score is **skill coverage**: how many of the posting's *scored* skills the resume shows.
+It is not a hiring probability or a fit prediction. The contract is `docs/MATCHING_DESIGN.md`;
+this page describes what the code does.
 
 ## Formula
 
-    S = 100 x (0.8 x R_matched/R_total + 0.2 x P_matched/P_total)
+    S = 100 x (0.8 x R_found/R_total + 0.2 x P_found/P_total)
 
-R = required skills, P = preferred skills. Weights 0.8 / 0.2.
+R = required skills, P = preferred skills.
 
-- Only required skills recognized: `S = 100 x R_matched/R_total`.
-- Only preferred skills recognized: `S = 100 x P_matched/P_total`.
-- No skills recognized at all: `S` is `None` (not 0). Show "no skills recognized".
+- Only required skills: `S = 100 x R_found/R_total`. Only preferred: `S = 100 x P_found/P_total`.
+- Neither: `S` is `None` (not 0). A posting with no headings and no inline cues therefore has
+  `score None`; its skills are listed as `unscored`.
+- Only required and preferred skills are scored. `unscored` (responsibilities, skills sections,
+  unknown sections, headingless text) and `excluded` (benefits, compensation, about us, EEO)
+  are shown for transparency and never change the score.
 
-## Which skills, and which lines
+## The five stages
 
-Skills come from `data/keywords.json` (canonical name plus aliases), matched with
-the regexes in `engine/keyword_extractor.py`.
+All vocabulary is data: `data/match_rules.json` (headings, cue lists, clause breaks, bullet
+markers) and `data/keywords.json` (skills, aliases, optional per-skill fields). Code names no skill.
 
-Posting sections: only Preferred / Nice to have / Bonus points (or Bonus skills) /
-Plus sections are preferred. A bare "Bonus" is not (it usually means pay). Every
-other line is required: intro, Responsibilities, Skills, About you, Requirements,
-and lines under unknown headings. Lines under these skip sections are dropped:
-Benefits, Perks, Compensation, Salary, About us, About the company, Who we are,
-Equal opportunity (employer), EEO.
+1. **Segment.** Text is split into lines (spans are absolute offsets) and typed sections:
+   required, preferred, responsibilities, skills, experience, excluded, unknown.
+   A heading candidate is a non-bullet line that is a known heading, ends with ":", starts
+   with `#` or `**`/`__`, or is ALL CAPS (two or more words, no comma, slash or skill).
+   Candidates are limited to 80 characters and 8 words unless they are known headings.
+   Only a *known* heading label (exact match in the vocabulary) sets a section type; an
+   unrecognised candidate starts an `unknown` section. Title Case alone is never a heading.
+   Inside an `excluded` section only a known heading ends the section. Text before the first
+   heading and headingless text are `unknown`. Bullets: `-`, `*`, en/em dash, `>` followed by
+   a space, or a bullet character (U+2022, U+00B7, U+25AA, U+25E6).
+2. **Find.** Every alias of every skill, longest alias first, no overlaps within a line
+   (ties go to the earlier skill in keywords.json). Word-bounded and case-folded; an all-caps
+   alias matched in exact case may take a trailing lowercase "s" ("PLCs").
+3. **Disambiguate.** Optional per-skill fields in keywords.json: `case_sensitive` (alias must
+   match case exactly), `needs_context` (one of these words must be in the same line),
+   `exclude_phrases` (drop a mention overlapping one of these phrases, e.g. "ml of").
+4. **Qualify.** A cue applies only inside the mention's clause (clause breaks: comma,
+   semicolon, sentence end, "but", "however", "except", "although", spaced dashes, "|"; "or"
+   and "and" are not breaks, a period inside "Y14.5" is not a break).
+   Cues before the mention: `negation` (no, not, without, never, lack of, ...) gives
+   *negated*; `hypothetical` (learn, learning, planning to, willingness to, ...) gives
+   *hypothetical*. "familiar with" is not a cue; "not familiar with" is. Hyphen compounds
+   such as "no-code" are not cues. A cue that sits inside another skill's mention ("Machine
+   Learning and FEA") is ignored. In postings only, `negation_after` ("not required", "not
+   needed", ...) after the mention in the same clause also negates. Mentions in excluded
+   posting sections are not qualified (they cannot create requirements anyway).
+5. **Decide.** Posting importance starts from the section (required, preferred, excluded;
+   everything else unscored). In any non-excluded section an inline cue in the mention's
+   clause overrides it: `preferred_cues` (a plus, nice to have, preferred, ...) or
+   `required_cues` (required, must, mandatory, essential, ...); when both occur the nearer
+   one wins, required on a tie. Negated and hypothetical posting mentions appear in no
+   group. With several mentions of a skill the tier precedence is required > preferred >
+   unscored > excluded, and the evidence is the earliest mention in the winning tier. A
+   resume skill is *found* if any affirmed resume mention exists, in any section; its
+   evidence is the earliest one.
 
-Headings: a heading-like line has no bullet marker, is 45 characters or fewer
-once markdown (`#`, `**`, `__`, trailing colon) is stripped, has no sentence
-punctuation, no digits, `$` or `%`, and mentions no recognized skill. Every
-heading-like line ends the current section, except inside a skip section, where
-only a known heading, a line ending in ":", a markdown-marked line, or a
-Title Case line ("The Position") ends it; a plain line such as "Free lunch"
-stays in the skip section and is dropped. A known required/preferred/skip
-heading sets the section type; an unknown heading ("The Position", "Your
-Toolbox") starts a required section, so a skip section never swallows the rest
-of the posting. A bullet marker is `-`, an en/em dash, `>`, a bullet character (U+2022, U+00B7,
-U+25AA, U+25E6) with or without a space, or `*` followed by a space
-("**Requirements**" is a heading). For an inline "Label: text" line, a
-required/preferred label applies to the text; a skip label ("Salary: ...")
-drops only that line and leaves the current section unchanged. An inline
-"Preferred:" / "Nice to have:" label mid-line starts a preferred segment
-("Required: X. Preferred: Y."). Heading lines are not attributed to skills. A
-skill in both groups counts once, as required. A non-heading line inside a
-required section that ends with "a plus", "(is) a plus", "preferred", "nice to
-have" or "is a bonus" counts as preferred.
+## Attribution
 
-Attribution: each `SkillMatch` carries `posting_line`, the first posting line in
-its group that mentions the skill, and (if found) `resume_line`, the first resume
-line that mentions it. Lines are split on newlines and bullet characters and
-capped at about 200 characters, centred on the match, with an ellipsis where
-cut. Output order follows `keywords.json` order, so it is deterministic.
-
-## Matching rules
-
-- Aliases use the shared extractor's regexes: case-insensitive, word
-  boundaries ("Solid Works" matches SolidWorks; "FEA" does not match
-  "features"). `/` and `-` separators work ("FEA/CFD", "PLC-based"). All-caps
-  aliases also match an upper-case-plus-lowercase-s plural ("PLCs", "SAPs");
-  "MLS listings" and "500 mls" do not match Machine Learning.
-- Ambiguous aliases (explicit set: `CAN`, `R`, `C`) match case-sensitively and
-  not when attached to `& / + # - .` or word characters ("can", "R&D",
-  "C-suite", "C/C++" do not match). The shipped keywords.json currently has no
-  bare R, C or CAN alias.
-- "excel at / excel in" does not match the Excel skill.
-
-Negation (a clause break is a comma, semicolon, sentence end, "and" or "but"):
-- Posting, before: a mention is not a requirement if a negator (no, not,
-  without, never, "don't need") is within 3 words before the skill with no
-  clause break between; hyphen compounds such as "no-code" are not negators.
-  "No prior PLC experience necessary but SolidWorks required" keeps only
-  SolidWorks. Side effect: "Without SolidWorks, you will struggle" is also
-  treated as negated (accepted).
-- Posting, after: "not required / needed / necessary" within up to 3 words
-  after the skill, with no clause break in between, negates it. "SolidWorks
-  skills and degree not required" keeps SolidWorks.
-- Resume: only the literal phrases "no experience with / in X", "no prior
-  experience with / in X" and "not familiar with X" negate. Anything else counts
-  as having the skill, because a false "missing" is worse than a rare false
-  "found" ("zero defects using FEA", "Not only PLC but also SolidWorks" are
-  found).
+Each `SkillMatch` carries `posting_line` and `resume_line` (the line, capped at 200
+characters around the match with an ellipsis where cut), the exact `posting_span` and
+`resume_span` of the matched text in the original input, and `section` (kind of the posting
+section holding the evidence). Output order follows keywords.json order within each group.
 
 ## Known limits
 
-- Regex matching only: no synonyms beyond the alias list, no sense of context,
-  seniority or years of experience.
-- Negation is a short-window heuristic. It can miss long-range or unusual
-  negations ("FEA: none"), and a resume saying "no FEA experience" still counts
-  as having FEA.
-- Section detection is heuristic. A short plain line with no skill under a
-  Preferred heading (for example "3 plus years") may end that section, and
-  company boilerplate under an unrecognised heading counts as required.
-- "X or Y" alternatives are counted as separate requirements.
-- Plain-line skill lists directly after a skip section (no bullets, no heading)
-  are dropped, since they look like benefits text.
-- A mention anywhere on a resume counts as having the skill, regardless of depth.
+- Regex matching only: no synonyms beyond the alias list, no sense of seniority or years.
+- Skills that are ordinary words need data fields to be safe; only a few have them. Skills
+  with several meanings, and an alias shared by two skills, resolve to the first skill in
+  keywords.json.
+- Heading vocabulary is finite. A real heading that is not in the vocabulary starts an
+  `unknown` section, so its skills are unscored; an unrecognised heading inside an excluded
+  section stays excluded. A line ending in ":" or in ALL CAPS is a heading even if it is
+  really a sentence.
+- Clause breaks include commas, so "No experience with FEA, CFD" negates only the first
+  skill; "and" is not a break, so "Not familiar with PLC and fluent in SQL" negates both.
+  "Without X, ..." negates X. Cue lists are English-only.
+- A hypothetical cue such as "learn" also drops postings like "Opportunities to learn X".
+- Inline bullet characters in the middle of a line do not split the line.
+- A resume mention anywhere counts as having the skill, regardless of depth or recency.
+- "X or Y" alternatives count as separate skills.
 
 ## Evaluation status
 
-The 0.85 threshold used by the evaluation is a **provisional engineering gate on
-a small sample** (15 labeled pairs, 5 held out). It is not a general accuracy
-claim. Measured results are **pending**: they exist only once the owner supplies
-labeled data (format in `data/eval/README.md`; run `scripts/evaluate_matching.py`).
+The 0.85 threshold is a **provisional engineering gate on a small sample** (15 owner-labeled
+pairs, 5 held out); it is not a general accuracy claim. Measured owner-set results are
+**pending**: `python scripts/evaluate_matching.py` exits 2 (`PENDING`) until the owner
+supplies at least 15 pairs with at least 5 holdout (format in `data/eval/README.md`).
+`--fixtures tests/fixtures/postings` reports per-stage numbers on 38 reviewer-written
+development fixtures; those are development checks, not accuracy estimates.

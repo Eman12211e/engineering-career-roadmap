@@ -1,94 +1,47 @@
 """Match a job posting against a resume: which recognized skills are covered.
 
-Pure functions: no streamlit, no file writes, no randomness. Text is never logged
-or put in exception messages. See docs/SCORING.md.
+Thin wrappers over the five stages in engine/match_stages.py (segment, find, disambiguate,
+qualify, decide). Pure functions: no streamlit, no file writes, no randomness. Text is never
+logged or put in exception messages. See docs/SCORING.md and docs/MATCHING_DESIGN.md.
 """
 
-import re
 from dataclasses import dataclass
-from functools import lru_cache
-from pathlib import Path
 
-from engine.keyword_extractor import build_regex_patterns, load_keywords
+from engine.match_stages import (
+    Mention,
+    _qualify,
+    disambiguate,
+    find_mentions,
+    importance,
+    segment,
+    skill_order,
+)
 
-_KEYWORDS_PATH = Path(__file__).resolve().parent.parent / "data" / "keywords.json"
 R_WEIGHT, P_WEIGHT = 0.8, 0.2
+_MAXLEN = 200
+_TIERS = ("required", "preferred", "unscored", "excluded")  # precedence, highest first
 
 
 @dataclass(frozen=True)
 class SkillMatch:
     skill: str
     category: str
-    requirement: str  # "required" | "preferred"
+    requirement: str  # "required" | "preferred" | "unscored" | "excluded"
     found: bool
-    posting_line: str  # the posting line that made it a requirement
-    resume_line: str | None  # the resume line that matched, None if missing
+    posting_line: str  # snippet (<= 200 chars) of the posting line that decided the requirement
+    resume_line: str | None  # snippet of the resume line that matched, None if missing
+    section: str = ""  # kind of the posting section holding the evidence
+    posting_span: tuple[int, int] | None = None  # exact span of the posting evidence
+    resume_span: tuple[int, int] | None = None  # exact span of the resume evidence
 
 
 @dataclass(frozen=True)
 class MatchResult:
     required: tuple[SkillMatch, ...]
     preferred: tuple[SkillMatch, ...]
-    score: float | None  # coverage 0-100, None if no skills recognized
-
-
-# ---- section headings -------------------------------------------------------
-_MOD = r"(?:(?:minimum|basic|key|required|preferred|desired|additional)\s+)?"
-_REQ_HEAD = re.compile(
-    _MOD + r"(?:requirements?|required(?:\s+(?:qualifications|skills|experience))?|"
-    r"qualifications|must[- ]haves?|what\s+you(?:'ll|\s+will)?\s+(?:need|do)|responsibilities|duties|"
-    r"skills|about\s+you|the\s+role|overview|summary|(?:job\s+)?description)", re.I)
-_PREF_HEAD = re.compile(  # a bare "Bonus" is usually pay, so it is not a preferred label
-    r"preferred(?:\s+(?:qualifications|skills|requirements|experience))?|"
-    r"desired(?:\s+(?:qualifications|skills))?|nice[- ]to[- ]haves?|bonus\s+(?:points|skills)|"
-    r"(?:a\s+)?plus(?:es)?|additional\s+(?:qualifications|skills)", re.I)
-_SKIP_HEAD = re.compile(  # clearly non-skill sections: ignored
-    r"benefits|perks|compensation|salary|about\s+us|about\s+the\s+company|who\s+we\s+are|"
-    r"equal\s+opportunity(?:\s+employer)?|eeo", re.I)
-# an inline "Preferred:" / "Nice to have:" label starts a new segment
-_INLINE_PREF = re.compile(
-    r"(?=\b(?:preferred(?:\s+\w+)?|nice[- ]to[- ]haves?|bonus\s+(?:points|skills))\s*:)", re.I)
-_SENTENCE_PUNCT = re.compile(r"[.!?;](?:\s|$)")
-
-
-def _is_bullet(line: str) -> bool:
-    return line.startswith(("-", "–", "—", ">", "•", "·", "▪", "◦")) or line.startswith("* ")
-
-
-_SMALL_WORDS = {"a", "an", "the", "of", "for", "to", "and", "or", "in", "on", "at", "with", "you", "your"}
-_TRAIL_PREF = re.compile(
-    r"(?:\(?(?:(?:is|are)\s+)?a\s+plus\)?|preferred|nice\s+to\s+have|(?:is\s+)?a\s+bonus)[\W_]*$", re.I)
-
-
-def _title_like(label: str) -> bool:
-    """Title Case / UPPER heading ("The Position"), unlike a plain line ("Free lunch")."""
-    words = [w for w in label.split() if w.lower() not in _SMALL_WORDS]
-    return bool(words) and all(w[0].isupper() or not w[0].isalpha() for w in words)
-
-
-def _clean_label(text: str) -> str:
-    """Strip markdown markers (#, **, __) and a trailing colon from a heading."""
-    return text.strip().lstrip("#").strip(" \t*_").rstrip(":").strip(" \t*_")
-
-
-def _classify(label: str) -> str | None:
-    for kind, rx in (("preferred", _PREF_HEAD), ("required", _REQ_HEAD), ("skip", _SKIP_HEAD)):
-        if rx.fullmatch(label):
-            return kind
-    return None
-
-
-def _lines(text: str) -> list[str]:
-    """Split on newlines; inline bullet characters start new pieces that keep their marker."""
-    out = []
-    for ln in re.split(r"[\r\n]+", text):
-        parts = re.split("([•·▪◦])", ln)
-        if parts[0].strip():
-            out.append(parts[0].strip())
-        for i in range(1, len(parts), 2):
-            if parts[i + 1].strip():
-                out.append(parts[i] + " " + parts[i + 1].strip())
-    return out
+    score: float | None  # coverage 0-100, None if no required/preferred skills recognized
+    unscored: tuple[SkillMatch, ...] = ()
+    excluded: tuple[SkillMatch, ...] = ()
 
 
 def _check(text: str, name: str) -> None:
@@ -96,150 +49,80 @@ def _check(text: str, name: str) -> None:
         raise ValueError(f"{name} text is empty")  # never echo the text
 
 
-def split_posting_requirements(posting: str, _skills=None) -> tuple[list[str], list[str]]:
-    """Return (required lines, preferred lines).
+def _snippet(m: Mention) -> str:
+    """The mention's line, capped at 200 chars around the match, with ellipses where cut."""
+    text, s, e = m.line.text, m.span[0] - m.line.start, m.span[1] - m.line.start
+    if len(text) <= _MAXLEN:
+        return text
+    w = _MAXLEN - 2
+    a = max(0, min(s - (w - (e - s)) // 2, len(text) - w))
+    return ("…" if a else "") + text[a:a + w] + ("…" if a + w < len(text) else "")
 
-    Only Preferred / Nice to have / Bonus points / Plus sections are preferred.
-    Everything else is required, except lines under clearly non-skill sections
-    (Benefits, Perks, Compensation, Salary, About us, ...), which are dropped.
-    A heading-like line (no bullet, <= 45 chars once markdown is stripped, no
-    sentence punctuation, no digits/$/%, no recognized skill) ends the current
-    section: known headings set its type, unknown ones start a required section.
-    "Label: text" lines apply a required/preferred label to the text; a skip label
-    ("Salary: ...") drops only that line. Heading lines are not returned.
+
+def _mentions(text: str, doc: str) -> list[tuple[Mention, str]]:
+    """Kept mentions with their posting importance ("" for a resume); negated/hypothetical dropped.
+
+    Mentions in excluded posting sections skip qualification: they never count anyway.
     """
-    _check(posting, "posting")
-    compiled = _default_compiled() if _skills is None else _compile(_skills)
-    has_skill = lambda s: any(p.search(s) for _, _, pats in compiled for p in pats)  # noqa: E731
-    required, preferred, section = [], [], "required"
-    for raw in _lines(posting):
-        for line in (s.strip() for s in _INLINE_PREF.split(raw)):
-            if not line:
-                continue
-            if not _is_bullet(line):
-                colon = line.find(":")
-                head, rest = (line[:colon], line[colon + 1:].strip(" \t*_")) if 0 <= colon <= 45 else ("", "")
-                if rest:
-                    kind = _classify(_clean_label(head))
-                    if kind == "skip":
-                        continue  # one line only; the section is unchanged
-                    if kind:
-                        section, line = kind, rest
-                else:
-                    label = _clean_label(line)
-                    kind = _classify(label)
-                    if kind is None and (label and len(label) <= 45 and not _SENTENCE_PUNCT.search(label)
-                            and not re.search(r"[\d$%]", label) and not has_skill(label)):
-                        kind = "required"  # unknown heading
-                        # inside a skip section a plain line ("Free lunch") is not a heading
-                        if section == "skip" and not (line.endswith(":") or line.startswith(("#", "**"))
-                                                      or _title_like(label)):
-                            kind = None
-                    if kind:
-                        section = kind
-                        continue
-            if section == "preferred" or (section == "required" and _TRAIL_PREF.search(line)):
-                preferred.append(line)
-            elif section == "required":
-                required.append(line)
-    return required, preferred
+    lines = tuple(ln for sec in segment(text, doc) for ln in sec.lines)
+    out = []
+    for m in disambiguate(find_mentions(lines)):
+        if doc == "posting" and m.line.section == "excluded":
+            out.append((m, "excluded"))
+            continue
+        m = _qualify(m, doc)
+        if m.status == "affirmed":
+            out.append((m, importance(m) if doc == "posting" else ""))
+    return out
 
 
-# ---- skill matching ---------------------------------------------------------
-_GUARDS = {"excel": r"(?!\s+(?:at|in)\b)"}  # the verb "excel at/in", not the spreadsheet
-_AMBIGUOUS = {"CAN", "R", "C"}  # aliases that are also ordinary words/letters
+def match_posting(posting: str, resume: str) -> MatchResult:
+    """Compare the skills a posting asks for with those a resume shows.
 
-
-def _pattern(alias: str) -> re.Pattern:
-    if alias in _AMBIGUOUS:
-        # case-sensitive, and not part of R&D, C-suite, C/C++, C#
-        return re.compile(r"(?<![\w&/+#.-])" + re.escape(alias) + r"(?![\w&/+#-])")
-    pat = build_regex_patterns([{"canonical": "x", "aliases": [alias]}])["x"][0].pattern
-    if alias.isupper() and pat.endswith(r"\b"):
-        pat = pat[:-2] + r"(?-i:(?<=[A-Z])s)?\b"  # plural only after upper case: PLCs, not MLS/mls
-    return re.compile(pat + _GUARDS.get(alias.lower(), ""), re.I)
-
-
-def _compile(skills) -> tuple:
-    return tuple((s["canonical"], s["category"], tuple(_pattern(a) for a in s["aliases"])) for s in skills)
-
-
-@lru_cache(maxsize=1)
-def _default_compiled() -> tuple:
-    return _compile(load_keywords(_KEYWORDS_PATH))
-
-
-_NEG = re.compile(r"(?<![\w-])(?:no|not|without|never)(?![\w-])|\bdon'?t\s+need\b", re.I)
-_CLAUSE_BREAK = re.compile(r"[,;.!?]|\b(?:but|and)\b", re.I)
-_NEG_AFTER = re.compile(
-    r"(?:[ \t]+(?!(?:and|but)\b)[\w'-]+){0,3}?[ \t]+(?:(?:is|are)[ \t]+)?not[ \t]+(?:required|needed|necessary)\b", re.I)
-_RESUME_NEG = re.compile(r"(?:no\s+(?:prior\s+)?experience\s+(?:with|in)|not\s+familiar\s+with)\s+$", re.I)
-_MAXLEN = 200
-
-
-def _snip(line: str, start: int, end: int) -> str:
-    """Cap a line at ~200 chars, centred on the match, with ellipses where cut."""
-    if len(line) <= _MAXLEN:
-        return line
-    s = max(0, min(start - (_MAXLEN - (end - start)) // 2, len(line) - _MAXLEN))
-    return ("…" if s else "") + line[s:s + _MAXLEN] + ("…" if s + _MAXLEN < len(line) else "")
-
-
-def _mention(line: str, patterns, is_resume: bool) -> str | None:
-    """Return the (capped) line if some alias matches outside a negation, else None.
-
-    Posting: negated when a negator is within 3 words before the skill with no
-    comma/semicolon/"but"/"and" between, or "not required/needed/necessary" follows
-    within the clause. Resume: only "no experience with X" / "not familiar with X".
-    """
-    for pat in patterns:
-        for m in pat.finditer(line):
-            before = line[:m.start()]
-            if is_resume:
-                if _RESUME_NEG.search(before):
-                    continue
-            else:
-                clause = _CLAUSE_BREAK.split(before)[-1]
-                if _NEG.search(" ".join(clause.split()[-3:])):
-                    continue
-                if _NEG_AFTER.match(line[m.end():m.end() + 60]):
-                    continue
-            return _snip(line, m.start(), m.end())
-    return None
-
-
-def _first_line(lines: list[str], patterns, is_resume: bool) -> str | None:
-    return next((r for r in (_mention(ln, patterns, is_resume) for ln in lines) if r is not None), None)
-
-
-def match_posting(posting: str, resume: str, _skills=None) -> MatchResult:
-    """Compare recognized posting skills with the resume.
-
-    Output order is stable: keyword-file order within each group.
-    `_skills` overrides the keyword list (tests only).
+    Output order is stable: keywords.json order within each group.
     """
     _check(posting, "posting")
     _check(resume, "resume")
-    req_lines, pref_lines = split_posting_requirements(posting, _skills)
-    resume_lines = _lines(resume)
-    required, preferred = [], []
-    for name, cat, pats in _default_compiled() if _skills is None else _compile(_skills):
-        for kind, lines, out in (("required", req_lines, required), ("preferred", pref_lines, preferred)):
-            pl = _first_line(lines, pats, False)
-            if pl is None:
-                continue
-            rl = _first_line(resume_lines, pats, True)
-            out.append(SkillMatch(name, cat, kind, rl is not None, pl, rl))
-            break  # in both sections: counts once, as required
+    evidence: dict[str, Mention] = {}
+    for m, _ in sorted(_mentions(resume, "resume"), key=lambda p: p[0].span):
+        evidence.setdefault(m.canonical, m)
+    best: dict[str, tuple[int, int, Mention]] = {}
+    for m, imp in _mentions(posting, "posting"):
+        key = (_TIERS.index(imp), m.span[0])
+        if m.canonical not in best or key < best[m.canonical][:2]:
+            best[m.canonical] = (*key, m)
+    groups: dict[str, list[SkillMatch]] = {t: [] for t in _TIERS}
+    for name in skill_order():
+        if name not in best:
+            continue
+        tier, _, m = best[name]
+        r = evidence.get(name)
+        groups[_TIERS[tier]].append(SkillMatch(
+            name, m.category, _TIERS[tier], r is not None, _snippet(m),
+            _snippet(r) if r else None, m.line.section, m.span, r.span if r else None,
+        ))
+    req, pref = groups["required"], groups["preferred"]
     return MatchResult(
-        tuple(required), tuple(preferred),
-        compute_coverage_score(sum(m.found for m in required), len(required),
-                               sum(m.found for m in preferred), len(preferred)),
+        tuple(req), tuple(pref),
+        compute_coverage_score(sum(s.found for s in req), len(req), sum(s.found for s in pref), len(pref)),
+        tuple(groups["unscored"]), tuple(groups["excluded"]),
     )
 
 
+def split_posting_requirements(posting: str) -> tuple[list[str], list[str]]:
+    """Return (required lines, preferred lines): posting lines holding a required / preferred skill."""
+    _check(posting, "posting")
+    out: tuple[list[str], list[str]] = ([], [])
+    seen: set[tuple[int, int]] = set()
+    for m, imp in _mentions(posting, "posting"):
+        if imp in ("required", "preferred") and (m.line.start, int(imp == "preferred")) not in seen:
+            seen.add((m.line.start, int(imp == "preferred")))
+            out[imp == "preferred"].append(m.line.text)
+    return out
+
+
 def compute_coverage_score(r_matched: int, r_total: int, p_matched: int, p_total: int) -> float | None:
-    """100 * (0.8 * R + 0.2 * P); an empty category passes its weight on; both empty -> None."""
+    """100 * (0.8 * R + 0.2 * P); an empty group passes its weight on; both empty -> None."""
     if r_total < 0 or p_total < 0 or not (0 <= r_matched <= r_total) or not (0 <= p_matched <= p_total):
         raise ValueError("matched counts must be within totals")
     if r_total == 0 and p_total == 0:

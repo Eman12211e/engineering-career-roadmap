@@ -22,7 +22,16 @@ ignored (see `EXAMPLE.schema.json`, which is fake). Each pair:
 | `preferred_skills` | canonical skill names the posting lists as preferred / nice to have |
 | `resume_has` | which of those required + preferred skills the resume actually shows |
 
+Optional per-pair fields (`line_labels`, `mention_labels`, `evidence_labels`) use the same
+shapes as the development fixtures in `tests/fixtures/postings/*.json`. The owner-set report
+does not read them yet; they are reserved so stage-level labels can be added later without
+changing the format.
+
 Run: `python scripts/evaluate_matching.py` (optionally `--dir <path>`).
+Exit codes: 2 `PENDING` (fewer than 15 pairs or fewer than 5 holdout pairs, including an empty
+set), 1 `FAIL` (any holdout precision or recall below the provisional 0.85), 0 `PASS`.
+Holdout results are printed in aggregate only, with no per-item failures.
+For the reviewer-written development fixtures: `--fixtures tests/fixtures/postings`.
 Output: precision, recall, sample size and example failures, separately for
 posting extraction (required, preferred) and resume matching, for tune and holdout.
 Only skill names are printed, never posting or resume text.
