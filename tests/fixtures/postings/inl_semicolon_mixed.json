@@ -1,0 +1,23 @@
+{
+  "id": "inl_semicolon_mixed",
+  "kind": "targeted",
+  "format": "inline cues",
+  "note": "Each clause carries its own cue.",
+  "posting_text": "Requirements:\n- SolidWorks required; FEA preferred",
+  "resume_text": "SolidWorks",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [
+      "Finite Element Analysis"
+    ],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

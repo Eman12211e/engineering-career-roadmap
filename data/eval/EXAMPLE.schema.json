@@ -1,0 +1,14 @@
+{
+  "_note": "FAKE schema example. Ignored by scripts/evaluate_matching.py. Not evaluation data.",
+  "pairs": [
+    {
+      "id": "example-01",
+      "split": "tune",
+      "posting_text": "FAKE POSTING.\nRequirements:\n- Skill A\n- Skill B\nNice to have:\n- Skill C",
+      "resume_text": "FAKE RESUME.\n- Used Skill A at Example Co.",
+      "required_skills": ["Skill A", "Skill B"],
+      "preferred_skills": ["Skill C"],
+      "resume_has": ["Skill A"]
+    }
+  ]
+}

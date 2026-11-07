@@ -1,0 +1,102 @@
+{
+  "id": "r5_bigco_basic_preferred",
+  "kind": "regression",
+  "format": "big-company career site, ALL CAPS DESCRIPTION / BASIC QUALIFICATIONS / PREFERRED QUALIFICATIONS, trailing pay and accommodation prose",
+  "note": "Same as review 5. 'Key job responsibilities' and 'About the team' are not headings (Sentence case, not in vocabulary; R2.2 rule 3) and stay body text of the DESCRIPTION (responsibilities) section, so Agile is unscored. SolidWorks appears in responsibilities first, but the required tier wins, and the evidence is the BASIC QUALIFICATIONS line. 'Familiarity with' is not a negator. Résumé 'Currently learning CATIA V5' is hypothetical, so CATIA is not found. Score 100*(0.8*3/4+0.2*2/3)=73.33. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "Mechanical Engineer II, Fulfillment Robotics\nJob ID: 2817734 | Westborough, MA, USA\n\nDESCRIPTION\nOur team designs end-of-arm tooling for industrial robotics cells in our fulfillment centers. You will partner with controls engineers who program PLCs and FANUC robots.\n\nKey job responsibilities\n- Design sheet metal and machined components in SolidWorks\n- Perform tolerance stack-up analysis and FEA on new fixtures\n- Support pilot builds and drive root cause analysis of field failures\n\nAbout the team\nOur team of 40 engineers works out of Westborough, MA and runs Agile sprints.\n\nBASIC QUALIFICATIONS\n- Bachelor's degree in Mechanical Engineering\n- 3+ years of experience with 3D CAD (SolidWorks, Creo or CATIA)\n- Experience applying GD&T per ASME Y14.5\n\nPREFERRED QUALIFICATIONS\n- Master's degree in Mechanical Engineering\n- Experience with Python or MATLAB for test data analysis\n- Familiarity with DFM/DFA principles\n\nOur inclusive culture empowers employees to deliver the best results for our customers. If you have a disability and need a workplace accommodation during the application process, please visit our accommodations page.\n\nPay range: the base pay for this position ranges from $98,000/year in our lowest geographic market up to $160,000/year in our highest geographic market.\n",
+  "resume_text": "JORDAN LEE\nAustin, TX | jordan.lee@email.com | (512) 555-0147\n\nEDUCATION\nB.S. Mechanical Engineering, Texas A&M University, 2019\n\nEXPERIENCE\nMechanical Design Engineer, Lonestar Automation - Austin, TX (2020-Present)\n• Designed sheet metal enclosures and machined fixtures in SolidWorks for robotic cells\n• Performed tolerance stack-up analysis and applied GD&T per ASME Y14.5 on 40+ drawings\n• Ran FEA in SolidWorks Simulation to validate brackets; cut part weight 18%\n• Wrote Python scripts to parse test data\n\nEngineering Intern, Brazos Pumps (Summer 2018)\n• Supported root cause analysis on pump seal failures using 5 Whys\n\nSKILLS\nCAD: SolidWorks, Creo (basic), AutoCAD\nAnalysis: FEA, MATLAB\nCurrently learning CATIA V5\n",
+  "expected": {
+    "required": [
+      "CATIA",
+      "Creo",
+      "GD&T",
+      "SolidWorks"
+    ],
+    "preferred": [
+      "DFM/DFA",
+      "MATLAB",
+      "Python"
+    ],
+    "unscored": [
+      "Finite Element Analysis",
+      "Industrial Robotics",
+      "PLC Programming",
+      "Project Management",
+      "Root Cause Analysis",
+      "Sheet Metal Design",
+      "Tolerance Stack-Up"
+    ],
+    "excluded": [],
+    "found": [
+      "Creo",
+      "Finite Element Analysis",
+      "GD&T",
+      "MATLAB",
+      "Python",
+      "Root Cause Analysis",
+      "Sheet Metal Design",
+      "SolidWorks",
+      "Tolerance Stack-Up"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "end-of-arm tooling",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "About the team",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "runs Agile sprints",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "3D CAD (SolidWorks",
+      "section": "required"
+    },
+    {
+      "contains": "test data analysis",
+      "section": "preferred"
+    },
+    {
+      "contains": "Job ID: 2817734",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Familiarity with DFM/DFA",
+      "canonical": "DFM/DFA",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning CATIA V5",
+      "canonical": "CATIA",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Analysis: FEA, MATLAB",
+      "canonical": "MATLAB",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "3D CAD (SolidWorks"
+    },
+    {
+      "canonical": "GD&T",
+      "posting_line_contains": "Experience applying GD&T"
+    },
+    {
+      "canonical": "Project Management",
+      "posting_line_contains": "runs Agile sprints"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "inl_required_preferred_labels",
+  "kind": "targeted",
+  "format": "inline cues",
+  "note": "'Required: X. Preferred: Y.' on one line.",
+  "posting_text": "Qualifications:\nRequired: SolidWorks. Preferred: FEA.",
+  "resume_text": "FEA",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [
+      "Finite Element Analysis"
+    ],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "Finite Element Analysis"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

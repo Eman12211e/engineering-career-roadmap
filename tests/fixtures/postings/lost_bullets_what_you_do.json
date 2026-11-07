@@ -1,0 +1,40 @@
+{
+  "id": "lost_bullets_what_you_do",
+  "kind": "targeted",
+  "format": "lost bullet markers",
+  "note": "Assumes 'What We're Looking For' -> required and 'Bonus Points' -> preferred in the vocabulary.",
+  "posting_text": "What You'll Do\nDesign Parts In SolidWorks\nRun FEA\nWhat We're Looking For\nCreo Proficiency\nBonus Points\nANSYS Experience",
+  "resume_text": "SolidWorks, ANSYS",
+  "expected": {
+    "required": [
+      "Creo"
+    ],
+    "preferred": [
+      "ANSYS"
+    ],
+    "unscored": [
+      "Finite Element Analysis",
+      "SolidWorks"
+    ],
+    "excluded": [],
+    "found": [
+      "ANSYS",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Design Parts In SolidWorks",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Creo Proficiency",
+      "section": "required"
+    },
+    {
+      "contains": "ANSYS Experience",
+      "section": "preferred"
+    }
+  ],
+  "mention_labels": []
+}

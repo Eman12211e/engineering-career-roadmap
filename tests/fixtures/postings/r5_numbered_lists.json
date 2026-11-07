@@ -1,0 +1,97 @@
+{
+  "id": "r5_numbered_lists",
+  "kind": "regression",
+  "format": "numbered lists (1. / 1) / lettered a. b.), plain known headings, a 'one of the following:' item and a 'desired tolerances' duty; PDF-wrapped résumé",
+  "note": "Same as review 5. 'desired tolerances' never binds (R2.4), so CNC Machining is unscored. '4. Experience with at least one of the following:' has more than 6 words and is not a heading, so 'b. SQL' stays required. Numbered and lettered items must be treated as list items: not heading candidates and not wrap continuations (see the ambiguity note in the report). Résumé: 'customer complaints; maintained the quality management' and 'system documentation.' join their bullet (R2.3), so 'quality management\\nsystem' matches and ISO 9001 is found. 'No experience with CNC programming.' is negated ('experience with' is a negation filler). Score 100*(0.8*3/4+0.2*2/2)=80. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "Quality Engineer\nResponsibilities\n1. Own the quality management system and lead internal ISO 9001 audits.\n2. Use SPC and control charts to monitor critical processes.\n3. Lead 8D root cause analysis for customer complaints.\n4. Work with machinists to hold the desired tolerances on CNC parts.\nQualifications\n1. BS in Mechanical, Industrial or Quality Engineering.\n2. 3+ years of experience with APQP/PPAP in an IATF 16949 environment.\n3. Working knowledge of GD&T and CMM inspection.\n4. Experience with at least one of the following:\n   a. Minitab\n   b. SQL\nPreferred\n1. ASQ CQE certification.\n2. Six Sigma Green Belt.\n3. Experience with SAP QM.\nCompensation\n1) Base salary $80,000-$95,000\n2) Annual bonus\n",
+  "resume_text": "Priya Raman\nQuality / Manufacturing Engineer\nDearborn, MI · priya.raman@mail.com\nPROFESSIONAL EXPERIENCE\nSupplier Quality Engineer, Midwest Metalform Co., 2019 – Present\n• Led APQP and PPAP submissions for 30+ stamped and welded\nassemblies for GM and Ford programs under IATF 16949.\n• Reduced scrap 22% using statistical process\ncontrol and Six Sigma tools; certified Six Sigma Green\nBelt (2021).\n• Facilitated 8D and fishbone root cause analysis for\ncustomer complaints; maintained the quality management\nsystem documentation.\nManufacturing Engineer, Lakeshore Plastics, 2016 – 2019\n• Supported injection molding process validation and\nlean manufacturing (5S, kaizen) events.\n• Programmed Allen-Bradley PLC\nladder logic for two assembly cells.\nTECHNICAL SKILLS\nMinitab, AutoCAD, SAP, GD&T, SPC, Microsoft Office\nNo experience with CNC programming.\n",
+  "expected": {
+    "required": [
+      "APQP",
+      "GD&T",
+      "IATF 16949",
+      "SQL"
+    ],
+    "preferred": [
+      "ERP Systems",
+      "Lean Six Sigma Green Belt"
+    ],
+    "unscored": [
+      "CNC Machining",
+      "ISO 9001",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ],
+    "excluded": [],
+    "found": [
+      "APQP",
+      "ERP Systems",
+      "GD&T",
+      "IATF 16949",
+      "ISO 9001",
+      "Lean Six Sigma Green Belt",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "desired tolerances",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "internal ISO 9001 audits",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Minitab",
+      "section": "required"
+    },
+    {
+      "contains": "SQL",
+      "section": "required"
+    },
+    {
+      "contains": "Experience with SAP QM",
+      "section": "preferred"
+    },
+    {
+      "contains": "Base salary",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "desired tolerances",
+      "canonical": "CNC Machining",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "maintained the quality management",
+      "canonical": "ISO 9001",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with CNC programming",
+      "canonical": "CNC Machining",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SQL",
+      "posting_line_contains": "SQL"
+    },
+    {
+      "canonical": "CNC Machining",
+      "posting_line_contains": "desired tolerances"
+    },
+    {
+      "canonical": "GD&T",
+      "posting_line_contains": "Working knowledge of GD&T"
+    }
+  ]
+}

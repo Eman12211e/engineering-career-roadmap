@@ -1,0 +1,28 @@
+{
+  "id": "neg_posting_not_required_after",
+  "kind": "targeted",
+  "format": "negation (posting)",
+  "note": "Rev 2 (note only, expected unchanged): the earlier ambiguity is resolved by the negation_after cues ('not required') in the posting, so CFD is negated and creates no requirement.",
+  "posting_text": "Requirements:\n- SolidWorks\n- CFD not required",
+  "resume_text": "SolidWorks",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "CFD not required",
+      "canonical": "CFD",
+      "status": "negated"
+    }
+  ]
+}

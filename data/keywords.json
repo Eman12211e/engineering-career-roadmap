@@ -45,6 +45,7 @@
     {
       "canonical": "Inventor",
       "aliases": ["Inventor", "Autodesk Inventor"],
+      "case_sensitive": true,
       "category": "cad",
       "industries": ["Factory Automation", "EV/Automotive"]
     },
@@ -231,6 +232,7 @@
     {
       "canonical": "ROS",
       "aliases": ["ROS", "Robot Operating System", "ROS2"],
+      "case_sensitive": true,
       "category": "programming",
       "industries": ["Aerospace/Robotics"]
     },
@@ -297,6 +299,7 @@
     {
       "canonical": "Machine Learning",
       "aliases": ["machine learning", "ML", "scikit-learn", "data science"],
+      "exclude_phrases": ["ml of", "ml per", "ml/min"],
       "category": "programming",
       "industries": ["Factory Automation", "EV/Automotive", "Aerospace/Robotics"]
     },

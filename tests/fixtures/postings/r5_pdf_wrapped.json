@@ -1,0 +1,97 @@
+{
+  "id": "r5_pdf_wrapped",
+  "kind": "regression",
+  "format": "posting pasted from PDF: hard wraps mid-sentence, alias split across a wrap; PDF-wrapped résumé",
+  "note": "Same as review 5. R2.3 joins 'hydraulics and pneumatics...', 'analysis on welded structures.', 'root cause analysis tools...' and 'programming.' onto the previous line. They start lower-case and the previous line has no end punctuation. So 'finite element\\nanalysis' matches as one span, and the offset invariant holds with the newline normalised to a space. 'GD&T.' and 'ANSYS is a plus.' start upper-case: they are not joined and stay separate body lines in the same section (not headings: they end with '.'). Résumé 'fatigue\\nanalysis' joins too, so Fatigue Analysis is found. 'Creo\\nParametric' does not join (upper-case) but 'Creo' alone matches. Résumé skills line 'Creo, ANSYS, GD&T, MATLAB, Python' is Title Case but is the last line. End of text is not a blank line (R2.8.3), and skill text is body, so it is not a heading and its mentions count (R2.8.4). Score 100*(0.8*4/4+0.2*3/4)=95. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "Design Engineer - Hydraulic Systems\nRequirements:\n- Bachelor of Science in Mechanical Engineering and 4+ years designing\nhydraulics and pneumatics systems for mobile equipment.\n- Proficiency in Creo Parametric and Windchill; experience creating drawings with\nGD&T.\n- Experience performing finite element\nanalysis on welded structures.\nPreferred Qualifications:\n- Working knowledge of fatigue analysis and durability testing; experience with\nANSYS is a plus.\n- Familiarity with lean principles and\nroot cause analysis tools (8D, fishbone).\nBenefits:\n- Competitive salary, 401(k) match, tuition reimbursement for courses in Python\nprogramming.\n",
+  "resume_text": "Samuel Ortiz\nDesign Engineer | Peoria, IL\nWORK EXPERIENCE\nDesign Engineer, Prairie Equipment (2018-2024)\nDesigned hydraulics manifolds and pneumatics circuits for compact loaders using Creo\nParametric and Windchill. Released drawings with full GD&T.\nPerformed finite element analysis and fatigue\nanalysis on welded booms using ANSYS Mechanical.\nLed lean principles workshops.\nSKILLS\nCreo, ANSYS, GD&T, MATLAB, Python\n",
+  "expected": {
+    "required": [
+      "Creo",
+      "Finite Element Analysis",
+      "GD&T",
+      "Hydraulics/Pneumatics"
+    ],
+    "preferred": [
+      "ANSYS",
+      "Fatigue Analysis",
+      "Lean Manufacturing",
+      "Root Cause Analysis"
+    ],
+    "unscored": [],
+    "excluded": [
+      "Python"
+    ],
+    "found": [
+      "ANSYS",
+      "Creo",
+      "Fatigue Analysis",
+      "Finite Element Analysis",
+      "GD&T",
+      "Hydraulics/Pneumatics",
+      "Lean Manufacturing"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "hydraulics and pneumatics systems",
+      "section": "required"
+    },
+    {
+      "contains": "analysis on welded structures",
+      "section": "required"
+    },
+    {
+      "contains": "ANSYS is a plus",
+      "section": "preferred"
+    },
+    {
+      "contains": "root cause analysis tools",
+      "section": "preferred"
+    },
+    {
+      "contains": "tuition reimbursement",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Experience performing finite element",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "4+ years designing",
+      "canonical": "Hydraulics/Pneumatics",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Performed finite element analysis and fatigue",
+      "canonical": "Fatigue Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Creo, ANSYS, GD&T, MATLAB, Python",
+      "canonical": "MATLAB",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Finite Element Analysis",
+      "posting_line_contains": "Experience performing finite element"
+    },
+    {
+      "canonical": "Hydraulics/Pneumatics",
+      "posting_line_contains": "4+ years designing"
+    },
+    {
+      "canonical": "Python",
+      "posting_line_contains": "tuition reimbursement"
+    }
+  ]
+}

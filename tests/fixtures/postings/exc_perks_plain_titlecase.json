@@ -1,0 +1,33 @@
+{
+  "id": "exc_perks_plain_titlecase",
+  "kind": "targeted",
+  "format": "exclusion zones",
+  "note": "Plain Title Case perk lines with no bullets.",
+  "posting_text": "Requirements:\n- Python\nPerks:\nGym Membership\nSQL Workshops\nUnlimited PTO\nSolidWorks Seat",
+  "resume_text": "Python",
+  "expected": {
+    "required": [
+      "Python"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [
+      "SQL",
+      "SolidWorks"
+    ],
+    "found": [
+      "Python"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "SQL Workshops",
+      "section": "excluded"
+    },
+    {
+      "contains": "SolidWorks Seat",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": []
+}

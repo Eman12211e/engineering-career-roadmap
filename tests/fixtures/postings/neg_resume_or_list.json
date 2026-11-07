@@ -1,0 +1,33 @@
+{
+  "id": "neg_resume_or_list",
+  "kind": "targeted",
+  "format": "negation (resume)",
+  "note": "Judgement: 'or' is not a clause break, so the negation covers both FEA and CFD.",
+  "posting_text": "Requirements:\n- FEA\n- CFD",
+  "resume_text": "No experience with FEA or CFD",
+  "expected": {
+    "required": [
+      "CFD",
+      "Finite Element Analysis"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": []
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "No experience with FEA or CFD",
+      "canonical": "Finite Element Analysis",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with FEA or CFD",
+      "canonical": "CFD",
+      "status": "negated"
+    }
+  ]
+}

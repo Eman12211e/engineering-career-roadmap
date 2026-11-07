@@ -1,0 +1,21 @@
+{
+  "id": "acr_mls_not_ml",
+  "kind": "targeted",
+  "format": "acronyms",
+  "note": "'MLS' and 'mls' are not Machine Learning.",
+  "posting_text": "Requirements:\n- Experience with MLS listings data\n- Measure 500 mls of coolant\n- SolidWorks",
+  "resume_text": "SolidWorks",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

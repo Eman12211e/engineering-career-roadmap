@@ -1,0 +1,38 @@
+{
+  "id": "exc_offer_comp_titlecase",
+  "kind": "targeted",
+  "format": "exclusion zones",
+  "note": "Assumes the vocabulary maps 'What We Offer' and 'Compensation & Benefits' to excluded. Title Case perk lines ('Free Lunch', 'Health Insurance') are not headings and stay excluded.",
+  "posting_text": "Requirements:\n- SolidWorks\n**What We Offer**\n- Python and SQL training budget\nCompensation & Benefits:\nFree Lunch\nHealth Insurance\nANSYS Training Stipend",
+  "resume_text": "SolidWorks, Python",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [
+      "ANSYS",
+      "Python",
+      "SQL"
+    ],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "training budget",
+      "section": "excluded"
+    },
+    {
+      "contains": "Free Lunch",
+      "section": "excluded"
+    },
+    {
+      "contains": "ANSYS Training Stipend",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": []
+}

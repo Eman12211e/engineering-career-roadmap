@@ -1,0 +1,30 @@
+{
+  "id": "dup_negated_then_preferred",
+  "kind": "targeted",
+  "format": "duplicate skills",
+  "note": "A negated required mention does not block an affirmed preferred one.",
+  "posting_text": "Requirements:\n- No CFD experience needed\n- GD&T\nPreferred:\n- CFD",
+  "resume_text": "CFD",
+  "expected": {
+    "required": [
+      "GD&T"
+    ],
+    "preferred": [
+      "CFD"
+    ],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "CFD"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "No CFD experience",
+      "canonical": "CFD",
+      "status": "negated"
+    }
+  ]
+}
