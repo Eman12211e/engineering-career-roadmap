@@ -264,3 +264,11 @@ There is no fourth session. Whatever fails after session 3 goes to the owner.
 11. **Order of the two heading rules.** R2.8.7 is applied first. R2.8.4 (mentions in heading
     lines are ignored) applies only to lines that end up as headings.
 12. **Excluded vocabulary also covers** "About the job" and "About the role".
+13. **`negation_fillers` is open-ended data,** with the same intent as R2.8.9. It may hold
+    usage and exposure phrases such as "used", "worked with", "had", "exposure to" and
+    "prior", so "Never used MATLAB" is negated.
+14. **`negation_after` follows the `cue_fillers` gap rule.** "X coursework is not necessary"
+    binds only if every word between X and the cue is a filler.
+15. **Commas inside a coordinated skill list are not clause breaks** for cue binding.
+    "SolidWorks, Creo, or CATIA preferred" binds all three.
+16. **"preferably X" and "ideally X" are prefix cue forms** for `preferred`.
