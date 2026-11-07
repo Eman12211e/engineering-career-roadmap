@@ -272,3 +272,8 @@ There is no fourth session. Whatever fails after session 3 goes to the owner.
 15. **Commas inside a coordinated skill list are not clause breaks** for cue binding.
     "SolidWorks, Creo, or CATIA preferred" binds all three.
 16. **"preferably X" and "ideally X" are prefix cue forms** for `preferred`.
+17. **Amends R2.8.12.** "About the job" and "About the role" are known headings of kind
+    `unknown`, not `excluded`. On LinkedIn, "About the job" often introduces the whole
+    posting, so treating it as excluded would hide real requirements. As `unknown`, it still
+    ends the previous section, and its skills are unscored. Four independent fixtures expect
+    exactly this.
