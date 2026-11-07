@@ -1,0 +1,167 @@
+{
+  "id": "u6_bigco_basic_desired",
+  "kind": "unseen",
+  "format": "big-company career site: Key Responsibilities / Basic Qualifications / Desired Qualifications / Benefits and Perks / Pay Transparency, EEO paragraph",
+  "note": "Company intro before the first heading is unknown, so ERP Systems is unscored and Python's pre-heading mention loses to its Desired mention. 'Pay Transparency' is excluded vocabulary (R2.8.1 waives rule 4), so the pay and EEO text is excluded (no skills there). SolidWorks/MATLAB appear only in Benefits and Perks: excluded, never found even though the resume lists SolidWorks. Resume: SPC is split across a PDF wrap; 'without added headcount by applying' and 'never missed a customer PPAP' are not negations (R2.4 gap rule).",
+  "posting_text": "Senior Manufacturing Engineer, Battery Module Assembly\nJob ID: R-204417 | Location: Fremont, CA | Full time\n\nVoltaris Mobility is building the next generation of electric trucks. Our plants run on SAP, and our line dashboards are written in Python.\n\nKey Responsibilities\n- Own the module assembly line from pilot build through high-volume launch\n- Lead DFMEA reviews with design and quality partners\n- Drive root cause analysis and corrective actions for line escapes\n- Release work instructions and train operators on new stations\n\nBasic Qualifications\n- Bachelor's degree in Mechanical, Manufacturing or Industrial Engineering\n- 5+ years of manufacturing engineering experience in automotive or battery production\n- Hands-on experience with GD&T and tolerance stack-up analysis\n- Working knowledge of statistical process control\n\nDesired Qualifications\n- Experience with IATF 16949 and APQP deliverables\n- Exposure to battery management systems at the module level\n- Lean Six Sigma Green Belt\n- Proficiency in Python for data analysis\n\nBenefits and Perks\n- Medical, dental and vision coverage from day one\n- Annual learning stipend that covers MATLAB and SolidWorks certification courses\n- On-site gym and free EV charging\n\nPay Transparency\nThe base salary range for this role is $128,000 to $165,000 plus equity.\n\nVoltaris is an equal opportunity employer. All qualified applicants will receive consideration without regard to race, color, religion, sex, national origin, disability or veteran status.",
+  "resume_text": "Priya Raman\nManufacturing Engineer | Reno, NV\n\nSKILLS\nGD&T (ASME Y14.5), DFMEA, 8D, SolidWorks, Minitab, Python, SQL\n\nEXPERIENCE\nManufacturing Engineer II, Sierra Cell Systems, 2021 to present\n- Launched two battery module lines with zero safety incidents and no line-down events\nover the first 12 months\n- Cut station cycle time 18% without added headcount by applying statistical process\ncontrol and poka-yoke on the stacking cell\n- Led tolerance stack-up studies that resolved a busbar interference issue\n- Submitted PPAP packages for 30+ purchased parts; never missed a customer PPAP date\nProcess Engineer, Granite Plastics, 2018 to 2021\n- Ran root cause analysis on molding defects and cut scrap by a third\n- No experience with IATF 16949 audits at this site; supported internal ISO 9001 audits\n- Currently learning battery management systems through an evening course\n\nEDUCATION\nB.S. Industrial Engineering, University of Nevada, Reno",
+  "expected": {
+    "required": [
+      "GD&T",
+      "Statistical Process Control",
+      "Tolerance Stack-Up"
+    ],
+    "preferred": [
+      "APQP",
+      "Battery Management Systems",
+      "IATF 16949",
+      "Lean Six Sigma Green Belt",
+      "Python"
+    ],
+    "unscored": [
+      "DFMEA",
+      "ERP Systems",
+      "Root Cause Analysis"
+    ],
+    "excluded": [
+      "MATLAB",
+      "SolidWorks"
+    ],
+    "found": [
+      "APQP",
+      "DFMEA",
+      "GD&T",
+      "Python",
+      "Root Cause Analysis",
+      "Statistical Process Control",
+      "Tolerance Stack-Up"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Voltaris Mobility is building",
+      "section": "unknown"
+    },
+    {
+      "contains": "Lead DFMEA reviews",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "GD&T and tolerance stack-up",
+      "section": "required"
+    },
+    {
+      "contains": "IATF 16949 and APQP",
+      "section": "preferred"
+    },
+    {
+      "contains": "Lean Six Sigma Green Belt",
+      "section": "preferred"
+    },
+    {
+      "contains": "Annual learning stipend",
+      "section": "excluded"
+    },
+    {
+      "contains": "base salary range",
+      "section": "excluded"
+    },
+    {
+      "contains": "equal opportunity employer",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Our plants run on SAP",
+      "canonical": "ERP Systems",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "without added headcount",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never missed a customer PPAP",
+      "canonical": "APQP",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with IATF 16949",
+      "canonical": "IATF 16949",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with IATF 16949",
+      "canonical": "ISO 9001",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning battery management",
+      "canonical": "Battery Management Systems",
+      "status": "hypothetical"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Python",
+      "posting_line_contains": "Proficiency in Python"
+    },
+    {
+      "canonical": "Tolerance Stack-Up",
+      "posting_line_contains": "GD&T and tolerance stack-up"
+    },
+    {
+      "canonical": "Statistical Process Control",
+      "posting_line_contains": "statistical process control"
+    },
+    {
+      "canonical": "ERP Systems",
+      "posting_line_contains": "Our plants run on SAP"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Our plants run on SAP",
+      "canonical": "ERP Systems",
+      "trap": "company",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Annual learning stipend",
+      "canonical": "MATLAB",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Annual learning stipend",
+      "canonical": "SolidWorks",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with IATF 16949",
+      "canonical": "IATF 16949",
+      "trap": "negated",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning battery management",
+      "canonical": "Battery Management Systems",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    }
+  ]
+}

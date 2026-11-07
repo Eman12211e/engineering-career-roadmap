@@ -1,0 +1,143 @@
+{
+  "id": "u6_pdf_hardwrap",
+  "kind": "unseen",
+  "format": "posting pasted from a PDF: hard wraps split skill names across lines",
+  "note": "R2.3 joins a physical line to the previous one when the previous line has no terminal punctuation and the line starts lower-case. Joined splits: 'root cause / analysis', 'statistical process / control', 'geometric / dimensioning and tolerancing', 'tolerance / stack-up analysis', 'composite / materials'. Not joined (next line starts upper-case): 'Six Sigma Green / Belt' (Six Sigma still matches on line 1) and 'CATIA / V5' (CATIA still matches; it is in Preferred anyway). Spans across a wrap must contain the newline and nothing else (offset invariant). 'Position Summary' and 'Physical Demands' are not vocabulary and fail R2.2 rule 4: body text. 'Essential Functions' is responsibilities vocabulary. AS9100 evidence must be the required-tier line, not the earlier intro.",
+  "posting_text": "Quality Engineer – Aerostructures\nCascade Aero Components, Wichita, KS\n\nPosition Summary\nCascade Aero Components manufactures machined and bonded structures for commercial\nand defense aircraft. The Quality Engineer supports first article inspection and\ncorrective action for our AS9100 certified facility.\n\nEssential Functions\n- Lead root cause\nanalysis and corrective action for nonconformances using 8D and fishbone\ndiagrams\n- Build and maintain statistical process\ncontrol charts for critical characteristics\n- Perform first article inspections and review drawings for geometric\ndimensioning and tolerancing errors\n\nMinimum Qualifications\n- B.S. in Mechanical, Aerospace, or Manufacturing Engineering\n- 3+ years of quality engineering experience in an AS9100 environment\n- Working knowledge of design FMEA and process FMEA\n- Experience with tolerance\nstack-up analysis\n\nPreferred Qualifications\n- Experience with carbon fiber composite\nmaterials and nondestructive inspection\n- Six Sigma Green\nBelt or higher\n- CMM programming experience; familiarity with CATIA\nV5 is a plus\n\nPhysical Demands\nWork is performed on the shop floor and in an office setting. Must be able to lift\n25 pounds.",
+  "resume_text": "ANGELA WHITFIELD\nWichita, KS | angela.w@example.com\n\nSUMMARY\nQuality engineer with six years in AS9100 aerospace machining and composites. Known\nfor closing corrective actions fast and never letting a nonconformance age past 30\ndays.\n\nEXPERIENCE\nQuality Engineer, Prairie Aerostructures, 2020 - present\n- Led root cause analysis on 140+ nonconformances using 8D; zero repeat escapes in\n2023\n- Rolled out statistical process control on CNC trim cells without adding inspection\nheadcount\n- Built tolerance stack-up models for wing rib assemblies in Excel\n- Reviewed drawings for geometric dimensioning and\ntolerancing compliance\nQuality Technician, Heartland Machining, 2017 - 2020\n- Supported first article inspections; no experience with CATIA at this site\n- Inspected carbon fiber layups for porosity\n\nCERTIFICATIONS\nASQ Certified Quality Engineer (CQE)",
+  "expected": {
+    "required": [
+      "AS9100",
+      "DFMEA",
+      "Tolerance Stack-Up"
+    ],
+    "preferred": [
+      "CATIA",
+      "Composites",
+      "Lean Six Sigma Green Belt"
+    ],
+    "unscored": [
+      "GD&T",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ],
+    "excluded": [],
+    "found": [
+      "AS9100",
+      "Composites",
+      "GD&T",
+      "Root Cause Analysis",
+      "Statistical Process Control",
+      "Tolerance Stack-Up"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Cascade Aero Components manufactures",
+      "section": "unknown"
+    },
+    {
+      "contains": "Lead root cause",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "in an AS9100 environment",
+      "section": "required"
+    },
+    {
+      "contains": "design FMEA and process FMEA",
+      "section": "required"
+    },
+    {
+      "contains": "Experience with tolerance",
+      "section": "required"
+    },
+    {
+      "contains": "Experience with carbon fiber composite",
+      "section": "preferred"
+    },
+    {
+      "contains": "Six Sigma Green",
+      "section": "preferred"
+    },
+    {
+      "contains": "Work is performed on the shop floor",
+      "section": "preferred"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Lead root cause",
+      "canonical": "Root Cause Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Build and maintain statistical process",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "review drawings for geometric",
+      "canonical": "GD&T",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Experience with tolerance",
+      "canonical": "Tolerance Stack-Up",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Reviewed drawings for geometric",
+      "canonical": "GD&T",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "without adding inspection",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "no experience with CATIA",
+      "canonical": "CATIA",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "AS9100",
+      "posting_line_contains": "in an AS9100 environment"
+    },
+    {
+      "canonical": "Root Cause Analysis",
+      "posting_line_contains": "Lead root cause"
+    },
+    {
+      "canonical": "GD&T",
+      "posting_line_contains": "review drawings for geometric"
+    },
+    {
+      "canonical": "Tolerance Stack-Up",
+      "posting_line_contains": "Experience with tolerance"
+    },
+    {
+      "canonical": "Composites",
+      "posting_line_contains": "Experience with carbon fiber composite"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "resume",
+      "line_contains": "no experience with CATIA",
+      "canonical": "CATIA",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ]
+}

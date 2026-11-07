@@ -1,0 +1,11 @@
+{
+  "note": "Historical labels kept unchanged. Tests report each one separately instead of failing on it. The coordinator decides any relabel.",
+  "disputed": [
+    {
+      "fixture": "u6_linkedin_lost_bullets",
+      "label": {"kind": "line_label", "contains": "Northfield Robotics is hiring", "section": "excluded"},
+      "alternative": {"section": "unknown"},
+      "reason": "Sealed under R2.8.12 (About the job = excluded). R2.8.17, committed after the seal, makes About the job a known heading of kind unknown. The line has no skills, so neither the score nor the found set changes."
+    }
+  ]
+}

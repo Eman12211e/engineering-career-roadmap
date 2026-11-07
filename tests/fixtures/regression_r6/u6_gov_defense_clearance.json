@@ -1,0 +1,148 @@
+{
+  "id": "u6_gov_defense_clearance",
+  "kind": "unseen",
+  "format": "government/defense (USAJobs style): Duties / Conditions of Employment / Qualifications / Desired Qualifications / Equal Employment Opportunity, clearance text",
+  "note": "'Conditions of Employment' is an unknown heading, but 'Must have FEA experience' is a modal-prefix cue, so FEA is required and its evidence is that line (earliest in the required tier). 'Must be able to obtain ... clearance' and 'Must be able to lift' bind nothing (R2.8.10; no skills there anyway). 'technical reports ... as required' must not bind (Technical Writing unscored). 'Knowledge of PLC programming is not required' is negation_after: PLC is in no group. 'Equal Employment Opportunity' is excluded vocabulary (no skills). Resume: MATLAB really negated; MBSE hypothetical; 'with no failed shock' and 'zero field cracks' are not negations.",
+  "posting_text": "Mechanical Engineer (Structures), GS-0830-12\nNaval Surface Warfare Center, Philadelphia Division\nOpen to U.S. citizens only. Security clearance required.\n\nDuties\n- Performs structural analysis and fatigue analysis of shipboard machinery foundations\n- Prepares technical reports and engineering change proposals as required\n- Reviews contractor drawings for compliance with ASME Y14.5 and MIL-STD-2035\n\nConditions of Employment\n- Must be a U.S. citizen\n- Must be able to obtain and maintain a SECRET security clearance\n- Must have FEA experience with shell and solid element models\n- Must be able to lift 40 pounds and climb ladders aboard ship\n\nQualifications\n- Bachelor's degree in mechanical engineering from an ABET-accredited program\n- One year of specialized experience equivalent to GS-11, including finite element analysis with ANSYS or a similar tool\n- Experience with MATLAB for post-processing test data\n\nDesired Qualifications\n- Registration as a Professional Engineer or passing the Fundamentals of Engineering exam\n- Experience with model-based systems engineering\n- Experience with CATIA V5\n- Knowledge of PLC programming is not required\n\nEqual Employment Opportunity\n\nThe Department of the Navy is an equal opportunity employer. Selection for this position will be made without regard to race, religion, color, sex, national origin, age, disability, or political affiliation. Reasonable accommodation is available to applicants with disabilities.",
+  "resume_text": "JAMES R. OKAFOR\nPhiladelphia, PA | Active SECRET clearance (2023)\n\nPROFESSIONAL EXPERIENCE\nStructural Engineer, Delaware Valley Marine Systems, 2019 - Present\n- Performed finite element analysis in ANSYS Workbench on 60+ machinery foundations\nwith no failed shock qualification tests\n- Completed fatigue life assessments for shipboard pump skids; zero field cracks reported\nsince 2020\n- Wrote technical reports supporting NAVSEA design reviews\n- Applied GD&T per ASME Y14.5 on all released drawings\n- No experience with MATLAB; post-processing was done in Excel and Python\n\nEDUCATION AND CERTIFICATIONS\nB.S. Mechanical Engineering, Drexel University\nPassed the Fundamentals of Engineering exam in 2018\nCurrently learning model-based systems engineering through a Navy Cameo course",
+  "expected": {
+    "required": [
+      "ANSYS",
+      "Finite Element Analysis",
+      "MATLAB"
+    ],
+    "preferred": [
+      "CATIA",
+      "FE Exam",
+      "Systems Engineering"
+    ],
+    "unscored": [
+      "Fatigue Analysis",
+      "GD&T",
+      "Structural Analysis",
+      "Technical Writing"
+    ],
+    "excluded": [],
+    "found": [
+      "ANSYS",
+      "FE Exam",
+      "Fatigue Analysis",
+      "Finite Element Analysis",
+      "GD&T",
+      "Technical Writing"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Performs structural analysis",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Prepares technical reports",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Must have FEA experience",
+      "section": "unknown"
+    },
+    {
+      "contains": "including finite element analysis with ANSYS",
+      "section": "required"
+    },
+    {
+      "contains": "model-based systems engineering",
+      "section": "preferred"
+    },
+    {
+      "contains": "Knowledge of PLC programming",
+      "section": "preferred"
+    },
+    {
+      "contains": "Department of the Navy is an equal",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Must have FEA experience",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Knowledge of PLC programming",
+      "canonical": "PLC Programming",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "with no failed shock",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with MATLAB",
+      "canonical": "MATLAB",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning model-based",
+      "canonical": "Systems Engineering",
+      "status": "hypothetical"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Finite Element Analysis",
+      "posting_line_contains": "Must have FEA experience"
+    },
+    {
+      "canonical": "Technical Writing",
+      "posting_line_contains": "Prepares technical reports"
+    },
+    {
+      "canonical": "GD&T",
+      "posting_line_contains": "ASME Y14.5"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Knowledge of PLC programming",
+      "canonical": "PLC Programming",
+      "trap": "negated",
+      "must_not": "appear in any result group"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with MATLAB",
+      "canonical": "MATLAB",
+      "trap": "negated",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning model-based",
+      "canonical": "Systems Engineering",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    }
+  ],
+  "binding_traps": [
+    {
+      "line_contains": "Prepares technical reports",
+      "canonical": "Technical Writing",
+      "expected_importance": "unscored",
+      "why": "'as required' never binds"
+    },
+    {
+      "line_contains": "Must have FEA experience",
+      "canonical": "Finite Element Analysis",
+      "expected_importance": "required",
+      "why": "modal prefix 'must have X' in an unknown section"
+    }
+  ]
+}

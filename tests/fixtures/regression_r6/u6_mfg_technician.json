@@ -1,0 +1,127 @@
+{
+  "id": "u6_mfg_technician",
+  "kind": "unseen",
+  "format": "manufacturing technician posting, ALL CAPS headings, '*' bullets, physical requirements",
+  "note": "ALL CAPS headings followed by lists. 'POSITION SUMMARY' is not vocabulary and fails R2.2 rule 4 (plain line follows; ALL CAPS alone does not waive it): pre-heading body. 'ESSENTIAL DUTIES' is not an exact vocabulary entry: unknown heading (unscored either way). 'WORKING CONDITIONS' is unknown with no skills; 'Must be able to lift/stand' lines bind nothing. 'Willingness to learn SolidWorks' is hypothetical even inside PREFERRED EXPERIENCE: no group, so the resume's SolidWorks is not found. Resume: 'Currently learning PLC troubleshooting and root cause analysis' makes both hypothetical (R2.8.5); 'zero ESD-related failures', 'no overtime was needed', 'never had a nonconformance' are not negations.",
+  "posting_text": "Manufacturing Technician II (Electronics Assembly)\nShift: Days, 6:00 a.m. to 2:30 p.m.\n\nPOSITION SUMMARY\nSupports production of power conversion modules for EV chargers and industrial drives.\n\nESSENTIAL DUTIES\n* Build, test and troubleshoot sub-assemblies per work instructions\n* Monitor control charts and escalate out-of-control conditions\n* Participate in kaizen events and daily 5S\n* Perform basic preventive maintenance on pneumatics and conveyors\n\nREQUIRED EXPERIENCE\n* 2+ years in a manufacturing or electronics assembly environment\n* Basic computer skills, including entering transactions in SAP\n* Ability to follow a quality management system (ISO 9001)\n\nPREFERRED EXPERIENCE\n* IPC-A-610 certification\n* Experience with PLC troubleshooting\n* Familiarity with root cause analysis tools such as 5 Whys\n* Willingness to learn SolidWorks for fixture design\n\nWORKING CONDITIONS\n* Must be able to lift 35 lbs and wear ESD protection\n* Must be able to stand for extended periods",
+  "resume_text": "DeShawn Price\nGreenville, SC\nManufacturing technician with 3 years building and testing power electronics.\n\nWork History\nProduction Technician, Carolina PowerTech (2022 - present)\n• Built and tested inverter sub-assemblies with zero ESD-related failures at final\ntest\n• Logged readings on control charts and flagged drift before it became scrap\n• Entered labor and scrap transactions in SAP every shift\n• Took part in two kaizen events; no overtime was needed to hit the new takt\n• Currently learning PLC troubleshooting and root cause analysis in an evening course\nAssembler, Upstate Cable (2021 - 2022)\n• Worked under an ISO 9001 quality management system; never had a nonconformance\nwritten against my station\n• Familiar with SolidWorks viewer for checking drawings",
+  "expected": {
+    "required": [
+      "ERP Systems",
+      "ISO 9001"
+    ],
+    "preferred": [
+      "PLC Programming",
+      "Root Cause Analysis"
+    ],
+    "unscored": [
+      "Hydraulics/Pneumatics",
+      "Lean Manufacturing",
+      "Statistical Process Control"
+    ],
+    "excluded": [],
+    "found": [
+      "ERP Systems",
+      "ISO 9001",
+      "Lean Manufacturing",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Supports production of power conversion",
+      "section": "unknown"
+    },
+    {
+      "contains": "entering transactions in SAP",
+      "section": "required"
+    },
+    {
+      "contains": "PLC troubleshooting",
+      "section": "preferred"
+    },
+    {
+      "contains": "Willingness to learn SolidWorks",
+      "section": "preferred"
+    },
+    {
+      "contains": "Must be able to lift 35 lbs",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Willingness to learn SolidWorks",
+      "canonical": "SolidWorks",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "no overtime was needed",
+      "canonical": "Lean Manufacturing",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never had a nonconformance",
+      "canonical": "ISO 9001",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning PLC",
+      "canonical": "PLC Programming",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning PLC",
+      "canonical": "Root Cause Analysis",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Familiar with SolidWorks viewer",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "ISO 9001",
+      "posting_line_contains": "quality management system (ISO 9001)"
+    },
+    {
+      "canonical": "Root Cause Analysis",
+      "posting_line_contains": "root cause analysis tools"
+    },
+    {
+      "canonical": "Statistical Process Control",
+      "posting_line_contains": "Monitor control charts"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Willingness to learn SolidWorks",
+      "canonical": "SolidWorks",
+      "trap": "hypothetical",
+      "must_not": "appear in any result group; resume SolidWorks must not be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning PLC",
+      "canonical": "PLC Programming",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning PLC",
+      "canonical": "Root Cause Analysis",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    }
+  ]
+}

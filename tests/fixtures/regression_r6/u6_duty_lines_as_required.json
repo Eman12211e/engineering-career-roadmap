@@ -1,0 +1,139 @@
+{
+  "id": "u6_duty_lines_as_required",
+  "kind": "unseen",
+  "format": "machinist posting with duty lines: 'as required', 'desired tolerances', 'must be able to lift'",
+  "note": "'as required' and 'desired tolerances' never bind (R2.4): hydraulics and 5S stay unscored in Job Duties; 'interpret GD&T to hold desired tolerances' stays required (section); 'Update SPC charts as required' stays preferred (section). 'Must be able to lift' has no skill and binds nothing (R2.8.10). The title line mentions CNC and has no colon, so it is body text (R2.8.7), pre-heading unknown; CNC wins required later and its evidence is the Qualifications line. FANUC appears only in Benefits: excluded, and the resume's FANUC is not found. Resume: Fusion 360 really negated; 'with zero scrap' and 'without supervisor sign-off delays' are not negations.",
+  "posting_text": "CNC Machinist II - 2nd Shift\nRidgeline Precision, Rockford, IL\n\nJob Duties\n- Set up and operate CNC lathes and mills for aerospace brackets\n- Maintain hydraulics and coolant systems on assigned machines as required\n- Lead 5S audits on the cell as required\n- Complete first-article and in-process inspections per AS9100 procedures\n- Must be able to lift 50 lbs and stand for a full 10-hour shift\n\nQualifications\n- 3+ years of CNC machining experience\n- Ability to read blueprints and interpret GD&T to hold desired tolerances\n- High school diploma or GED\n\nPreferred\n- Experience with Mastercam or Fusion 360\n- Update SPC charts as required\n\nBenefits\n- Shift differential, overtime, and 401(k) with match\n- Paid training on our new FANUC robot loading cell",
+  "resume_text": "Luis Ferreira\nRockford, IL | 815-555-0199\n\nWork Experience\nCNC Machinist, Forest City Tool & Die, 2018 - Present\n- Set up and ran Okuma and Haas CNC lathes, holding +/-0.0005 in. with zero scrap on the\nlast 3 aerospace lots\n- Edited G-code at the control and proved out new programs without supervisor sign-off\ndelays\n- Read prints with GD&T and verified features on the CMM\n- Ran 5S on the cell and kept SPC charts current\n- Loaded parts for a FANUC robot cell and cleared minor faults\nMachine Operator, Rock River Plastics, 2015 - 2018\n- No experience with Fusion 360; programs came from the engineering office\n\nTraining\nHydraulics I and II, Rock Valley College",
+  "expected": {
+    "required": [
+      "CNC Machining",
+      "GD&T"
+    ],
+    "preferred": [
+      "Fusion 360",
+      "Statistical Process Control"
+    ],
+    "unscored": [
+      "AS9100",
+      "Hydraulics/Pneumatics",
+      "Lean Manufacturing"
+    ],
+    "excluded": [
+      "Industrial Robotics"
+    ],
+    "found": [
+      "CNC Machining",
+      "GD&T",
+      "Hydraulics/Pneumatics",
+      "Lean Manufacturing",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "CNC Machinist II",
+      "section": "unknown"
+    },
+    {
+      "contains": "Maintain hydraulics",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Lead 5S audits",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Must be able to lift",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "interpret GD&T to hold desired",
+      "section": "required"
+    },
+    {
+      "contains": "Update SPC charts",
+      "section": "preferred"
+    },
+    {
+      "contains": "FANUC robot loading",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "with zero scrap",
+      "canonical": "CNC Machining",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "without supervisor sign-off",
+      "canonical": "CNC Machining",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with Fusion 360",
+      "canonical": "Fusion 360",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "CNC Machining",
+      "posting_line_contains": "3+ years of CNC machining"
+    },
+    {
+      "canonical": "GD&T",
+      "posting_line_contains": "interpret GD&T"
+    },
+    {
+      "canonical": "Statistical Process Control",
+      "posting_line_contains": "Update SPC charts"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "FANUC robot loading",
+      "canonical": "Industrial Robotics",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with Fusion 360",
+      "canonical": "Fusion 360",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ],
+  "binding_traps": [
+    {
+      "line_contains": "Maintain hydraulics",
+      "canonical": "Hydraulics/Pneumatics",
+      "expected_importance": "unscored",
+      "why": "'as required' never binds"
+    },
+    {
+      "line_contains": "Lead 5S audits",
+      "canonical": "Lean Manufacturing",
+      "expected_importance": "unscored",
+      "why": "'as required' never binds"
+    },
+    {
+      "line_contains": "interpret GD&T",
+      "canonical": "GD&T",
+      "expected_importance": "required",
+      "why": "'desired tolerances' never binds"
+    },
+    {
+      "line_contains": "Update SPC charts",
+      "canonical": "Statistical Process Control",
+      "expected_importance": "preferred",
+      "why": "'as required' never binds"
+    }
+  ]
+}

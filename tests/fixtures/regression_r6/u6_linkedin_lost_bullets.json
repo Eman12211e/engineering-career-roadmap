@@ -1,0 +1,155 @@
+{
+  "id": "u6_linkedin_lost_bullets",
+  "kind": "unseen",
+  "format": "LinkedIn copy-paste, bullet markers lost, plain headings, one culture heading followed by a blank line",
+  "note": "'About the job' is excluded vocabulary (R2.8.12); its text has no skills. Lost-bullet lines that are short and Title Case ('Proficiency in SolidWorks and GD&T', 'Robot Programming Experience') mention skills and have no colon, so they are body text (R2.8.7; rule 4 also fails). 'Life At Northfield' is followed by a blank line, so it is an unknown heading that ends Nice To Have: 3D Printing and Python there are culture text, unscored, never scored. Industrial Robotics evidence is the preferred line, not the earlier FANUC responsibilities line. Resume: robot programming is hypothetical; 'No experience with ANSYS or PLC programming' negates both (R2.8.5); 'no tool failures' and 'without exceeding air budgets' are not negations.",
+  "posting_text": "About the job\nNorthfield Robotics is hiring a Mechanical Engineer, Automation to join our Grand Rapids team.\nResponsibilities\nDesign custom end-of-arm tooling and fixtures in SolidWorks\nSpecify pneumatics and vacuum grippers for end-of-arm tools\nSupport robot cell integration with our FANUC programmers\nCreate assembly drawings and BOMs in our ERP system\nQualifications\nBachelor's degree in Mechanical Engineering or related field\n2+ years of machine design experience\nProficiency in SolidWorks and GD&T\nExperience with stress analysis of weldments\nNice To Have\nExperience with ANSYS or other FEA tools\nKnowledge of PLC programming is a plus\nRobot Programming Experience\nLife At Northfield\n\nMonthly hackathons where engineers build 3D printing and Python side projects\nFree snacks, 401(k), and an on-site gym\nNorthfield Robotics is an equal opportunity employer.",
+  "resume_text": "Ethan Brooks\nGrand Rapids, MI\nMechanical engineer focused on automation tooling and fixtures.\n\nExperience\nMechanical Engineer, Lakeshore Automation (2021-present)\n- Designed 30+ end-of-arm tools in SolidWorks; no tool failures during customer run-off\n- Performed stress analysis on welded frames using hand calcs and SolidWorks Simulation\n- Specified pneumatics, valves and vacuum for gripper packages without exceeding air\nbudgets\n- Currently learning robot programming in an evening class\n- No experience with ANSYS or PLC programming\nDesign Intern, Kent Fixtures (2020)\n- Released drawings with GD&T per ASME Y14.5\n- Entered BOMs and routings into the ERP system\n\nSkills\nSolidWorks, GD&T, AutoCAD, FEA (coursework)",
+  "expected": {
+    "required": [
+      "GD&T",
+      "SolidWorks",
+      "Structural Analysis"
+    ],
+    "preferred": [
+      "ANSYS",
+      "Finite Element Analysis",
+      "Industrial Robotics",
+      "PLC Programming"
+    ],
+    "unscored": [
+      "3D Printing",
+      "ERP Systems",
+      "Hydraulics/Pneumatics",
+      "Python"
+    ],
+    "excluded": [],
+    "found": [
+      "ERP Systems",
+      "Finite Element Analysis",
+      "GD&T",
+      "Hydraulics/Pneumatics",
+      "SolidWorks",
+      "Structural Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Northfield Robotics is hiring",
+      "section": "excluded"
+    },
+    {
+      "contains": "Specify pneumatics",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Proficiency in SolidWorks and GD&T",
+      "section": "required"
+    },
+    {
+      "contains": "stress analysis of weldments",
+      "section": "required"
+    },
+    {
+      "contains": "Robot Programming Experience",
+      "section": "preferred"
+    },
+    {
+      "contains": "Monthly hackathons",
+      "section": "unknown"
+    },
+    {
+      "contains": "equal opportunity employer",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Support robot cell integration",
+      "canonical": "Industrial Robotics",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "no tool failures",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "without exceeding air",
+      "canonical": "Hydraulics/Pneumatics",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning robot programming",
+      "canonical": "Industrial Robotics",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS or PLC",
+      "canonical": "ANSYS",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS or PLC",
+      "canonical": "PLC Programming",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Industrial Robotics",
+      "posting_line_contains": "Robot Programming Experience"
+    },
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "Proficiency in SolidWorks and GD&T"
+    },
+    {
+      "canonical": "Structural Analysis",
+      "posting_line_contains": "stress analysis of weldments"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Monthly hackathons",
+      "canonical": "3D Printing",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Monthly hackathons",
+      "canonical": "Python",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning robot programming",
+      "canonical": "Industrial Robotics",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS or PLC",
+      "canonical": "ANSYS",
+      "trap": "negated",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS or PLC",
+      "canonical": "PLC Programming",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ]
+}

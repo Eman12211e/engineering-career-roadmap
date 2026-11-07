@@ -1,0 +1,131 @@
+{
+  "id": "u6_startup_emoji_ev",
+  "kind": "unseen",
+  "format": "startup with emoji headings and bullet-character items; non-vocabulary 'Our Stack' heading",
+  "note": "'Our Stack' (after the tools emoji) is Title Case followed by a list, so it is an unknown heading that ends the required section: MATLAB and SolidWorks are unscored, not required. 'Location' is not vocabulary and fails R2.2 rule 4, so it is body text in Benefits (no skills). In Benefits, SolidWorks loses to its unscored mention (precedence) while Six Sigma appears only there (excluded; the resume's Six Sigma Yellow Belt must not be found). Resume: BMS is really negated; 'no manual post-processing', 'zero test-cell damage', 'without a dedicated acoustics lab' are not negations.",
+  "posting_text": "⚡ Ampere Motorworks | Powertrain Test Engineer\n\nWe're a 40-person team building electric drivetrains for last-mile delivery vans. Everyone here gets their hands dirty.\n\n👋 Who you are\n• You've run dyno or HIL test campaigns on an EV powertrain or e-motor\n• You're comfortable with CAN bus tools and writing test scripts in Python\n• You can turn messy data into clear technical reports\n\n🛠️ Our Stack\n• MATLAB/Simulink, Python, Jira\n• SolidWorks for test fixtures\n\n🌟 Nice to haves\n• Regenerative braking calibration experience\n• Familiarity with battery management systems and NVH testing\n\n🍕 Benefits\n• Free lunch Fridays and a Six Sigma or SolidWorks course stipend\n• Commuter e-bike program\n\n📍 Location\nFremont, CA. Visa sponsorship is not available for this role.",
+  "resume_text": "DANIELA ORTIZ\nTest Engineer • Fremont, CA\n\nSUMMARY\nTest engineer with 4 years on EV powertrain validation. Comfortable at the dyno, in\nthe lab and in front of customers.\n\nEXPERIENCE\nValidation Engineer, Corvane EV (2021 to present)\n• Ran 1,200 hours of e-motor dyno testing with zero test-cell damage events\n• Built CAN bus logging in Python and MATLAB; no manual post-processing needed after\nrollout\n• Authored technical reports for regenerative braking calibration releases\n• Characterized NVH on the gearbox without a dedicated acoustics lab\nTest Technician, Hilltop Motors (2019 to 2021)\n• No experience with battery management systems; supported pack teardown only\n\nSKILLS\nPython, MATLAB/Simulink, CANalyzer, LabVIEW, SolidWorks (basic), Six Sigma Yellow Belt",
+  "expected": {
+    "required": [
+      "CAN Bus",
+      "Electric Powertrain",
+      "Python",
+      "Technical Writing"
+    ],
+    "preferred": [
+      "Battery Management Systems",
+      "Regenerative Braking",
+      "Vibration Analysis"
+    ],
+    "unscored": [
+      "MATLAB",
+      "SolidWorks"
+    ],
+    "excluded": [
+      "Lean Six Sigma Green Belt"
+    ],
+    "found": [
+      "CAN Bus",
+      "Electric Powertrain",
+      "MATLAB",
+      "Python",
+      "Regenerative Braking",
+      "SolidWorks",
+      "Technical Writing",
+      "Vibration Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "dyno or HIL test campaigns",
+      "section": "required"
+    },
+    {
+      "contains": "clear technical reports",
+      "section": "required"
+    },
+    {
+      "contains": "MATLAB/Simulink, Python, Jira",
+      "section": "unknown"
+    },
+    {
+      "contains": "SolidWorks for test fixtures",
+      "section": "unknown"
+    },
+    {
+      "contains": "Regenerative braking calibration",
+      "section": "preferred"
+    },
+    {
+      "contains": "course stipend",
+      "section": "excluded"
+    },
+    {
+      "contains": "Visa sponsorship",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Familiarity with battery management",
+      "canonical": "Battery Management Systems",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "zero test-cell damage",
+      "canonical": "Electric Powertrain",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "without a dedicated acoustics lab",
+      "canonical": "Vibration Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with battery management",
+      "canonical": "Battery Management Systems",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Python",
+      "posting_line_contains": "comfortable with CAN bus tools"
+    },
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "SolidWorks for test fixtures"
+    },
+    {
+      "canonical": "MATLAB",
+      "posting_line_contains": "MATLAB/Simulink, Python, Jira"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "course stipend",
+      "canonical": "Lean Six Sigma Green Belt",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "course stipend",
+      "canonical": "SolidWorks",
+      "trap": "benefits",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with battery management",
+      "canonical": "Battery Management Systems",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ]
+}

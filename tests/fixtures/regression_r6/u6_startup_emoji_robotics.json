@@ -1,0 +1,182 @@
+{
+  "id": "u6_startup_emoji_robotics",
+  "kind": "unseen",
+  "format": "startup with emoji headings (rocket/flexed-biceps/sparkles/gift/rainbow), dash bullets",
+  "note": "Emoji are stripped before vocabulary lookup. 'Our Values' is a Title Case non-vocabulary heading followed by a list, so it opens an unknown section and ends Perks: CNC there is unscored (culture) and must not be scored. Perks skills are excluded. 'plus a DFM/DFA mindset' contains 'plus' but not the cue 'a plus', and a comma separates it from sheet metal: DFM/DFA stays required. Resume: topology optimization is split by a PDF wrap; 'no redesign', 'never shipped ... without bench validation', 'zero unplanned stops' are not negations; GD&T is really negated and C++ is hypothetical. Fusion 360, MATLAB and 3D printing are in the resume but excluded in the posting, so not found.",
+  "posting_text": "Robotics Mechanical Engineer @ Kestrel Robotics 🤖\nSan Francisco · On-site · Series B\n\nHey! We build autonomous picking arms for grocery warehouses. We ship weekly, argue kindly, and celebrate every first pick.\n\n🚀 What you'll do\n- Design end effectors and gearbox housings in SolidWorks\n- Run FEA on arm links and iterate with topology optimization\n- Bring up new hardware with our ROS2 software team\n\n💪 What we're looking for\n- 3+ years designing electromechanical assemblies\n- Strong SolidWorks skills and solid GD&T fundamentals\n- Experience with sheet metal and machined parts, plus a DFM/DFA mindset\n\n✨ Bonus points\n- Experience with FANUC or other industrial robot programming\n- C++ or Python for test scripts\n\n🎁 Perks\n- Equity, 401k match, and lunch every day\n- Quarterly hack week where people try 3D printing, CFD or whatever they like\n- Free Fusion 360 and MATLAB licenses for side projects\n\n🌈 Our Values\n- Ship it, then make it better\n- No ego, no blame\n- Friday demos where anyone can show off a CNC side project",
+  "resume_text": "Marcus Lee | Mechanical Engineer | Oakland, CA\n\nTechnical Skills\nSolidWorks, Fusion 360, ANSYS Mechanical, MATLAB, Python, 3D printing\n\nProfessional Experience\nMechanical Engineer, Brightline Automation (2022 - 2025)\n- Designed a 6-axis wrist module in SolidWorks that passed 1M-cycle life testing with\nno redesign\n- Performed finite element analysis on aluminum links and cut mass 22% through topology\noptimization\n- Wrote Python scripts to log encoder data; never shipped a fixture without bench validation\n- Integrated a FANUC cell for case packing with zero unplanned stops in the first quarter\n\nProjects\n- Built a hobby rover on ROS2 and a 3D printed gripper\n- Currently learning C++ to port the rover motor drivers\n- No experience with GD&T beyond one sophomore drafting course",
+  "expected": {
+    "required": [
+      "DFM/DFA",
+      "GD&T",
+      "Sheet Metal Design",
+      "SolidWorks"
+    ],
+    "preferred": [
+      "C++",
+      "Industrial Robotics",
+      "Python"
+    ],
+    "unscored": [
+      "CNC Machining",
+      "Finite Element Analysis",
+      "Lightweight Optimization",
+      "ROS"
+    ],
+    "excluded": [
+      "3D Printing",
+      "CFD",
+      "Fusion 360",
+      "MATLAB"
+    ],
+    "found": [
+      "Finite Element Analysis",
+      "Industrial Robotics",
+      "Lightweight Optimization",
+      "Python",
+      "ROS",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Design end effectors",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Strong SolidWorks skills",
+      "section": "required"
+    },
+    {
+      "contains": "plus a DFM/DFA mindset",
+      "section": "required"
+    },
+    {
+      "contains": "C++ or Python for test scripts",
+      "section": "preferred"
+    },
+    {
+      "contains": "Quarterly hack week",
+      "section": "excluded"
+    },
+    {
+      "contains": "Free Fusion 360",
+      "section": "excluded"
+    },
+    {
+      "contains": "Friday demos",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Bring up new hardware",
+      "canonical": "ROS",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "cut mass 22%",
+      "canonical": "Lightweight Optimization",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never shipped a fixture",
+      "canonical": "Python",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "zero unplanned stops",
+      "canonical": "Industrial Robotics",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning C++",
+      "canonical": "C++",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with GD&T",
+      "canonical": "GD&T",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "Strong SolidWorks skills"
+    },
+    {
+      "canonical": "Industrial Robotics",
+      "posting_line_contains": "Experience with FANUC"
+    },
+    {
+      "canonical": "DFM/DFA",
+      "posting_line_contains": "plus a DFM/DFA mindset"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Quarterly hack week",
+      "canonical": "3D Printing",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Quarterly hack week",
+      "canonical": "CFD",
+      "trap": "benefits",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Free Fusion 360",
+      "canonical": "Fusion 360",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Free Fusion 360",
+      "canonical": "MATLAB",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Friday demos",
+      "canonical": "CNC Machining",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning C++",
+      "canonical": "C++",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with GD&T",
+      "canonical": "GD&T",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ],
+  "binding_traps": [
+    {
+      "line_contains": "plus a DFM/DFA mindset",
+      "canonical": "DFM/DFA",
+      "expected_importance": "required",
+      "why": "'plus' alone is not the cue 'a plus'"
+    }
+  ]
+}

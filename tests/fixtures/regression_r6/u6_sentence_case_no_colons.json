@@ -1,0 +1,132 @@
+{
+  "id": "u6_sentence_case_no_colons",
+  "kind": "unseen",
+  "format": "sentence-case headings without colons, blank line after each heading",
+  "note": "Vocabulary headings in sentence case ('What you'll do', 'What you'll need', 'Nice to have', 'Benefits'). 'About the team' fails R2.2 rule 3 (not Title Case: 'team' is lower-case; no colon, not ALL CAPS, not vocabulary) even though a blank line follows, so it is body text and Benefits continues: 3D Printing and Python are excluded (contract-literal; if an implementation treats it as an unknown heading they become unscored, never scored). 'injection molded parts' is not an alias, so Injection Molding comes only from responsibilities (unscored). Resume: thermal simulation is hypothetical; 'no tooling rework', 'no field returns', 'never missed' are not negations; Fusion 360, Python, rapid prototyping are excluded-only and not found.",
+  "posting_text": "Design engineer, consumer appliances\nBrightwater Home is hiring in Louisville, KY. Hybrid, 3 days on site.\n\nWhat you'll do\n\n- Own plastic part design for countertop appliances from concept to tooling release\n- Work with suppliers on injection molding and mold design reviews\n- Run tolerance analysis on snap fits and fastened joints\n\nWhat you'll need\n\n- 3+ years designing molded plastic parts in Creo Parametric\n- Solid understanding of DFM for injection molded parts\n- Clear technical writing for design reviews\n\nNice to have\n\n- Experience with sheet metal design\n- Exposure to thermal simulation for heated appliances\n\nBenefits\n\n- Employee discount on Brightwater appliances\n- Tuition reimbursement, including Autodesk Fusion classes\n\nAbout the team\n\nWe're 12 engineers who love rapid prototyping and run a weekly Python club.",
+  "resume_text": "Sofia Marchetti\nMechanical Design Engineer · Cincinnati, OH\n\nExperience\n\nProduct Design Engineer, Queen City Housewares, 2020 to present\n- Designed 40+ molded parts in Creo Parametric with no tooling rework on\nthe last six launches\n- Led mold design reviews with two domestic tool shops\n- Ran tolerance analysis on hinge and latch assemblies; no field returns traced to fit\n- Applied DFM guidelines with mold makers, saving $180k in tooling\n- Wrote design review packets and technical reports for each gate\nAssociate Engineer, Ohio Valley Metals, 2018 to 2020\n- Designed sheet metal enclosures and brackets; never missed a release date\n- Currently learning thermal simulation through an online course\n\nSkills\n\nCreo, SolidWorks, Fusion 360, Python, rapid prototyping",
+  "expected": {
+    "required": [
+      "Creo",
+      "DFM/DFA",
+      "Technical Writing"
+    ],
+    "preferred": [
+      "Sheet Metal Design",
+      "Thermal Analysis"
+    ],
+    "unscored": [
+      "Injection Molding",
+      "Tolerance Stack-Up"
+    ],
+    "excluded": [
+      "3D Printing",
+      "Fusion 360",
+      "Python"
+    ],
+    "found": [
+      "Creo",
+      "DFM/DFA",
+      "Injection Molding",
+      "Sheet Metal Design",
+      "Technical Writing",
+      "Tolerance Stack-Up"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Brightwater Home is hiring",
+      "section": "unknown"
+    },
+    {
+      "contains": "injection molding and mold design",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Creo Parametric",
+      "section": "required"
+    },
+    {
+      "contains": "sheet metal design",
+      "section": "preferred"
+    },
+    {
+      "contains": "Autodesk Fusion classes",
+      "section": "excluded"
+    },
+    {
+      "contains": "About the team",
+      "section": "excluded"
+    },
+    {
+      "contains": "weekly Python club",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "with no tooling rework",
+      "canonical": "Creo",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "no field returns",
+      "canonical": "Tolerance Stack-Up",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never missed a release",
+      "canonical": "Sheet Metal Design",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning thermal",
+      "canonical": "Thermal Analysis",
+      "status": "hypothetical"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Injection Molding",
+      "posting_line_contains": "injection molding and mold design"
+    },
+    {
+      "canonical": "DFM/DFA",
+      "posting_line_contains": "Solid understanding of DFM"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Autodesk Fusion classes",
+      "canonical": "Fusion 360",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "weekly Python club",
+      "canonical": "Python",
+      "trap": "culture",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "weekly Python club",
+      "canonical": "3D Printing",
+      "trap": "culture",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning thermal",
+      "canonical": "Thermal Analysis",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    }
+  ]
+}
