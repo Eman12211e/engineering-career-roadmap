@@ -92,7 +92,7 @@ def render_audit_tab(
     # STEP 1: THE DISCOVERY
     # ================================================================
     st.header("Step 1: Industry Discovery")
-    st.caption("What do employers actually search for in 2026?")
+    st.caption("What do postings in this synthetic sample mention most?")
 
     # Pull top 3 skills for the insight banner
     top3 = ranked_df.head(3)
@@ -100,8 +100,8 @@ def render_audit_tab(
 
     # Insight banner
     st.info(
-        f"**In 2026, {int(top3.iloc[0]['priority_score'])}% of "
-        f"{industry_label} jobs require "
+        f"**{int(top3.iloc[0]['priority_score'])}% of postings in this "
+        f"synthetic sample ({industry_label}) mention "
         f"'{top3.iloc[0]['canonical']}' and "
         f"'{top3.iloc[1]['canonical']}'.**  "
         f"'{top3.iloc[2]['canonical']}' follows at "
@@ -337,8 +337,12 @@ def _render_results(results: dict, industry_label: str, user_config: dict) -> No
                     st.markdown(f"**{proj['title']}** ({proj['difficulty']})")
                     st.caption(f"{proj['estimated_hours']} hours")
                     if proj.get("resume_bullets"):
-                        st.markdown("*Sample bullet:*")
+                        st.markdown("*Example phrasing for after you complete the project:*")
                         st.code(proj["resume_bullets"][0], language=None)
+                        st.caption(
+                            "Replace every number and result with your own measured "
+                            "results. Don't copy these numbers."
+                        )
                 else:
                     st.markdown(
                         "Build a portfolio project demonstrating this skill "
