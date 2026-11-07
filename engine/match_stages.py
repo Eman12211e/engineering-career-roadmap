@@ -81,7 +81,8 @@ class _Rules:
     bullets_spaced: str
     numbered: re.Pattern
     neg_before: re.Pattern          # negator then only fillers, ending at the skill
-    hyp_before: re.Pattern          # hypothetical cue then only fillers, ending at the skill
+    hyp_cue: re.Pattern             # a hypothetical cue anywhere (starts a scope)
+    hyp_ends: re.Pattern            # contrast or hard stop that ends a hypothetical scope
     neg_after: re.Pattern           # fillers then a "not required" cue, starting after the skill
     not_required_then_pref: re.Pattern
     breaks: re.Pattern
@@ -110,7 +111,8 @@ def _rules() -> _Rules:
         bullets_spaced="".join(d["bullets"]["with_space"]),
         numbered=re.compile(d["bullets"]["numbered"]),
         neg_before=re.compile(_bounded(d["negation"]) + r"(?:\s+" + fill_b + r")*\s*$", re.I),
-        hyp_before=re.compile(_bounded(d["hypothetical"]) + r"(?:\s+" + fill_b + r")*\s*$", re.I),
+        hyp_cue=re.compile(_bounded(d["hypothetical"]), re.I),
+        hyp_ends=re.compile("|".join(f"(?:{b})" for b in d["hypothetical_scope_ends"]), re.I),
         neg_after=re.compile(r"^" + after_gap + _bounded(d["negation_after"]), re.I),
         not_required_then_pref=re.compile(
             r"^" + after_gap + _bounded(d["negation_after"]) + r"\s*,?\s*(?:but|though|however)\s*,?\s*"
@@ -408,17 +410,46 @@ def clause_span(line: Line, span: tuple[int, int]) -> tuple[int, int]:
     return line.start + start, line.start + max(end, start)
 
 
+def _hyp_start(line: Line, pos: int) -> int | None:
+    """Start of the hypothetical scope covering normalised index `pos`, or None.
+
+    The nearest earlier hypothetical cue whose scope has not ended (no contrast and no hard stop
+    between it and `pos`). Commas and ordinary words do not end a scope. A cue inside a skill's
+    own matched span ("machine learning") never starts one.
+    """
+    r = _rules()
+    n = _norm(line)
+    own = [norm_span(line, m.span)[1:] for m in find_mentions((line,))]
+    best = None
+    for c in r.hyp_cue.finditer(n.text):
+        if c.end() > pos:
+            break
+        if any(c.start() < e and s < c.end() for s, e in own):
+            continue
+        if not r.hyp_ends.search(n.text, c.end(), pos):
+            best = c.start()
+    return best
+
+
 def _qualify(mention: Mention, doc: DocKind) -> Mention:
+    """Stage 4 (R3.1): affirmed by default; the latest applicable cue sets the state.
+
+    Hypothetical: a scope that runs on until a contrast or hard stop. Negation: the gap rule
+    (directly before the skill or its coordinated list, only fillers between). Posting only:
+    "not required" cues after the skill.
+    """
     r = _rules()
     n = _norm(mention.line)
     nspan = norm_span(mention.line, mention.span)[1:]
     chain = _chain_of(mention.line, nspan)
     lo, hi = _clause(mention.line, nspan)
-    before = n.text[lo:chain[0][0]]
+    neg = r.neg_before.search(n.text[lo:chain[0][0]])
+    neg_at = lo + neg.start() if neg else None
+    hyp_at = _hyp_start(mention.line, chain[0][0])
     status: Status = "affirmed"
-    if r.neg_before.search(before):
+    if neg_at is not None and (hyp_at is None or neg_at > hyp_at):
         status = "negated"
-    elif r.hyp_before.search(before):
+    elif hyp_at is not None:
         status = "hypothetical"
     elif doc == "posting":
         after = n.text[chain[-1][1]:hi]
@@ -428,11 +459,13 @@ def _qualify(mention: Mention, doc: DocKind) -> Mention:
 
 
 def qualify(mention: Mention) -> Mention:
-    """Return the mention with status set from cues bound to it in the same clause.
+    """Return the mention with status set by scope (R3.1).
 
-    A negator or hypothetical cue applies only directly before the skill (or the first skill of
-    its coordinated list), separated by nothing but filler words. Posting rules apply,
-    including the "not required" cues that follow the skill.
+    Affirmed by default. A hypothetical cue opens a scope that spans ordinary words, commas and
+    slashes until a contrast ("but", "however", "although", "whereas") or a hard stop (period,
+    semicolon, colon, end of the logical line). A negator applies directly before the skill (or
+    its coordinated list), separated only by fillers. A later cue sets a new state; cues never
+    reach back. Posting rules apply, including the "not required" cues after the skill.
     """
     return _qualify(mention, "posting")
 

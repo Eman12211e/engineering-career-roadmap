@@ -37,7 +37,7 @@ optional per-skill fields). Code names no skill.
      skill mentions.
    - *Vocabulary lookup* strips leading symbols, case-folds, turns "&" into "and" and
      hyphens into spaces. "About the job" and "About the role" are known headings of kind
-     `unknown` (the fixtures expect their text to be unscored, not excluded; see Known limits).
+     `unknown` (R2.8.17): their text is unscored, not excluded.
    - *List items:* `-`, `*`, en/em dash, `>` followed by a space; bullet characters (U+2022,
      U+00B7, U+25AA, U+25E6); numbered and lettered items ("1.", "2)", "a.", "b)"). They are
      never headings and never wrap continuations.
@@ -53,18 +53,26 @@ optional per-skill fields). Code names no skill.
    collapse only.
 3. **Disambiguate.** Optional per-skill fields in keywords.json: `case_sensitive`,
    `needs_context` (one of these words must be in the same line), `exclude_phrases`.
-4. **Qualify.** Negators (no, not, without, never, lack of, ...) and hypothetical cues (learn,
-   learning, planning to take, preparing for, studying for, willing to learn, ...) apply only
-   when they sit directly before the skill, or before the first skill of its coordinated list
-   ("X, Y or Z"), separated by nothing but `negation_fillers` ("prior", "experience with",
-   "used", "the", ...). So "No experience with FEA or CFD" negates both, while "without added
-   headcount by applying lean", "zero escapes with no rework using SPC" and "willing to travel
-   and have AutoCAD skills" negate nothing. In postings only, a `negation_after` cue ("not
-   required", "not needed", ...) negates when only `cue_fillers` sit between the skill (or
-   the last skill of its list) and the cue; "X is not required, but is a plus" is not negated
-   (and is preferred). Clause breaks (comma, semicolon, sentence end, "but", "however",
-   spaced dashes, ...) end a clause, except commas and connectors inside a coordinated list.
-   Mentions in excluded posting sections are not qualified.
+4. **Qualify** (R3.1, same rules for postings and resumes). A mention is affirmed by default.
+   - A hypothetical cue (learn, learning, planning to take, preparing for, studying for,
+     willing to learn, ...) opens a scope that runs across ordinary words, coordinators, commas and
+     slashes. Every later mention inside it is hypothetical. The scope ends at a contrast ("but",
+     "however", "although", "whereas") or a hard stop (period, semicolon, colon, end of the
+     logical line, so it continues across a joined hard wrap). A cue inside another skill's own
+     span ("machine learning") never opens one.
+   - A negator (no, not, without, never, lack of, ...) keeps the gap rule: it applies to a skill
+     directly after it, separated only by `negation_fillers` ("prior", "experience with",
+     "used", "the", ...), and to every skill in that skill's coordinated list. It does not spread
+     across ordinary words, so achievement bullets ("without rework by applying SPC", "never
+     missed a deadline in X") stay affirmed. "familiar with" is affirmed; "not familiar with" is
+     negated.
+   - A later cue sets a new state from that point; a cue never reaches back to a mention before it.
+   - Postings only: a `negation_after` cue ("not required", "not needed", ...) after the skill
+     negates when only `cue_fillers` sit between; "X is not required, but is a plus" is not
+     negated (and is preferred).
+   - Clause breaks (comma, semicolon, sentence end, "but", "however", "although", "whereas",
+     spaced dashes, ...) still bound cue binding and negation, but commas do not end a
+     hypothetical scope. Mentions in excluded posting sections are not qualified.
 5. **Decide.** Positive evidence only: a posting skill is required or preferred only from a known
    required/preferred heading or a bound cue; everything else is unscored and nothing inherits
    importance from a previous line or section. Cue binding is grammatical (`_importance_cue`):
@@ -101,13 +109,14 @@ section holding the evidence). Output order follows keywords.json order within e
   lose headings that are not in the vocabulary ("HOW TO APPLY" is, "Our Culture" is not).
   A line ending in ":" or in Title Case followed by a list is a heading even if it is
   really a sentence.
-- "About the job" / "About the role" are vocabulary headings of kind `unknown`, so their text
-  is unscored. The design contract (R2.8.12) says excluded; four development fixtures expect
-  unscored, and the code follows the fixtures. A one-line data change in
-  `match_rules.json` flips it.
+- "About the job" / "About the role" are vocabulary headings of kind `unknown` (R2.8.17), so
+  their text is unscored, not excluded.
 - Cue lists and fillers are English-only and finite. A skill separated from a cue by a word
   that is not a filler ("FEA coursework is not necessary") is neither negated nor bound.
 - A hypothetical cue such as "learn" also drops postings like "Opportunities to learn X".
+- A hypothetical scope has no way to tell an assertion from the cue's object: in "Learning PLC and
+  already proficient in root cause analysis" both skills are hypothetical, although the second
+  is claimed outright. Ambiguous claims are never counted as confirmed experience (R3.1.8).
 - "X or Y" alternatives count as separate skills; commas end a clause outside a coordinated
   list ("No experience with FEA, CFD" negates both only because they form a list).
 - Hard-wrap joining needs the next line to start with a lower-case letter; wrapped lines that
@@ -122,5 +131,31 @@ The 0.85 threshold is a **provisional engineering gate on a small sample** (15 o
 pairs, 5 held out); it is not a general accuracy claim. Measured owner-set results are
 **pending**: `python scripts/evaluate_matching.py` exits 2 (`PENDING`) until the owner
 supplies at least 15 pairs with at least 5 holdout (format in `data/eval/README.md`).
-`--fixtures tests/fixtures/postings` reports per-stage numbers on 38 reviewer-written
-development fixtures; those are development checks, not accuracy estimates.
+
+The numbers below are generated by `python scripts/evaluate_matching.py --update-docs`.
+
+<!-- eval:start -->
+<!-- generated by `python scripts/evaluate_matching.py --update-docs`; do not edit by hand -->
+
+Development and regression fixtures (written by the independent reviewer, not tuned on):
+
+| Folder | Fixtures | Exact-set pass |
+|---|---|---|
+| `postings` | 48 | 48 |
+| `regression_r6` | 14 | 14 |
+| total | 62 | 62 |
+
+Per-stage metrics over all fixtures:
+
+- stage 1 section accuracy: 1.00 (200/200)
+- stage 2-3 mention precision 1.00 (377/377), recall 1.00 (377/377)
+- stage 4 status accuracy: 1.00 (132/132)
+- stage 5 importance accuracy: 1.00 (368/368)
+
+Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 2
+
+- `r5_linkedin_bonus_if` {"kind": "mention_label", "doc": "posting", "line_contains": "Learning stipend for MATLAB", "canonical": "MATLAB", "status": "affirmed"}: engine now {"status": "hypothetical"}, alternative {"status": "hypothetical"}; R3.1.2: the cue 'learning' opens a scope that runs across ordinary words, so MATLAB in 'Learning stipend for MATLAB courses' is hypothetical. The line sits in an excluded section, so no result set changes.
+- `u6_linkedin_lost_bullets` {"kind": "line_label", "contains": "Northfield Robotics is hiring", "section": "excluded"}: engine now {"section": "unknown"}, alternative {"section": "unknown"}; Sealed under R2.8.12 (About the job = excluded). R2.8.17, committed after the seal, makes About the job a known heading of kind unknown. The line has no skills, so neither the score nor the found set changes.
+
+These are fixture results, not an accuracy estimate on unseen postings.
+<!-- eval:end -->

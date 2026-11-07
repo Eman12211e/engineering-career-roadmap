@@ -225,7 +225,8 @@
     "\\bexcept\\b",
     "\\balthough\\b",
     "\\s[–—-]\\s",
-    "\\|"
+    "\\|",
+    "\\bwhereas\\b"
   ],
   "heading_test": {
     "max_words": 6,
@@ -410,5 +411,14 @@
     "desirable",
     "helpful",
     "beneficial"
+  ],
+  "hypothetical_scope_ends": [
+    "\\bbut\\b",
+    "\\bhowever\\b",
+    "\\balthough\\b",
+    "\\bwhereas\\b",
+    "\\.(?=\\s|$)",
+    ";",
+    ":"
   ]
 }
