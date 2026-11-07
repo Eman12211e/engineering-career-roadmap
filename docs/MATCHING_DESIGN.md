@@ -344,3 +344,16 @@ Applies to Stage 4 (`qualify`) on both documents.
   - A `MatchResult` gap flows into `BulletEvidence`.
 - **Session limit.** One working session. Pass requires zero critical errors on the round-7
   set (R2.6 table). If any critical error remains, the round stops and the owner decides.
+
+## R3.3 Clarifications (coordinator, before any Stage 4 code change)
+
+Where `data/match_rules.json` disagrees with Revision 3, the contract wins, and the data must
+be updated to match it.
+1. **Scope ends.** A hypothetical scope ends at the R3.1.4 contrasts ("but", "however",
+   "although", "whereas") and hard stops (period, semicolon, colon, end of line). Commas and
+   slashes do NOT end it. Other `clause_breaks` entries keep their R2 role in cue binding and
+   negation, but do not end a hypothetical scope.
+2. **End of line** means the end of the logical line built by R2.3, not a physical newline. A
+   scope therefore continues across a joined hard wrap.
+3. **Cues inside skill names.** A cue word inside another skill's matched span (e.g.
+   "learning" in "machine learning") never starts a scope. This restates existing behaviour.
