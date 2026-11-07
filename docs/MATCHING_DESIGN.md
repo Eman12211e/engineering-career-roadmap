@@ -447,3 +447,31 @@ The sealed set avoids all of these phrasings, so the rulings don't affect its la
 4. **More coordinators.** "&", "and/or" and "as well as" are coordinators too, as in the
    existing `list_connectors` data.
 5. **"except"** remains a contrast that ends a list. It is not a negation cue.
+
+## R4.8 PROPOSED addendum, 2026-11-07: list-item word cap (needs owner approval)
+
+R4.1 and R4.4 did not authorise this rule; the implementer added it in `13cda7b` as
+`max_item_words` = 3 in `data/match_rules.json`. It is recorded here so it isn't silently
+retained, and Revision 3 and Revision 4 above are left unchanged.
+
+- **What it does:** for posting importance cues, a non-skill list item longer than 3 words
+  ends the coordinated list.
+- **Why it exists:** without it, a postfix cue binds across long duty phrases. "technical
+  reports and engineering change proposals as required" would bind earlier skills. That
+  contradicts R2.4 and R2.8.10, under which "as required" binds nothing.
+- **Locked tests that need it:** removing it (setting it to 99) breaks
+  `u6_duty_lines_as_required` and `u6_gov_defense_clearance` (regression_r6). Round 8 gives
+  the same result for any value from 2 to 99.
+- **Limitation:** a long unknown alternative ends the binding. In "SolidWorks, Creo or any
+  other parametric CAD package preferred", the skills stay at the section's importance (for
+  example required), a major-class swap. It fails toward the section kind, never toward an
+  invented claim.
+- **Coordinator recommendation:** retain it as a defensible temporary product rule, list the
+  limitation in `docs/SCORING.md`, and replace it with real phrase structure in the
+  post-Gate-1 architecture work.
+
+## Post-Gate-1 architecture issue (high priority, not fixed in this round)
+
+Trailing qualification cues on résumé and posting text ("Python (learning)",
+"FEA (in progress)", "SQL, basic") come after the skill, and R3.1.6 says a cue never reaches
+back. Fixing it needs phrase-level structure, not another cue rule.

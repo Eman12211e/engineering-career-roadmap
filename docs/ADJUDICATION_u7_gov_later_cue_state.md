@@ -1,7 +1,7 @@
-# Adjudication record: `u7_gov_later_cue_state` (PROPOSED, not approved)
+# Adjudication record: `u7_gov_later_cue_state` (APPROVED by owner, 2026-11-07)
 
-**Status:** pending owner approval. This proposed interpretation is not authoritative, and
-no test or metric depends on it. The sealed file is unchanged; its round-7 hash
+**Status:** approved by the owner on 2026-11-07. **Direction: engine-favoured** (the ruling
+agrees with the engine's output). The sealed file is unchanged; its round-7 hash
 (`3e34b01a…f12d`) still matches `docs/UNSEEN_SET.md`.
 
 ## The original labels
@@ -39,8 +39,21 @@ author's `critical_traps` require only that CFD is never found. Under this readi
 engine matches both labels, and the pair has no failure other than its unrelated status
 counts.
 
-## Owner decision required
+## Approved interpretation
 
-Choose one of the following:
-- **Approve:** the reading becomes an occurrence-indexed entry in `DISPUTED.json`.
-- **Reject:** the pair stays a reported failure in the round-7 retrospective.
+- Occurrence 1, `"CFD"`: **negated**
+- Occurrence 2, `"flow simulation"`: **hypothetical**
+
+## Objective evidence
+
+Each label's `line_contains` text sits next to a different mention. The `occurrence` field
+did not exist when the set was sealed. The author's `critical_traps` require only that CFD is
+never found, and the engine meets that.
+
+## Impact on reported results
+
+The round-7 retrospective is reported twice: with the original labels (10/12 exact), and with
+the adjudicated labels. With the adjudicated labels this pair passes, and
+`u7_cue_bound_preferred` is the remaining miss, now fixed on `fix/comma-lists`.
+
+The sealed file is unchanged; its hash `3e34b01a…f12d` is intact.
