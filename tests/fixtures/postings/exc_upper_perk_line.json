@@ -2,7 +2,7 @@
   "id": "exc_upper_perk_line",
   "kind": "targeted",
   "format": "exclusion zones",
-  "note": "Coordinator ruling: inside an excluded section only a KNOWN heading ends it. 'MEDICAL DENTAL VISION' is an ALL CAPS candidate but not in the vocabulary, so BENEFITS continues and Python is excluded.",
+  "note": "Rev 2 (note only, expected unchanged): the earlier 'only a known heading ends an excluded section' ruling is superseded by R2.2. 'MEDICAL DENTAL VISION' is ALL CAPS but fails R2.2 rule 4 (next line is not a list item, no blank line follows, no trailing ':', not in the vocabulary), so it is body text of BENEFITS and Python stays excluded. 'BENEFITS' itself is a heading via the vocabulary.",
   "posting_text": "Requirements:\n- FEA\nBENEFITS\nMEDICAL DENTAL VISION\nPython lunch-and-learns",
   "resume_text": "FEA",
   "expected": {

@@ -2,7 +2,7 @@
   "id": "neg_posting_not_required_after",
   "kind": "targeted",
   "format": "negation (posting)",
-  "note": "CONTRACT AMBIGUITY: the cue sits AFTER the mention. Literal rule 4 (cues only before) would make CFD affirmed, and 'required' could even act as a required cue. Engineering expectation used here: CFD creates no requirement. Needs a coordinator decision.",
+  "note": "Rev 2 (note only, expected unchanged): the earlier ambiguity is resolved by the negation_after cues ('not required') in the posting, so CFD is negated and creates no requirement.",
   "posting_text": "Requirements:\n- SolidWorks\n- CFD not required",
   "resume_text": "SolidWorks",
   "expected": {

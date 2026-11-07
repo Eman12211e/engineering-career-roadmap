@@ -230,3 +230,21 @@ A session is one bounded implementation-and-validation cycle.
 | 3 | Integration checks, then the independent review on the unseen set, then the evidence report |
 
 There is no fourth session. Whatever fails after session 3 goes to the owner.
+
+## R2.8 Clarifications (coordinator rulings, session 1, before any results)
+
+1. **Vocabulary match.** A line that matches the heading vocabulary satisfies rules 3 and 4
+   of R2.2. Excluded vocabulary covers process and company text, including "How to Apply".
+   ALL CAPS alone does not waive rule 4.
+2. **Lookup normalisation.** Leading emoji and symbols are stripped. Inside the label, "&"
+   becomes "and", hyphens become spaces, and the text is case folded. Other characters
+   inside the label are kept.
+3. **End of text** does not count as a blank line under R2.2 rule 4.
+4. **Mentions in heading lines** are ignored. A heading carries no skill mentions.
+5. **Negators and hypothetical cues span coordinated lists.** A negator or hypothetical cue
+   that binds to the first skill of a coordinated skill list ("X, Y or Z", "X and Y") binds
+   to every skill in that list, as postfix cues do. So "No experience with FEA or CFD"
+   negates both.
+6. **Multi-word cues are data.** Hypothetical cues may be multi-word phrases, e.g.
+   "planning to take", "preparing for", "studying for". The cue and filler examples in R2.4
+   are the minimum contents of their data lists.
