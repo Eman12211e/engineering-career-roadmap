@@ -132,6 +132,12 @@ section holding the evidence). Output order follows keywords.json order within e
   `affirmed`. On a resume that is an invented claim, so the skill would count as confirmed
   experience the person does not have. Until the engine handles postfix qualifiers, treat a
   resume match on such a line as unverified.
+- **A negation or prefix-label cue followed by a comma list whose first item is not a known
+  skill.** "Never used LabVIEW, SQL" and "No experience with LabVIEW, SQL" leave SQL affirmed, so a
+  negated skill is counted as present. "Nice to have: LabVIEW, SQL" or "Preferred: LabVIEW, SQL" give
+  SQL the section's importance instead of the label's. Root cause: the R2.8.15 comma exemption in
+  `_clause()` applies only when every list item is a known skill. Status: not fixed; a
+  correction needs a separately reviewed contract change.
 
 ## Technical debt
 
