@@ -248,3 +248,7 @@ There is no fourth session. Whatever fails after session 3 goes to the owner.
 6. **Multi-word cues are data.** Hypothetical cues may be multi-word phrases, e.g.
    "planning to take", "preparing for", "studying for". The cue and filler examples in R2.4
    are the minimum contents of their data lists.
+7. **Lines that mention a skill.** Accepted implementer addition (`heading_test.skill_text_is_body`):
+   an unrecognised line that mentions a skill and has no trailing colon is body text, not a
+   heading. This keeps a résumé line such as "SQL, PYTHON" from becoming a heading. A known
+   vocabulary heading is unaffected.

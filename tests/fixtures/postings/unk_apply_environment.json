@@ -2,7 +2,7 @@
   "id": "unk_apply_environment",
   "kind": "targeted",
   "format": "unknown headings",
-  "note": "ALL CAPS 'HOW TO APPLY' and 'Work Environment:' are unknown -> unscored.",
+  "note": "ALL CAPS 'HOW TO APPLY' and 'Work Environment:' are unknown -> unscored. Rev 2 / ruling R2.8.1: 'How to Apply' is excluded vocabulary, so its section lines are excluded and ERP Systems (whose only alias hit, SAP, is in that section) moves from unscored to excluded.",
   "posting_text": "Requirements:\n- FEA\nHOW TO APPLY\nApply via our SAP portal.\nWork Environment:\n- Shop floor with CNC machines and PLC-controlled lines",
   "resume_text": "FEA",
   "expected": {
@@ -12,10 +12,11 @@
     "preferred": [],
     "unscored": [
       "CNC Machining",
-      "ERP Systems",
       "PLC Programming"
     ],
-    "excluded": [],
+    "excluded": [
+      "ERP Systems"
+    ],
     "found": [
       "Finite Element Analysis"
     ]
@@ -23,7 +24,7 @@
   "line_labels": [
     {
       "contains": "SAP portal",
-      "section": "unknown"
+      "section": "excluded"
     },
     {
       "contains": "Shop floor",
