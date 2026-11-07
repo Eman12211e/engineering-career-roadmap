@@ -337,8 +337,12 @@ def _render_results(results: dict, industry_label: str, user_config: dict) -> No
                     st.markdown(f"**{proj['title']}** ({proj['difficulty']})")
                     st.caption(f"{proj['estimated_hours']} hours")
                     if proj.get("resume_bullets"):
-                        st.markdown("*Sample bullet:*")
+                        st.markdown("*Example phrasing for after you complete the project:*")
                         st.code(proj["resume_bullets"][0], language=None)
+                        st.caption(
+                            "Replace every number and result with your own measured "
+                            "results. Don't copy these numbers."
+                        )
                 else:
                     st.markdown(
                         "Build a portfolio project demonstrating this skill "

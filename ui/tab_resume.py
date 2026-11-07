@@ -7,6 +7,7 @@ from engine.bullet_generator import (
     BulletEvidence,
     build_bullet,
     find_unsupported_claims,
+    skill_mentioned,
     suggest_prompts,
     suggest_verbs,
 )
@@ -33,6 +34,9 @@ def render_resume_tab(
         default=top_skills[:3],
         help="Each skill gets a short form; fill in only what is true.",
     )
+
+    # Reset every run so a deselected skill's old bullet never reaches the PDF.
+    st.session_state["generated_bullets"] = []
 
     if not selected:
         st.info("Select at least one skill above to start.")
@@ -73,6 +77,11 @@ def render_resume_tab(
         problems = find_unsupported_claims(bullet, evidence)
         if problems:
             st.warning("Not found in your evidence: " + ", ".join(problems))
+        if not skill_mentioned(bullet, skill):
+            st.info(
+                f"Your bullet does not mention {skill}. Add it in your own words "
+                "only if it is true; it is not inserted for you."
+            )
         all_bullets.append(bullet)
         st.markdown("---")
 

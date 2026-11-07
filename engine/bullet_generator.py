@@ -6,7 +6,11 @@ metrics, verbs, tools or ownership, and nothing is random.
 
 import re
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 from typing import Dict, List
+
+from engine.keyword_extractor import load_keywords
 
 # Offered as suggestions only (suggest_verbs); never applied automatically.
 STRONG_VERBS = {
@@ -35,16 +39,37 @@ _CATEGORY_PROMPTS = {
     "certifications": "Which exam or course, and when did you complete it?",
 }
 
-# Words that imply ownership/seniority or named credentials/tools.
-_INFLATION = {
-    "led", "lead", "leading", "managed", "owned", "ownership", "spearheaded",
-    "directed", "headed", "oversaw", "supervised", "architected", "principal",
-    "senior", "expert", "certified", "pmp", "six sigma", "green belt",
-    "black belt", "p.e.", "solidworks", "catia", "ansys", "abaqus", "autocad",
-    "creo", "matlab", "simulink", "labview", "python", "sql", "fea", "cfd",
-    "gd&t", "plc", "iso 9001", "as9100", "fmea", "spc",
+# Verbs/phrases that imply ownership or impact: supported only if the user's
+# action starts with them. Nothing else in the evidence can vouch for them.
+_VERBS = {
+    "led", "lead", "leading", "managed", "owned", "spearheaded", "directed",
+    "headed", "oversaw", "supervised", "architected", "optimized", "improved",
+    "drove", "mentored", "owner of", "responsible for",
 }
-_NUM = re.compile(r"\$?\d[\d,]*(?:\.\d+)?[KkMmBb]?%?")
+# Other inflation and number words: supported if in the user's own text.
+_WORDS = {
+    "ownership", "principal", "senior", "expert", "certified", "pmp",
+    "six sigma", "green belt", "black belt", "p.e.", "one", "two", "three",
+    "four", "five", "six", "seven", "eight", "nine", "ten", "twenty", "thirty",
+    "forty", "fifty", "hundred", "thousand", "half", "doubled", "tripled",
+    "halved", "twice", "percent",
+}
+_NUM = re.compile(r"(\$?\d[\d,]*(?:\.\d+)?[KkMmBb]?%?)(?:\s+([A-Za-z]+))?")
+
+
+@lru_cache(maxsize=1)
+def _tool_terms() -> tuple:
+    """Canonicals and aliases from data/keywords.json (read-only)."""
+    path = Path(__file__).resolve().parent.parent / "data" / "keywords.json"
+    terms = {"Minitab", "Siemens TIA Portal", "TIA Portal", "CLSSGB"}  # not in keywords.json
+    for sk in load_keywords(path):
+        terms.update([sk["canonical"], *sk.get("aliases", [])])
+    return tuple(sorted(terms))
+
+
+def _has(term: str, text: str, exact_case: bool = False) -> bool:
+    pat = r"(?<![\w&])" + re.escape(term) + r"(?![\w&])"
+    return bool(re.search(pat, text, 0 if exact_case else re.I))
 
 
 @dataclass(frozen=True)
@@ -68,29 +93,44 @@ def build_bullet(evidence: BulletEvidence) -> str:
         raise ValueError("action is required and cannot be blank")
     context, result = _clean(evidence.context), _clean(evidence.result)
     text = f"{action} {context}".strip()
-    if skill.lower() not in text.lower():
-        text += f" using {skill}"
     if result:
         text += f", {result.rstrip('.')}"
     return text[0].upper() + text[1:].rstrip(".") + "."
 
 
+def skill_mentioned(bullet: str, skill: str) -> bool:
+    """True if the skill appears in the bullet (it is never inserted for you)."""
+    return _has(_clean(skill), bullet)
+
+
 def find_unsupported_claims(bullet: str, evidence: BulletEvidence) -> List[str]:
-    """Return numbers and inflation terms in `bullet` that the evidence lacks."""
-    source = " ".join(
-        _clean(x) for x in (evidence.skill, evidence.action, evidence.context, evidence.result)
-    ).lower()
-    src_nums = {m.rstrip(".,").lower() for m in _NUM.findall(source)}
+    """Return numbers, inflation terms and tools in `bullet` that the user's own
+    action/context/result do not support. The skill field is not evidence."""
+    action = _clean(evidence.action)
+    source = " ".join(_clean(x) for x in (action, evidence.context, evidence.result))
+    norm = lambda n: n.replace(",", "").lower()
+    src = [(norm(n), u.lower()) for n, u in _NUM.findall(source)]
     flagged: List[str] = []
-    for m in _NUM.findall(bullet):
-        tok = m.rstrip(".,")
-        if tok.lower() not in src_nums and tok not in flagged:
-            flagged.append(tok)
-    low = bullet.lower()
-    for term in sorted(_INFLATION):
-        pat = r"(?<![\w&])" + re.escape(term) + r"(?![\w&])"
-        if re.search(pat, low) and not re.search(pat, source):
-            flagged.append(term)
+
+    def add(t):
+        if t not in flagged:
+            flagged.append(t)
+
+    for n, u in _NUM.findall(bullet):
+        k, u = norm(n), u.lower()
+        if not any(k == sn and (not u or not su or u == su) for sn, su in src):
+            add(n.rstrip(".,"))
+    first = action.lower()
+    for term in sorted(_VERBS):
+        if _has(term, bullet) and not (first == term or first.startswith(term + " ")):
+            add(term)
+    for term in sorted(_WORDS):
+        if _has(term, bullet) and not _has(term, source):
+            add(term)
+    for term in _tool_terms():
+        exact = len(term) <= 3  # short aliases like ROS are case-sensitive
+        if _has(term, bullet, exact) and not _has(term, source, exact):
+            add(term.lower())
     return flagged
 
 

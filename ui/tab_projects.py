@@ -19,7 +19,8 @@ def render_projects_tab(industries: List[str]) -> None:
     st.header("High-Impact Projects")
     st.write(
         "Systems-integration projects that produce a GitHub portfolio "
-        "and ready-to-use resume bullets. Filtered to your target industries."
+        "and example resume phrasing for after you finish. Filtered to your "
+        "target industries."
     )
 
     projects = _load_projects()
@@ -60,11 +61,10 @@ def render_projects_tab(industries: List[str]) -> None:
             for d in project["deliverables"]:
                 st.markdown(f"- {d}")
 
-            st.markdown("**Copy-Paste Resume Bullets:**")
-            all_bullets = []
+            st.markdown("**Example phrasing for after you complete the project:**")
+            st.caption(
+                "Replace every number and result with your own measured "
+                "results. Don't copy these numbers."
+            )
             for bullet in project["resume_bullets"]:
                 st.markdown(f"- {bullet}")
-                all_bullets.append(bullet)
-
-            # Copyable block
-            st.code("\n".join(f"* {b}" for b in all_bullets), language=None)
