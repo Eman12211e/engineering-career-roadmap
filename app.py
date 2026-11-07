@@ -10,7 +10,7 @@ from pathlib import Path
 
 from config.settings import (
     APP_TITLE, APP_ICON, DATA_DIR, JOB_POSTINGS_DIR,
-    INDUSTRY_FILE_MAP, DEFAULT_TOP_N, LAST_UPDATED,
+    INDUSTRY_FILE_MAP, DEFAULT_TOP_N,
 )
 from engine.keyword_extractor import load_keywords, build_regex_patterns, count_skill_mentions
 from engine.ranking import compute_priority_scores
@@ -63,7 +63,7 @@ html, body, [class*="css"] {
 """, unsafe_allow_html=True)
 
 st.markdown('<p class="main-title">Engineering Career Roadmap</p>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Data-driven insights for the 2026 job market.</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Skill coverage from your posting and résumé, compared against a synthetic sample of 225 postings.</p>', unsafe_allow_html=True)
 
 
 # ── Cached data loaders ───────────────────────────────────────────────

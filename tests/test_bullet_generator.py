@@ -131,12 +131,7 @@ def test_verb_must_be_in_action_not_context():
 
 
 def test_session_bullets_cleared_when_deselected():
-    pd = pytest.importorskip("pandas")
     at_mod = pytest.importorskip("streamlit.testing.v1")
-    from ui.tab_resume import render_resume_tab
-
-    df = pd.DataFrame({"canonical": ["GD&T", "FEA"], "priority_score": [50.0, 40.0]})
-    meta = [{"canonical": "GD&T", "category": "standards"}]
 
     def app():
         import pandas as pd

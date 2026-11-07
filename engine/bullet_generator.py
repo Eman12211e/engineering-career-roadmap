@@ -108,7 +108,8 @@ def find_unsupported_claims(bullet: str, evidence: BulletEvidence) -> List[str]:
     action/context/result do not support. The skill field is not evidence."""
     action = _clean(evidence.action)
     source = " ".join(_clean(x) for x in (action, evidence.context, evidence.result))
-    norm = lambda n: n.replace(",", "").lower()
+    def norm(n):
+        return n.replace(",", "").lower()
     src = [(norm(n), u.lower()) for n, u in _NUM.findall(source)]
     flagged: List[str] = []
 

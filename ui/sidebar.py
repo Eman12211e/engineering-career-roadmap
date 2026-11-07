@@ -11,7 +11,7 @@ def render_sidebar() -> Dict:
     Returns dict with keys: background, industries, export_pdf
     """
     st.sidebar.title("Career Roadmap")
-    st.sidebar.caption("Data updated March 2026")
+    st.sidebar.caption("Market data: synthetic sample of 225 postings")
 
     background = st.sidebar.selectbox(
         "Your Background",

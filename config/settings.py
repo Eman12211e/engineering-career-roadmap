@@ -10,7 +10,6 @@ JOB_POSTINGS_DIR = DATA_DIR / "job_postings"
 # ── App metadata ───────────────────────────────────────────────────────
 APP_TITLE = "Engineering Career Roadmap"
 APP_ICON = "🎯"
-LAST_UPDATED = "March 2026"
 
 # ── Industry options ───────────────────────────────────────────────────
 INDUSTRIES = ["EV/Automotive", "Factory Automation", "Aerospace/Robotics"]
