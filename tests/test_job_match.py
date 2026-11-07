@@ -210,3 +210,40 @@ def test_long_line_is_capped_around_match():
     m = match_posting(line, line).required[0]
     assert len(m.posting_line) <= 202 and "SolidWorks" in m.posting_line
     assert m.posting_line.startswith("…") and m.posting_line.endswith("…")
+
+
+# ---- second review: skip sections end, bonus, markdown, clauses, plurals ----
+def test_unknown_heading_ends_skip_section():
+    assert set(req("About Us\nAcme.\nWhat We're Looking For\n- SolidWorks, FEA, PLC")) == {
+        "SolidWorks", "Finite Element Analysis", "PLC Programming"}
+    p = ("About Us\nWe build robots.\nThe Position\n- SolidWorks\n- FEA\nBenefits\n- Python lunch-and-learns\n"
+         "Your Toolbox\n- SQL\n- ROS")
+    assert set(req(p)) == {"SolidWorks", "Finite Element Analysis", "SQL", "ROS"}
+
+
+def test_skip_label_drops_only_its_line():
+    assert set(req("Requirements\n- FEA\nSalary: Competitive, FEA a must\n- SolidWorks")) == {
+        "Finite Element Analysis", "SolidWorks"}
+    assert req("Requirements\n- FEA\nSalary: Competitive, Python a must") == ["Finite Element Analysis"]
+
+
+def test_bare_bonus_is_pay_not_preferred():
+    r = match_posting("Requirements\n- FEA\nCompensation\nBase $90k\nBonus: 10% target\n"
+                      "- Python lunch-and-learns\n- SolidWorks seat for home use", "x")
+    assert names(r.required) == ["Finite Element Analysis"] and not r.preferred
+
+
+def test_markdown_headings_and_bullets():
+    r = match_posting("**Requirements**\n- SolidWorks\n**Preferred**\n- FEA", "x")
+    assert names(r.required) == ["SolidWorks"] and names(r.preferred) == ["Finite Element Analysis"]
+    assert split_posting_requirements("Preferred\n* Nice to have") == ([], ["* Nice to have"])
+
+
+def test_not_required_stops_at_clause_break():
+    assert req("SolidWorks skills and degree not required") == ["SolidWorks"]
+    assert req("SolidWorks, degree not required") == ["SolidWorks"]
+
+
+def test_plural_only_after_uppercase():
+    assert req("PLCs and SAPs") == ["PLC Programming", "ERP Systems"]
+    assert req("MLS listings; 500 mls of fluid") == []

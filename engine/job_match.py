@@ -35,43 +35,40 @@ class MatchResult:
 # ---- section headings -------------------------------------------------------
 _MOD = r"(?:(?:minimum|basic|key|required|preferred|desired|additional)\s+)?"
 _REQ_HEAD = re.compile(
-    r"\W*" + _MOD + r"(?:requirements?|required(?:\s+(?:qualifications|skills|experience))?|"
+    _MOD + r"(?:requirements?|required(?:\s+(?:qualifications|skills|experience))?|"
     r"qualifications|must[- ]haves?|what\s+you(?:'ll|\s+will)?\s+(?:need|do)|responsibilities|duties|"
-    r"skills|about\s+you|the\s+role|overview|summary|(?:job\s+)?description)\W*", re.I)
-_PREF_HEAD = re.compile(
-    r"\W*(?:preferred(?:\s+(?:qualifications|skills|requirements|experience))?|"
-    r"desired(?:\s+(?:qualifications|skills))?|nice[- ]to[- ]haves?|bonus(?:\s+points)?|"
-    r"(?:a\s+)?plus(?:es)?|additional\s+(?:qualifications|skills))\W*", re.I)
+    r"skills|about\s+you|the\s+role|overview|summary|(?:job\s+)?description)", re.I)
+_PREF_HEAD = re.compile(  # a bare "Bonus" is usually pay, so it is not a preferred label
+    r"preferred(?:\s+(?:qualifications|skills|requirements|experience))?|"
+    r"desired(?:\s+(?:qualifications|skills))?|nice[- ]to[- ]haves?|bonus\s+(?:points|skills)|"
+    r"(?:a\s+)?plus(?:es)?|additional\s+(?:qualifications|skills)", re.I)
 _SKIP_HEAD = re.compile(  # clearly non-skill sections: ignored
-    r"\W*(?:benefits|perks|compensation|salary|about\s+us|about\s+the\s+company|who\s+we\s+are|"
-    r"equal\s+opportunity(?:\s+employer)?|eeo)\W*", re.I)
+    r"benefits|perks|compensation|salary|about\s+us|about\s+the\s+company|who\s+we\s+are|"
+    r"equal\s+opportunity(?:\s+employer)?|eeo", re.I)
 # an inline "Preferred:" / "Nice to have:" label starts a new segment
-_INLINE_PREF = re.compile(r"(?=\b(?:preferred(?:\s+\w+)?|nice[- ]to[- ]haves?|bonus(?:\s+points)?)\s*:)", re.I)
-_BULLET = ("-", "*", "–", "—", ">")
+_INLINE_PREF = re.compile(
+    r"(?=\b(?:preferred(?:\s+\w+)?|nice[- ]to[- ]haves?|bonus\s+(?:points|skills))\s*:)", re.I)
+_SENTENCE_PUNCT = re.compile(r"[.!?;](?:\s|$)")
 
 
-def _heading(line: str) -> tuple[str, str] | None:
-    """Return (section, rest_of_line) if the line is a heading, else None.
+def _is_bullet(line: str) -> bool:
+    return line.startswith(("-", "–", "—", ">")) or line.startswith("* ")
 
-    A line starting with a bullet marker is never a heading.
-    """
-    if line.startswith(_BULLET):
-        return None
-    colon = line.find(":")
-    if 0 <= colon <= 45:
-        head, rest = line[:colon], line[colon + 1:]
-    elif len(line) <= 45:
-        head, rest = line, ""
-    else:
-        return None
+
+def _clean_label(text: str) -> str:
+    """Strip markdown markers (#, **, __) and a trailing colon from a heading."""
+    return text.strip().lstrip("#").strip(" \t*_").rstrip(":").strip(" \t*_")
+
+
+def _classify(label: str) -> str | None:
     for kind, rx in (("preferred", _PREF_HEAD), ("required", _REQ_HEAD), ("skip", _SKIP_HEAD)):
-        if rx.fullmatch(head):
-            return kind, rest.strip()
+        if rx.fullmatch(label):
+            return kind
     return None
 
 
 def _lines(text: str) -> list[str]:
-    return [p.strip() for p in re.split(r"[\r\n\u2022\u00b7]+", text) if p.strip()]
+    return [p.strip() for p in re.split(r"[\r\n•·]+", text) if p.strip()]
 
 
 def _check(text: str, name: str) -> None:
@@ -79,25 +76,44 @@ def _check(text: str, name: str) -> None:
         raise ValueError(f"{name} text is empty")  # never echo the text
 
 
-def split_posting_requirements(posting: str) -> tuple[list[str], list[str]]:
+def split_posting_requirements(posting: str, _skills=None) -> tuple[list[str], list[str]]:
     """Return (required lines, preferred lines).
 
-    Only Preferred / Nice to have / Bonus / Plus sections are preferred. Every other
-    line is required (intro, responsibilities, unknown headings), except lines under
-    clearly non-skill sections (Benefits, Perks, Compensation, About us, About the
-    company, Equal opportunity), which are dropped. Heading lines are not returned.
+    Only Preferred / Nice to have / Bonus points / Plus sections are preferred.
+    Everything else is required, except lines under clearly non-skill sections
+    (Benefits, Perks, Compensation, Salary, About us, ...), which are dropped.
+    A heading-like line (no bullet, <= 45 chars once markdown is stripped, no
+    sentence punctuation, no digits/$/%, no recognized skill) ends the current
+    section: known headings set its type, unknown ones start a required section.
+    "Label: text" lines apply a required/preferred label to the text; a skip label
+    ("Salary: ...") drops only that line. Heading lines are not returned.
     """
     _check(posting, "posting")
+    compiled = _default_compiled() if _skills is None else _compile(_skills)
+    has_skill = lambda s: any(p.search(s) for _, _, pats in compiled for p in pats)  # noqa: E731
     required, preferred, section = [], [], "required"
     for raw in _lines(posting):
         for line in (s.strip() for s in _INLINE_PREF.split(raw)):
             if not line:
                 continue
-            h = _heading(line)
-            if h:
-                section, line = h
-                if not line:
-                    continue
+            if not _is_bullet(line):
+                colon = line.find(":")
+                head, rest = (line[:colon], line[colon + 1:].strip(" \t*_")) if 0 <= colon <= 45 else ("", "")
+                if rest:
+                    kind = _classify(_clean_label(head))
+                    if kind == "skip":
+                        continue  # one line only; the section is unchanged
+                    if kind:
+                        section, line = kind, rest
+                else:
+                    label = _clean_label(line)
+                    kind = _classify(label)
+                    if kind is None and (label and len(label) <= 45 and not _SENTENCE_PUNCT.search(label)
+                            and not re.search(r"[\d$%]", label) and not has_skill(label)):
+                        kind = "required"  # unknown heading
+                    if kind:
+                        section = kind
+                        continue
             if section == "preferred":
                 preferred.append(line)
             elif section == "required":
@@ -116,7 +132,7 @@ def _pattern(alias: str) -> re.Pattern:
         return re.compile(r"(?<![\w&/+#.-])" + re.escape(alias) + r"(?![\w&/+#-])")
     pat = build_regex_patterns([{"canonical": "x", "aliases": [alias]}])["x"][0].pattern
     if alias.isupper() and pat.endswith(r"\b"):
-        pat = pat[:-2] + r"s?\b"  # plural acronyms: PLCs
+        pat = pat[:-2] + r"(?-i:(?<=[A-Z])s)?\b"  # plural only after upper case: PLCs, not MLS/mls
     return re.compile(pat + _GUARDS.get(alias.lower(), ""), re.I)
 
 
@@ -132,7 +148,7 @@ def _default_compiled() -> tuple:
 _NEG = re.compile(r"(?<![\w-])(?:no|not|without|never)(?![\w-])|\bdon'?t\s+need\b", re.I)
 _CLAUSE_BREAK = re.compile(r"[,;.!?]|\b(?:but|and)\b", re.I)
 _NEG_AFTER = re.compile(
-    r"(?:[ \t]+[\w'-]+){0,3}?[ \t]+(?:(?:is|are)[ \t]+)?not[ \t]+(?:required|needed|necessary)\b", re.I)
+    r"(?:[ \t]+(?!(?:and|but)\b)[\w'-]+){0,3}?[ \t]+(?:(?:is|are)[ \t]+)?not[ \t]+(?:required|needed|necessary)\b", re.I)
 _RESUME_NEG = re.compile(r"(?:no\s+(?:prior\s+)?experience\s+(?:with|in)|not\s+familiar\s+with)\s+$", re.I)
 _MAXLEN = 200
 
@@ -180,7 +196,7 @@ def match_posting(posting: str, resume: str, _skills=None) -> MatchResult:
     """
     _check(posting, "posting")
     _check(resume, "resume")
-    req_lines, pref_lines = split_posting_requirements(posting)
+    req_lines, pref_lines = split_posting_requirements(posting, _skills)
     resume_lines = _lines(resume)
     required, preferred = [], []
     for name, cat, pats in _default_compiled() if _skills is None else _compile(_skills):
