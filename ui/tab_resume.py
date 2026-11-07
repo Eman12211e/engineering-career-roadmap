@@ -6,7 +6,7 @@ from typing import List, Dict
 from engine.bullet_generator import (
     BulletEvidence,
     build_bullet,
-    find_unsupported_claims,
+    split_claims,
     skill_mentioned,
     suggest_prompts,
     suggest_verbs,
@@ -74,9 +74,14 @@ def render_resume_tab(
         evidence = BulletEvidence(skill=skill, action=action, context=context, result=result)
         bullet = build_bullet(evidence)
         st.markdown(f"- {bullet}")
-        problems = find_unsupported_claims(bullet, evidence)
+        problems, check = split_claims(bullet, evidence)
         if problems:
             st.warning("Not found in your evidence: " + ", ".join(problems))
+        if check:
+            st.info(
+                "Ownership or impact words: keep only if you personally did this: "
+                + ", ".join(check)
+            )
         if not skill_mentioned(bullet, skill):
             st.info(
                 f"Your bullet does not mention {skill}. Add it in your own words "

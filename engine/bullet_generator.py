@@ -40,7 +40,7 @@ _CATEGORY_PROMPTS = {
 }
 
 # Verbs/phrases that imply ownership or impact: supported only if the user's
-# action starts with them. Nothing else in the evidence can vouch for them.
+# action contains them. Nothing else in the evidence can vouch for them.
 _VERBS = {
     "led", "lead", "leading", "managed", "owned", "spearheaded", "directed",
     "headed", "oversaw", "supervised", "architected", "optimized", "improved",
@@ -120,9 +120,8 @@ def find_unsupported_claims(bullet: str, evidence: BulletEvidence) -> List[str]:
         k, u = norm(n), u.lower()
         if not any(k == sn and (not u or not su or u == su) for sn, su in src):
             add(n.rstrip(".,"))
-    first = action.lower()
     for term in sorted(_VERBS):
-        if _has(term, bullet) and not (first == term or first.startswith(term + " ")):
+        if _has(term, bullet) and not _has(term, action):
             add(term)
     for term in sorted(_WORDS):
         if _has(term, bullet) and not _has(term, source):
@@ -132,6 +131,19 @@ def find_unsupported_claims(bullet: str, evidence: BulletEvidence) -> List[str]:
         if _has(term, bullet, exact) and not _has(term, source, exact):
             add(term.lower())
     return flagged
+
+
+def split_claims(bullet: str, evidence: BulletEvidence):
+    """Split flags into (unsupported, personal_check).
+
+    unsupported: terms found nowhere in the user's action/context/result.
+    personal_check: ownership/impact verbs the user typed in context or result
+    (not action); keep only if they personally did it.
+    """
+    own = " ".join(_clean(x) for x in (evidence.context, evidence.result))
+    flags = find_unsupported_claims(bullet, evidence)
+    check = [t for t in flags if t in _VERBS and _has(t, own)]
+    return [t for t in flags if t not in check], check
 
 
 def suggest_prompts(skill: str, category: str) -> List[str]:

@@ -13,6 +13,7 @@ from engine.bullet_generator import (
     find_unsupported_claims,
     generate_bullets,
     skill_mentioned,
+    split_claims,
     suggest_prompts,
     suggest_verbs,
 )
@@ -148,3 +149,13 @@ def test_session_bullets_cleared_when_deselected():
     assert at.session_state["generated_bullets"]
     at.multiselect[0].set_value([]).run()
     assert at.session_state["generated_bullets"] == []
+
+
+def test_user_typed_words_not_called_unsupported():
+    e = BulletEvidence("PLC", "helped lead the PLC test")
+    assert find_unsupported_claims(build_bullet(e), e) == []
+    e = BulletEvidence("X", "helped the team", "we were led by a manager")
+    assert split_claims("Helped the team, we were led by a manager.", e) == ([], ["led"])
+    e = BulletEvidence("X", "tracked downtime", "", "improved uptime")
+    assert split_claims(build_bullet(e), e) == ([], ["improved"])
+    assert split_claims("Drove the test", e)[0] == ["drove"]
