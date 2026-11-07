@@ -112,3 +112,121 @@ MatchResult(required, preferred, score, unscored=(), excluded=())
 If the redesign misses a criterion, the misses are documented in `docs/SCORING.md` and
 reported to the owner for a decision. There is no further heuristic patching and no
 threshold change.
+
+---
+
+# Revision 2: bounded remediation round (frozen 2026-11-07)
+
+The owner approved Option A. Where this revision conflicts with anything above, this
+revision wins. It is frozen before any code is written, so the rules, the severity table and
+the unseen-set protocol can't move after results come in.
+
+## R2.1 Positive evidence for importance
+
+A posting skill is `required` or `preferred` only with positive evidence:
+- it sits in a section whose heading matches the `required` or `preferred` vocabulary; or
+- a bound cue (R2.4) ties it to `required` or `preferred`.
+
+Everything else is `unscored`. That covers text before the first heading, text after an
+unknown heading, responsibilities, skills sections and headingless text. A skill never takes
+its importance from the line or section before it. Unscored skills are still reported as
+"also mentioned in the posting" and never count toward the score. `excluded` still needs a
+known excluded heading.
+
+## R2.2 Structural heading test (thresholds in `data/match_rules.json` → `heading_test`)
+
+A non-bullet line is a heading if all of these hold:
+1. After stripping leading emoji, symbols, `#`, `*` and `_`, it has at most `max_words`
+   words (default 6).
+2. It does not end with sentence punctuation (`.`, `!`, `?`).
+3. It either ends with ":", or is Title Case (every word not in `small_words` starts with an
+   upper-case letter), or is ALL CAPS, or matches the heading vocabulary.
+4. The next non-blank line is a list item, or the line is followed by a blank line, or it
+   ends with ":", or it matches the vocabulary.
+
+Lines that look like headings but fail the test stay body text: "Our team uses Python." fails
+rule 2, and "Python lunch-and-learns" fails rules 3 and 4. Tests must cover such near-misses.
+Every heading ends the previous section, including unknown and excluded ones. A heading
+outside the vocabulary opens an `unknown` section; this supersedes the earlier "only a known
+heading ends an excluded section" ruling. Emoji and symbols are stripped before vocabulary
+lookup. The vocabulary is data only.
+
+## R2.3 Hard-wrapped lines
+
+A physical line continues the previous one when the previous line does not end with
+`.`, `:`, `;`, `!` or `?`, and the line itself is not a bullet or a heading and starts with a
+lower-case letter. Segment builds logical `Line`s from physical lines, and
+`Line.text == source[Line.start:Line.end]` still holds, newlines included. Find matches
+aliases across a joined line through an offset map back to the original text.
+
+**Offset invariant**, checked by a property test over every fixture and every mention:
+`norm(source[start:end]) == norm(alias)`, or `norm(alias) + "s"` under the plural rule.
+`norm` does case folding and collapses runs of whitespace (spaces, tabs, newlines) to one
+space. It removes nothing else. A span that contains any other word or character fails.
+
+## R2.4 Cue binding: grammatical, not distance-based
+
+A cue binds to a skill only inside the same list item or clause, and only in these forms
+(templates and filler words live in data):
+- **Prefix label** at the start of the clause: "Preferred: X", "Required: X",
+  "Nice to have: X", "Bonus: X". All skills in the clause are bound.
+- **Postfix phrase** after the last skill of a skill list: "X (preferred)", "X preferred",
+  "X is a plus", "X and Y a plus", "X required", "X is required". Only words from
+  `cue_fillers` (e.g. "experience", "skills", "knowledge", "is", "are", "highly", "strongly")
+  may sit between the last skill and the cue.
+- **Modal prefix:** "must have X", "X is a must".
+
+So "as required" and "desired tolerances" never bind.
+
+**Negation and hypothetical cues use the same gap rule.** A negator ("no", "not", "without",
+"never", "not familiar with") or a hypothetical cue ("learning", "willing to learn") applies
+only when it sits directly before the skill, or is separated from it only by
+`negation_fillers` (e.g. "prior", "experience with", "knowledge of"). This means:
+- "without added headcount by applying lean" is not negated;
+- "Zero escapes with no rework using SPC" is not negated;
+- "willing to travel 20% and have AutoCAD skills" is not hypothetical.
+
+"X is not required, but is a plus" or "not required but nice to have" is `preferred`.
+
+## R2.5 Evaluation
+
+- **Metric bug.** The résumé metric is fixed before anything else: it covers required and
+  preferred skills only, as `data/eval/README.md` defines. All earlier numbers, including
+  38/38, are re-run and reported.
+- **Development and regression fixtures.** The 38 existing fixtures, plus the 10 postings
+  from review 5. Their expected results change only with coordinator approval. Agent C may
+  read them.
+- **Unseen set.** Written by an independent reviewer before implementation and stored
+  outside the repository. Only its SHA-256 hashes and creation date go in
+  `docs/UNSEEN_SET.md`. Agent C must never read it. Nobody runs it before session 3.
+  Filesystem isolation is by instruction only; the hashes prove the set was fixed in
+  advance, not that it stayed secret.
+- **Not accuracy evidence.** Integration and unit test counts show the wiring works, not
+  that the answers are correct.
+
+## R2.6 Pass criteria on the unseen set (fixed in advance)
+
+| Error | Severity | Allowed |
+|---|---|---|
+| Skill marked required/preferred from culture, benefits or company text | Critical | 0 |
+| Negated or hypothetical mention counted as present | Critical | 0 |
+| Résumé claim invented in a bullet | Critical | 0 |
+| Wrong offset or evidence line | Critical | 0 |
+| Required and preferred swapped | Major | Count reported |
+| Common alias missed (SolidWorks, FEA, GD&T, ...) | Major | Count reported |
+| Uncommon alias or odd formatting missed | Minor | Documented |
+
+If any critical error remains, the round stops, Gate 1 stays blocked, and the owner makes a
+scope decision. A critical error is never documented away as a limitation.
+
+## R2.7 Time box: three sessions
+
+A session is one bounded implementation-and-validation cycle.
+
+| Session | Work |
+|---|---|
+| 1 | Fix the eval metric and re-run; freeze the regression fixtures and the unseen set; implement R2.1 and R2.2 |
+| 2 | Implement R2.3 and R2.4, plus the offset property test |
+| 3 | Integration checks, then the independent review on the unseen set, then the evidence report |
+
+There is no fourth session. Whatever fails after session 3 goes to the owner.
