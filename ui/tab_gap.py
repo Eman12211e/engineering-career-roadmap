@@ -55,7 +55,7 @@ def render_gap_tab(
 
     # Donut chart
     fig = gap_donut(len(present), len(missing))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.metric("Skills Coverage", f"{gap_pct}%", help="Percentage of top skills found in your resume")
 

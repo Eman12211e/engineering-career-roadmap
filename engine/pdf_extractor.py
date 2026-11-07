@@ -8,22 +8,47 @@ page numbers, headers/footers, and junk characters.
 import re
 import fitz  # PyMuPDF
 
+from config.settings import (
+    MAX_PDF_BYTES,
+    MAX_PDF_PAGES,
+    MAX_TEXT_CHARS,
+    MIN_EXTRACTED_CHARS,
+)
+
+
+class PDFExtractionError(Exception):
+    """Raised for unusable PDFs. Messages never contain document content."""
+
+    def __init__(self, user_message: str):
+        super().__init__(user_message)
+        self.user_message = user_message
+
 
 def extract_text_from_pdf(pdf_bytes: bytes) -> str:
-    """Extract all text from a PDF file's bytes.
-
-    Args:
-        pdf_bytes: Raw bytes of the uploaded PDF file.
-
-    Returns:
-        Concatenated text from all pages, separated by newlines.
-    """
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    pages = []
-    for page in doc:
-        pages.append(page.get_text())
-    doc.close()
-    return "\n".join(pages)
+    """Extract all text from a PDF's bytes, enforcing size and page limits."""
+    if not pdf_bytes:
+        raise PDFExtractionError("The uploaded file is empty.")
+    if len(pdf_bytes) > MAX_PDF_BYTES:
+        raise PDFExtractionError(
+            f"The PDF is larger than {MAX_PDF_BYTES // (1024 * 1024)} MB. Please upload a smaller file."
+        )
+    try:
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    except Exception:
+        raise PDFExtractionError("That file could not be read as a PDF.") from None
+    try:
+        if doc.needs_pass or doc.is_encrypted:
+            raise PDFExtractionError("The PDF is password-protected. Please upload an unlocked copy.")
+        if doc.page_count > MAX_PDF_PAGES:
+            raise PDFExtractionError(
+                f"The PDF has more than {MAX_PDF_PAGES} pages. Please upload a shorter document."
+            )
+        try:
+            return "\n".join(page.get_text() for page in doc)
+        except Exception:
+            raise PDFExtractionError("The PDF text could not be extracted.") from None
+    finally:
+        doc.close()
 
 
 def clean_pdf_text(raw_text: str) -> str:
@@ -67,10 +92,28 @@ def clean_pdf_text(raw_text: str) -> str:
     return text.strip()
 
 
-def pdf_to_clean_text(pdf_bytes: bytes) -> str:
-    """Full pipeline: PDF bytes → extracted text → cleaned text.
+def validate_text_input(text: str, field: str) -> str:
+    """Strip pasted text; reject empty or over-long input without echoing it."""
+    text = (text or "").strip()
+    if not text:
+        raise ValueError(f"The {field} is empty.")
+    if len(text) > MAX_TEXT_CHARS:
+        raise ValueError(f"The {field} is longer than {MAX_TEXT_CHARS:,} characters.")
+    return text
 
-    This is the main entry point used by the UI tabs.
+
+def pdf_to_clean_text(pdf_bytes: bytes) -> str:
+    """Full pipeline: PDF bytes -> extracted text -> cleaned text.
+
+    Raises PDFExtractionError (plain user_message, no content) on bad input.
     """
-    raw = extract_text_from_pdf(pdf_bytes)
-    return clean_pdf_text(raw)
+    text = clean_pdf_text(extract_text_from_pdf(pdf_bytes))
+    if len(text) < MIN_EXTRACTED_CHARS:
+        raise PDFExtractionError(
+            "Very little text was found. The PDF may be a scanned image; paste the text instead."
+        )
+    if len(text) > MAX_TEXT_CHARS:
+        raise PDFExtractionError(
+            f"The PDF text is longer than {MAX_TEXT_CHARS:,} characters. Please upload a shorter document."
+        )
+    return text
