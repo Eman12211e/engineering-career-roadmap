@@ -245,7 +245,7 @@ def test_qualify_returns_a_new_mention():
     ("FEA is required", "excluded", "excluded"),
     ("FEA is a plus", "excluded", "excluded"),
     ("SolidWorks required; FEA preferred", "required", "preferred"),
-    ("FEA must be strong", "responsibilities", "required"),
+    ("FEA must be strong", "responsibilities", "unscored"),
 ])
 def test_importance(text, section, expected):
     m = next(m for m in mentions(text, section) if m.canonical == "Finite Element Analysis")

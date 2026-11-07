@@ -65,9 +65,13 @@ def _key(label: str) -> str:
     return " ".join(t.split())
 
 
-def _cue_regex(words: list[str]) -> re.Pattern:
-    alts = ("\\s+".join(re.escape(w) for w in c.replace("’", "'").split()) for c in words)
-    return re.compile(r"(?<![\w-])(?:" + "|".join(alts) + r")(?![\w-])", re.I)
+def _alt(words) -> str:
+    ws = sorted({w.replace("’", "'") for w in words}, key=len, reverse=True)
+    return "|".join(r"\s+".join(re.escape(t) for t in w.split()) for w in ws)
+
+
+def _bounded(words) -> str:
+    return r"(?<![\w-])(?:" + _alt(words) + r")(?![\w-])"
 
 
 @dataclass(frozen=True)
@@ -75,12 +79,16 @@ class _Rules:
     headings: dict          # doc -> {normalised label: kind}
     bullets_always: str
     bullets_spaced: str
-    negation: re.Pattern
-    negation_after: re.Pattern
-    hypothetical: re.Pattern
-    required_cues: re.Pattern
-    preferred_cues: re.Pattern
+    numbered: re.Pattern
+    neg_before: re.Pattern          # negator then only fillers, ending at the skill
+    hyp_before: re.Pattern          # hypothetical cue then only fillers, ending at the skill
+    neg_after: re.Pattern           # fillers then a "not required" cue, starting after the skill
+    not_required_then_pref: re.Pattern
     breaks: re.Pattern
+    connectors: re.Pattern          # a gap made only of list connectors
+    postfix: dict                   # importance -> pattern, starting after the last skill of a list
+    modal_before: dict              # importance -> pattern, ending at the first skill of a list
+    labels: dict                    # importance -> pattern, at the start of a clause
     heading_test: dict
 
 
@@ -92,16 +100,35 @@ def _rules() -> _Rules:
         doc: {_key(label): kind for kind, labels in kinds.items() for label in labels}
         for doc, kinds in d["headings"].items()
     }
+    fill_b = _bounded(d["negation_fillers"])
+    cue_fill = _bounded(d["cue_fillers"])
+    prefix_fill = _bounded(d["negation_fillers"] + d["cue_fillers"])
+    after_gap = r"\s*(?:" + cue_fill + r"\s+)*"
     return _Rules(
         headings=heads,
         bullets_always="".join(d["bullets"]["always"]),
         bullets_spaced="".join(d["bullets"]["with_space"]),
-        negation=_cue_regex(d["negation"]),
-        negation_after=_cue_regex(d["negation_after"]),
-        hypothetical=_cue_regex(d["hypothetical"]),
-        required_cues=_cue_regex(d["required_cues"]),
-        preferred_cues=_cue_regex(d["preferred_cues"]),
+        numbered=re.compile(d["bullets"]["numbered"]),
+        neg_before=re.compile(_bounded(d["negation"]) + r"(?:\s+" + fill_b + r")*\s*$", re.I),
+        hyp_before=re.compile(_bounded(d["hypothetical"]) + r"(?:\s+" + fill_b + r")*\s*$", re.I),
+        neg_after=re.compile(r"^" + after_gap + _bounded(d["negation_after"]), re.I),
+        not_required_then_pref=re.compile(
+            r"^" + after_gap + _bounded(d["negation_after"]) + r"\s*,?\s*(?:but|though|however)\s*,?\s*"
+            r"(?:(?:is|are)\s+)?" + _bounded(d["not_required_then_preferred"]), re.I),
         breaks=re.compile("|".join(f"(?:{b})" for b in d["clause_breaks"]), re.I),
+        connectors=re.compile(r"^(?:\s*(?:" + _alt(d["list_connectors"]) + r")\s*)+$", re.I),
+        postfix={
+            imp: re.compile(r"^\s*\(?\s*(?:" + cue_fill + r"\s+)*" + _bounded(words), re.I)
+            for imp, words in d["postfix_cues"].items()
+        },
+        modal_before={
+            imp: re.compile(_bounded(words) + r"(?:\s+" + prefix_fill + r")*\s*$", re.I)
+            for imp, words in d["modal_prefix"].items()
+        },
+        labels={
+            imp: re.compile(r"^[\W_]*(?:" + _alt(words) + r")\s*:", re.I)
+            for imp, words in d["prefix_labels"].items()
+        },
         heading_test=d["heading_test"],
     )
 
@@ -156,8 +183,11 @@ def skill_order() -> tuple[str, ...]:
 
 # ---- Stage 1 -- Segment ----------------------------------------------------------------------
 def _is_bullet(text: str) -> bool:
+    """A list item: bullet marker, or a numbered / lettered item ("1.", "2)", "a.")."""
     r = _rules()
-    return text[0] in r.bullets_always or (len(text) > 1 and text[0] in r.bullets_spaced and text[1] in " \t")
+    return (text[0] in r.bullets_always
+            or (len(text) > 1 and text[0] in r.bullets_spaced and text[1] in " \t")
+            or r.numbered.match(text) is not None)
 
 
 def classify_heading(label: str, doc: DocKind) -> SectionKind | None:
@@ -204,8 +234,17 @@ def _is_heading(text: str, doc: DocKind, next_text: str | None, blank_after: boo
     return True, kind, label
 
 
+_NO_CONTINUE = ".:;!?"
+
+
 def segment(text: str, doc: DocKind) -> tuple[Section, ...]:
-    """Split text into typed sections. Headingless text is one "unknown" section."""
+    """Split text into typed sections. Headingless text is one "unknown" section.
+
+    Hard-wrapped physical lines are joined into one logical Line (R2.3): a line continues the
+    previous body line when that line does not end with . : ; ! ? and this line is not a list
+    item or heading and starts with a lower-case letter. Line.text == text[start:end] always,
+    newlines included.
+    """
     sections: list[Section] = []
     kind: SectionKind = "unknown"
     heading: str | None = None
@@ -216,14 +255,15 @@ def segment(text: str, doc: DocKind) -> tuple[Section, ...]:
         if body or heading is not None:
             sections.append(Section(kind, heading, hspan, tuple(body)))
 
-    phys: list[tuple[int, str, str]] = []  # (start offset of the stripped text, stripped text, raw chunk)
+    phys: list[tuple[int, str]] = []  # (start offset of the stripped text, stripped text)
     pos = 0
     for chunk in text.split("\n"):
-        t = chunk.strip()
-        phys.append((pos + len(chunk) - len(chunk.lstrip()), t, chunk))
+        phys.append((pos + len(chunk) - len(chunk.lstrip()), chunk.strip()))
         pos += len(chunk) + 1
-    for i, (start, t, _) in enumerate(phys):
+    prev_body = False  # was the previous physical line a body line (not blank, not a heading)?
+    for i, (start, t) in enumerate(phys):
         if not t:
+            prev_body = False
             continue
         end = start + len(t)
         bullet = _is_bullet(t)
@@ -234,44 +274,85 @@ def segment(text: str, doc: DocKind) -> tuple[Section, ...]:
             if is_head:  # every heading ends the previous section, known or not
                 close()
                 kind, heading, hspan, body = known or "unknown", label, (start, end), []
+                prev_body = False
+                continue
+            if prev_body and body and t[0].islower() and body[-1].text[-1] not in _NO_CONTINUE:
+                last = body[-1]
+                body[-1] = Line(text[last.start:end], last.start, end, last.section, last.heading, last.is_bullet)
                 continue
         body.append(Line(t, start, end, kind, heading, bullet))
+        prev_body = True
     close()
     return tuple(sections)
 
 
+# ---- Normalised view of a line (whitespace runs collapsed) -------------------------------------
+@dataclass(frozen=True)
+class _Norm:
+    text: str                     # line text with every whitespace run collapsed to one space
+    to_orig: tuple[int, ...]      # normalised index -> index in Line.text
+    to_norm: tuple[int, ...]      # Line.text index -> normalised index (len + 1 entries)
+
+
+@lru_cache(maxsize=8192)
+def _norm(line: Line) -> _Norm:
+    out: list[str] = []
+    to_orig: list[int] = []
+    to_norm: list[int] = []
+    for i, ch in enumerate(line.text):
+        if ch.isspace():
+            if not out or out[-1] != " ":
+                out.append(" ")
+                to_orig.append(i)
+        else:
+            out.append(ch)
+            to_orig.append(i)
+        to_norm.append(len(out) - 1)
+    to_norm.append(len(out))
+    return _Norm("".join(out), tuple(to_orig), tuple(to_norm))
+
+
+def norm_span(line: Line, span: tuple[int, int]) -> tuple[str, int, int]:
+    """(normalised line text, start, end) of an absolute span in normalised coordinates."""
+    n = _norm(line)
+    return n.text, n.to_norm[span[0] - line.start], n.to_norm[span[1] - line.start - 1] + 1
+
+
 # ---- Stage 2 -- Find -------------------------------------------------------------------------
 def find_mentions(lines: tuple[Line, ...]) -> tuple[Mention, ...]:
-    """Longest-alias-first, non-overlapping candidate mentions. No keep/drop or importance decisions."""
+    """Longest-alias-first, non-overlapping candidate mentions. No keep/drop or importance decisions.
+
+    Aliases match across hard-wrap newlines (whitespace runs count as one space); spans are
+    absolute offsets into the original text.
+    """
     out: list[Mention] = []
     for line in lines:
+        n = _norm(line)
         cands = []
         for order, sk in enumerate(_skills()):
             for alias, rx in sk.aliases:
-                for m in rx.finditer(line.text):
+                for m in rx.finditer(n.text):
                     cands.append((-(m.end() - m.start()), m.start(), order, sk, alias, m.end()))
         cands.sort(key=lambda c: c[:3])
         taken: list[tuple[int, int]] = []
-        for neg_len, s, _, sk, alias, e in cands:
+        for _, s, _, sk, alias, e in cands:
             if any(s < te and ts < e for ts, te in taken):
                 continue
             taken.append((s, e))
-            out.append(Mention(sk.canonical, sk.category, alias, (line.start + s, line.start + e), line))
+            span = (line.start + n.to_orig[s], line.start + n.to_orig[e - 1] + 1)
+            out.append(Mention(sk.canonical, sk.category, alias, span, line))
     return tuple(sorted(out, key=lambda m: (m.line.start, m.span)))
 
 
 # ---- Stage 3 -- Disambiguate -----------------------------------------------------------------
 def _keep(m: Mention) -> bool:
     sk = _skill_by_name()[m.canonical]
-    text = m.line.text
-    s, e = m.span[0] - m.line.start, m.span[1] - m.line.start
+    text, s, e = norm_span(m.line, m.span)
     if sk.case_sensitive and text[s:e] not in (m.alias, m.alias + "s"):
         return False
     if sk.needs_context and not any(rx.search(text) for rx in sk.needs_context):
         return False
-    return not any(
-        p.start() < e and s < p.end() for rx in sk.exclude_phrases for p in rx.finditer(text)
-    )
+    return not any(p.start() < e and s < p.end() for rx in sk.exclude_phrases for p in rx.finditer(text))
 
 
 def disambiguate(mentions: tuple[Mention, ...]) -> tuple[Mention, ...]:
@@ -280,52 +361,78 @@ def disambiguate(mentions: tuple[Mention, ...]) -> tuple[Mention, ...]:
 
 
 # ---- Stage 4 -- Qualify ----------------------------------------------------------------------
-@lru_cache(maxsize=4096)
-def _line_spans(line: Line) -> tuple[tuple[int, int], ...]:
-    return tuple(m.span for m in find_mentions((line,)))
+@lru_cache(maxsize=8192)
+def _chains(line: Line) -> tuple[tuple[tuple[int, int], ...], ...]:
+    """Coordinated skill lists ("X, Y or Z") as tuples of normalised spans, in line order."""
+    n = _norm(line)
+    spans = []
+    for m in disambiguate(find_mentions((line,))):
+        a, b = norm_span(line, m.span)[1:]
+        spans.append((a, b))
+    chains: list[list[tuple[int, int]]] = []
+    for sp in spans:
+        if chains and (sp[0] == chains[-1][-1][1] or _rules().connectors.match(n.text[chains[-1][-1][1]:sp[0]])):
+            chains[-1].append(sp)
+        else:
+            chains.append([sp])
+    return tuple(tuple(c) for c in chains)
+
+
+def _chain_of(line: Line, nspan: tuple[int, int]) -> tuple[tuple[int, int], ...]:
+    return next((c for c in _chains(line) if nspan in c), (nspan,))
+
+
+def _clause(line: Line, nspan: tuple[int, int]) -> tuple[int, int]:
+    """Clause bounds in normalised coordinates; breaks inside a coordinated list do not count."""
+    n = _norm(line)
+    gaps = [(a[1], b[0]) for c in _chains(line) for a, b in zip(c, c[1:])]
+    lo, hi = 0, len(n.text)
+    for b in _rules().breaks.finditer(n.text):
+        if any(b.start() < ge and gs < b.end() for gs, ge in gaps):
+            continue
+        if b.end() <= nspan[0]:
+            lo = b.end()
+        elif b.start() >= nspan[1]:
+            hi = b.start()
+            break
+    return lo, hi
 
 
 def clause_span(line: Line, span: tuple[int, int]) -> tuple[int, int]:
     """Absolute span of the clause containing `span`, bounded by clause breaks from data."""
-    s, e = span[0] - line.start, span[1] - line.start
-    lo, hi = 0, len(line.text)
-    for b in _rules().breaks.finditer(line.text):
-        if b.end() <= s:
-            lo = b.end()
-        elif b.start() >= e:
-            hi = b.start()
-            break
-    return line.start + lo, line.start + hi
-
-
-def _cues(rx: re.Pattern, line: Line, lo: int, hi: int) -> list[tuple[int, int]]:
-    """Absolute spans of cue matches in [lo, hi) that do not sit inside a skill mention."""
-    own = _line_spans(line)
-    found = []
-    for m in rx.finditer(line.text, lo - line.start, hi - line.start):
-        a, b = line.start + m.start(), line.start + m.end()
-        if not any(a < oe and os < b for os, oe in own):
-            found.append((a, b))
-    return found
+    n = _norm(line)
+    _, a, b = norm_span(line, span)
+    lo, hi = _clause(line, (a, b))
+    start = n.to_orig[lo] if lo < len(n.to_orig) else len(line.text)
+    end = n.to_orig[hi - 1] + 1 if hi > 0 else 0
+    return line.start + start, line.start + max(end, start)
 
 
 def _qualify(mention: Mention, doc: DocKind) -> Mention:
     r = _rules()
-    lo, hi = clause_span(mention.line, mention.span)
+    n = _norm(mention.line)
+    nspan = norm_span(mention.line, mention.span)[1:]
+    chain = _chain_of(mention.line, nspan)
+    lo, hi = _clause(mention.line, nspan)
+    before = n.text[lo:chain[0][0]]
     status: Status = "affirmed"
-    if _cues(r.negation, mention.line, lo, mention.span[0]):
+    if r.neg_before.search(before):
         status = "negated"
-    elif _cues(r.hypothetical, mention.line, lo, mention.span[0]):
+    elif r.hyp_before.search(before):
         status = "hypothetical"
-    elif doc == "posting" and _cues(r.negation_after, mention.line, mention.span[1], hi):
-        status = "negated"
+    elif doc == "posting":
+        after = n.text[chain[-1][1]:hi]
+        if r.neg_after.match(after) and not r.not_required_then_pref.match(n.text[chain[-1][1]:]):
+            status = "negated"
     return dataclasses.replace(mention, status=status)
 
 
 def qualify(mention: Mention) -> Mention:
-    """Return the mention with status set from cues before it in the same clause.
+    """Return the mention with status set from cues bound to it in the same clause.
 
-    Posting rules apply, including the "not required" cues that follow the mention.
+    A negator or hypothetical cue applies only directly before the skill (or the first skill of
+    its coordinated list), separated by nothing but filler words. Posting rules apply,
+    including the "not required" cues that follow the skill.
     """
     return _qualify(mention, "posting")
 
@@ -337,24 +444,36 @@ _SECTION_IMPORTANCE: dict[str, Importance] = {
 
 
 def _importance_cue(mention: Mention) -> Importance | None:
-    """The one place a mention's inline importance cue is decided (R2.4 will rebind this).
+    """The one place a mention's inline importance cue is decided (R2.4).
 
-    Currently: the nearest required/preferred cue inside the mention's clause.
+    Grammatical binding only: a prefix label at the start of the clause, a postfix phrase right
+    after the last skill of its coordinated list, or a modal/"preferably" cue right before the
+    first skill. Only filler words may sit in the gap. "X is not required, but is a plus" is preferred.
     """
     r = _rules()
-    lo, hi = clause_span(mention.line, mention.span)
-    s, e = mention.span
-    best: tuple[int, Importance] | None = None
-    for rx, imp in ((r.required_cues, "required"), (r.preferred_cues, "preferred")):
-        for a, b in _cues(rx, mention.line, lo, hi):
-            gap = max(a - e, s - b, 0)
-            if best is None or gap < best[0]:
-                best = (gap, imp)
-    return best[1] if best else None
+    n = _norm(mention.line)
+    nspan = norm_span(mention.line, mention.span)[1:]
+    chain = _chain_of(mention.line, nspan)
+    lo, hi = _clause(mention.line, nspan)
+    after = n.text[chain[-1][1]:]
+    if r.not_required_then_pref.match(after):
+        return "preferred"
+    clause_after = n.text[chain[-1][1]:hi]
+    for imp in ("preferred", "required"):
+        if r.postfix[imp].match(clause_after):
+            return imp
+    before = n.text[lo:chain[0][0]]
+    for imp in ("preferred", "required"):
+        if r.modal_before[imp].search(before):
+            return imp
+    for imp in ("preferred", "required"):
+        if r.labels[imp].match(n.text[lo:hi]):
+            return imp
+    return None
 
 
 def importance(mention: Mention) -> Importance:
-    """Posting importance (R2.1): required/preferred only from a known required/preferred heading
+    """Posting importance (R2.1): required or preferred only from a known required/preferred heading
     or a bound cue; everything else is unscored. Excluded needs a known excluded heading."""
     base = _SECTION_IMPORTANCE.get(mention.line.section, "unscored")
     if base == "excluded":

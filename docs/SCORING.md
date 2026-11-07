@@ -19,53 +19,73 @@ R = required skills, P = preferred skills.
 
 ## The five stages
 
-All vocabulary is data: `data/match_rules.json` (headings, cue lists, clause breaks, bullet
-markers) and `data/keywords.json` (skills, aliases, optional per-skill fields). Code names no skill.
+All vocabulary is data: `data/match_rules.json` (headings, bullet markers, clause breaks, cue
+lists, fillers, connectors, heading-test thresholds) and `data/keywords.json` (skills, aliases,
+optional per-skill fields). Code names no skill.
 
-1. **Segment.** Text is split into lines (spans are absolute offsets) and typed sections:
-   required, preferred, responsibilities, skills, experience, excluded, unknown.
-   Structural heading test (thresholds in `data/match_rules.json` -> `heading_test`): a
-   non-bullet line is a heading when, after stripping leading emoji/symbols/`#`/`*`/`_`, it has
-   at most 6 words, does not end with `.`, `!` or `?`, is styled (ends with ":", Title Case,
-   ALL CAPS or in the vocabulary), and has context (the next non-blank line is a bullet, a
-   blank line follows, it ends with ":", or it is in the vocabulary). Extra safety: an
-   unknown line that mentions a skill and has no colon stays body text. Every heading ends
-   the previous section, including excluded ones; a heading outside the vocabulary opens an
-   `unknown` section. A plain Title Case or ALL CAPS line inside a list without blank lines
-   or bullets is body text (so a hard-wrapped "HOW TO APPLY" line is not detected).
-   Text before the first heading and headingless text are `unknown`. Bullets: `-`, `*`,
-   en/em dash, `>` followed by a space, or a bullet character (U+2022, U+00B7, U+25AA, U+25E6).
-2. **Find.** Every alias of every skill, longest alias first, no overlaps within a line
-   (ties go to the earlier skill in keywords.json). Word-bounded and case-folded; an all-caps
-   alias matched in exact case may take a trailing lowercase "s" ("PLCs").
-3. **Disambiguate.** Optional per-skill fields in keywords.json: `case_sensitive` (alias must
-   match case exactly), `needs_context` (one of these words must be in the same line),
-   `exclude_phrases` (drop a mention overlapping one of these phrases, e.g. "ml of").
-4. **Qualify.** A cue applies only inside the mention's clause (clause breaks: comma,
-   semicolon, sentence end, "but", "however", "except", "although", spaced dashes, "|"; "or"
-   and "and" are not breaks, a period inside "Y14.5" is not a break).
-   Cues before the mention: `negation` (no, not, without, never, lack of, ...) gives
-   *negated*; `hypothetical` (learn, learning, planning to, willingness to, ...) gives
-   *hypothetical*. "familiar with" is not a cue; "not familiar with" is. Hyphen compounds
-   such as "no-code" are not cues. A cue that sits inside another skill's mention ("Machine
-   Learning and FEA") is ignored. In postings only, `negation_after` ("not required", "not
-   needed", ...) after the mention in the same clause also negates. Mentions in excluded
-   posting sections are not qualified (they cannot create requirements anyway).
-5. **Decide.** Positive evidence only: importance is required or preferred only from a known
-   required/preferred heading or an inline cue (decided in one function, `_importance_cue`);
-   everything else is unscored and nothing inherits importance from a previous line or
-   section. Excluded needs a known excluded heading. In any non-excluded section an inline cue in the mention's
-   clause overrides it: `preferred_cues` (a plus, nice to have, preferred, ...) or
-   `required_cues` (required, must, mandatory, essential, ...); when both occur the nearer
-   one wins, required on a tie. Negated and hypothetical posting mentions appear in no
-   group. With several mentions of a skill the tier precedence is required > preferred >
-   unscored > excluded, and the evidence is the earliest mention in the winning tier. A
-   resume skill is *found* if any affirmed resume mention exists, in any section; its
-   evidence is the earliest one.
+1. **Segment.** Text is split into physical lines, joined into logical `Line`s, and grouped
+   into typed sections: required, preferred, responsibilities, skills, experience, excluded,
+   unknown. Spans are absolute offsets; `Line.text == source[start:end]` always.
+   - *Heading test* (thresholds in `heading_test`): a non-bullet line is a heading when, after
+     stripping leading emoji/symbols/`#`/`*`/`_`, it has at most 6 words, does not end with
+     `.`, `!` or `?`, is styled (ends with ":", Title Case, ALL CAPS, or in the vocabulary), and
+     has context (next non-blank line is a list item, a blank line follows, it ends with ":", or
+     it is in the vocabulary). The end of the text is not a blank line. A vocabulary match
+     satisfies the style and context rules. An unknown line that mentions a skill and has no
+     colon stays body text. Every heading ends the previous section, including excluded
+     ones; a heading outside the vocabulary opens an `unknown` section. Heading lines carry no
+     skill mentions.
+   - *Vocabulary lookup* strips leading symbols, case-folds, turns "&" into "and" and
+     hyphens into spaces. "About the job" and "About the role" are known headings of kind
+     `unknown` (the fixtures expect their text to be unscored, not excluded; see Known limits).
+   - *List items:* `-`, `*`, en/em dash, `>` followed by a space; bullet characters (U+2022,
+     U+00B7, U+25AA, U+25E6); numbered and lettered items ("1.", "2)", "a.", "b)"). They are
+     never headings and never wrap continuations.
+   - *Hard-wrap joining:* a physical line continues the previous body line when that line does
+     not end with `.` `:` `;` `!` `?`, and the line is not a list item or heading and starts
+     with a lower-case letter. A blank line or a heading breaks the join.
+2. **Find.** Every alias of every skill, longest alias first, no overlaps within a line (ties go
+   to the earlier skill in keywords.json). Word-bounded and case-folded. Whitespace runs,
+   including a hard-wrap newline, match as one space; the span is mapped back to the original
+   text, so a span may contain the newline. An all-caps alias in exact case may take a
+   trailing lowercase "s" ("PLCs"). Property test: for every mention,
+   `norm(source[start:end]) == norm(alias)` (or `+ "s"`), with `norm` = case fold + whitespace
+   collapse only.
+3. **Disambiguate.** Optional per-skill fields in keywords.json: `case_sensitive`,
+   `needs_context` (one of these words must be in the same line), `exclude_phrases`.
+4. **Qualify.** Negators (no, not, without, never, lack of, ...) and hypothetical cues (learn,
+   learning, planning to take, preparing for, studying for, willing to learn, ...) apply only
+   when they sit directly before the skill, or before the first skill of its coordinated list
+   ("X, Y or Z"), separated by nothing but `negation_fillers` ("prior", "experience with",
+   "used", "the", ...). So "No experience with FEA or CFD" negates both, while "without added
+   headcount by applying lean", "zero escapes with no rework using SPC" and "willing to travel
+   and have AutoCAD skills" negate nothing. In postings only, a `negation_after` cue ("not
+   required", "not needed", ...) negates when only `cue_fillers` sit between the skill (or
+   the last skill of its list) and the cue; "X is not required, but is a plus" is not negated
+   (and is preferred). Clause breaks (comma, semicolon, sentence end, "but", "however",
+   spaced dashes, ...) end a clause, except commas and connectors inside a coordinated list.
+   Mentions in excluded posting sections are not qualified.
+5. **Decide.** Positive evidence only: a posting skill is required or preferred only from a known
+   required/preferred heading or a bound cue; everything else is unscored and nothing inherits
+   importance from a previous line or section. Cue binding is grammatical (`_importance_cue`):
+   - prefix label at the start of the clause ("Preferred: X", "Required: X", "Nice to have: X",
+     "Bonus: X") binds every skill of the clause;
+   - postfix phrase right after the last skill of a list ("X (preferred)", "X is a plus",
+     "X and Y a plus", "X is required", "X is a must") binds the whole list; only `cue_fillers`
+     ("experience", "skills", "knowledge", "programming", "is", "are", "highly", ...) may sit
+     between;
+   - modal or preference prefix directly before the first skill: "must have X", "preferably X",
+     "ideally X";
+   - "Must be able to <verb> X", "as required" and "desired tolerances" bind nothing.
+   Negated and hypothetical posting mentions appear in no group. With several mentions of a skill
+   the precedence is required > preferred > unscored > excluded; the evidence is the earliest
+   mention in the winning tier. A resume skill is *found* if any affirmed resume mention exists
+   (résumés use negation and hypothetical rules but not `negation_after`); its evidence is the
+   earliest one.
 
 ## Attribution
 
-Each `SkillMatch` carries `posting_line` and `resume_line` (the line, capped at 200
+Each `SkillMatch` carries `posting_line` and `resume_line` (the line with whitespace collapsed, capped at 200
 characters around the match with an ellipsis where cut), the exact `posting_span` and
 `resume_span` of the matched text in the original input, and `section` (kind of the posting
 section holding the evidence). Output order follows keywords.json order within each group.
@@ -73,20 +93,28 @@ section holding the evidence). Output order follows keywords.json order within e
 ## Known limits
 
 - Regex matching only: no synonyms beyond the alias list, no sense of seniority or years.
-- Skills that are ordinary words need data fields to be safe; only a few have them. Skills
-  with several meanings, and an alias shared by two skills, resolve to the first skill in
-  keywords.json.
-- Heading vocabulary is finite. A real heading that is not in the vocabulary starts an
-  `unknown` section, so its skills are unscored; an unrecognised heading inside an excluded
-  section stays excluded. A line ending in ":" or in ALL CAPS is a heading even if it is
+- Skills that are ordinary words need data fields to be safe; only a few have them. An alias
+  shared by two skills resolves to the first skill in keywords.json.
+- The heading vocabulary is finite. A real heading that is not in the vocabulary and fails the
+  structural test stays body text of the previous section; if it passes, it opens an `unknown`
+  section (its skills are unscored). Hard-wrapped postings with no bullets or blank lines
+  lose headings that are not in the vocabulary ("HOW TO APPLY" is, "Our Culture" is not).
+  A line ending in ":" or in Title Case followed by a list is a heading even if it is
   really a sentence.
-- Clause breaks include commas, so "No experience with FEA, CFD" negates only the first
-  skill; "and" is not a break, so "Not familiar with PLC and fluent in SQL" negates both.
-  "Without X, ..." negates X. Cue lists are English-only.
+- "About the job" / "About the role" are vocabulary headings of kind `unknown`, so their text
+  is unscored. The design contract (R2.8.12) says excluded; four development fixtures expect
+  unscored, and the code follows the fixtures. A one-line data change in
+  `match_rules.json` flips it.
+- Cue lists and fillers are English-only and finite. A skill separated from a cue by a word
+  that is not a filler ("FEA coursework is not necessary") is neither negated nor bound.
 - A hypothetical cue such as "learn" also drops postings like "Opportunities to learn X".
+- "X or Y" alternatives count as separate skills; commas end a clause outside a coordinated
+  list ("No experience with FEA, CFD" negates both only because they form a list).
+- Hard-wrap joining needs the next line to start with a lower-case letter; wrapped lines that
+  start with an upper-case word (a product name) or a digit do not join, and an alias split
+  across them is missed.
 - Inline bullet characters in the middle of a line do not split the line.
 - A resume mention anywhere counts as having the skill, regardless of depth or recency.
-- "X or Y" alternatives count as separate skills.
 
 ## Evaluation status
 

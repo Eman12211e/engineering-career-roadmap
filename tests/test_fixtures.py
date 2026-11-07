@@ -12,8 +12,8 @@ ev = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ev)
 
 
-def test_there_are_38_fixtures():
-    assert len(FIXTURES) == 38
+def test_there_are_48_fixtures():
+    assert len(FIXTURES) == 48
 
 
 @pytest.mark.parametrize("path", FIXTURES, ids=lambda p: p.stem)

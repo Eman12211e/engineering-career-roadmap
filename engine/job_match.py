@@ -13,6 +13,7 @@ from engine.match_stages import (
     disambiguate,
     find_mentions,
     importance,
+    norm_span,
     segment,
     skill_order,
 )
@@ -51,7 +52,7 @@ def _check(text: str, name: str) -> None:
 
 def _snippet(m: Mention) -> str:
     """The mention's line, capped at 200 chars around the match, with ellipses where cut."""
-    text, s, e = m.line.text, m.span[0] - m.line.start, m.span[1] - m.line.start
+    text, s, e = norm_span(m.line, m.span)  # whitespace-collapsed, so a hard wrap reads as one line
     if len(text) <= _MAXLEN:
         return text
     w = _MAXLEN - 2
