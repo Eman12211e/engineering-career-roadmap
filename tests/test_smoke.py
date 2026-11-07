@@ -15,4 +15,6 @@ def test_app_runs_without_errors_or_deprecations(caplog):
     assert not at.exception
     assert not [x for x in w if issubclass(x.category, DeprecationWarning)]
     assert "deprecat" not in caplog.text.lower()
+    assert not [r for r in caplog.records if r.name == "streamlit.deprecation_util"]
+    assert not [r for r in caplog.records if "use_container_width" in r.getMessage()]
     assert not [x for x in at.warning if "deprecat" in str(x.value).lower()]
