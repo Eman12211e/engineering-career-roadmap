@@ -1,0 +1,77 @@
+{
+  "id": "full_indeed_dash",
+  "kind": "full",
+  "format": "indeed, colon headings, '-' bullets, pay header",
+  "note": "'a plus' lines are written one skill per line on purpose, so the result does not depend on whether 'and' is a clause break. 'No prior automotive experience required' mentions no skill. PLC is required via the Qualifications line; the 'PLCs' responsibility line does not change the sets.",
+  "posting_text": "Controls Engineer\nFull-time | $85,000 - $105,000 a year\nFull job description\nResponsibilities:\n- Program and troubleshoot Allen-Bradley PLCs and HMIs\n- Support robotic cells (FANUC) and vision systems\n- Lead root cause analysis on line downtime\nQualifications:\n- 2+ years with PLC programming (ladder logic)\n- Experience with SPC is a plus\n- Lean manufacturing a plus\n- No prior automotive experience required\nBenefits:\n- 401(k) with match\n- Health insurance",
+  "resume_text": "Jane Doe, Mechanical Engineer\nSkills: SolidWorks, ANSYS (FEA), GD&T, MATLAB, Python, Minitab\n- Designed injection molded housings, applying DFM\n- Ran root cause analysis (8D) and SPC on assembly line\n- Wrote ladder logic for Allen-Bradley PLC test stand\n- Supported ISO 9001 audits",
+  "expected": {
+    "required": [
+      "PLC Programming"
+    ],
+    "preferred": [
+      "Lean Manufacturing",
+      "Statistical Process Control"
+    ],
+    "unscored": [
+      "Industrial Robotics",
+      "Root Cause Analysis"
+    ],
+    "excluded": [],
+    "found": [
+      "PLC Programming",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "$85,000",
+      "section": "unknown"
+    },
+    {
+      "contains": "Allen-Bradley PLCs",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "FANUC",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "2+ years with PLC programming",
+      "section": "required"
+    },
+    {
+      "contains": "Experience with SPC is a plus",
+      "section": "required"
+    },
+    {
+      "contains": "No prior automotive",
+      "section": "required"
+    },
+    {
+      "contains": "401(k)",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Lean manufacturing a plus",
+      "canonical": "Lean Manufacturing",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Wrote ladder logic",
+      "canonical": "PLC Programming",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "PLC Programming",
+      "posting_line_contains": "2+ years with PLC programming"
+    }
+  ]
+}

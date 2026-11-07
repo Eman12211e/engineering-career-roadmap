@@ -1,0 +1,36 @@
+{
+  "id": "hyp_resume_learning",
+  "kind": "targeted",
+  "format": "hypothetical (resume)",
+  "note": "Assumes 'learning' and 'planning to' are hypothetical cues.",
+  "posting_text": "Requirements:\n- ROS\n- FE exam\n- Python",
+  "resume_text": "Currently learning ROS\nPlanning to take the FE exam\nUsed Python daily",
+  "expected": {
+    "required": [
+      "FE Exam",
+      "Python",
+      "ROS"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "Python"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "learning ROS",
+      "canonical": "ROS",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Planning to take",
+      "canonical": "FE Exam",
+      "status": "hypothetical"
+    }
+  ]
+}

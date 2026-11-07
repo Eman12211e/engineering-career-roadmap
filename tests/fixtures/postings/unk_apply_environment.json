@@ -1,0 +1,34 @@
+{
+  "id": "unk_apply_environment",
+  "kind": "targeted",
+  "format": "unknown headings",
+  "note": "ALL CAPS 'HOW TO APPLY' and 'Work Environment:' are unknown -> unscored.",
+  "posting_text": "Requirements:\n- FEA\nHOW TO APPLY\nApply via our SAP portal.\nWork Environment:\n- Shop floor with CNC machines and PLC-controlled lines",
+  "resume_text": "FEA",
+  "expected": {
+    "required": [
+      "Finite Element Analysis"
+    ],
+    "preferred": [],
+    "unscored": [
+      "CNC Machining",
+      "ERP Systems",
+      "PLC Programming"
+    ],
+    "excluded": [],
+    "found": [
+      "Finite Element Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "SAP portal",
+      "section": "unknown"
+    },
+    {
+      "contains": "Shop floor",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": []
+}

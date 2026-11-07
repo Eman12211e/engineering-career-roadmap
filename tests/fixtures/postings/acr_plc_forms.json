@@ -1,0 +1,34 @@
+{
+  "id": "acr_plc_forms",
+  "kind": "targeted",
+  "format": "acronyms",
+  "note": "PLC-based and lowercase 'plc programming' must match. The PLCs mention label is a judgement call: the contract has no plural rule; the sets do not depend on it.",
+  "posting_text": "Requirements:\n- PLC-based control design\n- Troubleshooting PLCs\n- plc programming",
+  "resume_text": "Programmed Allen-Bradley controllers",
+  "expected": {
+    "required": [
+      "PLC Programming"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "PLC Programming"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "PLC-based",
+      "canonical": "PLC Programming",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Troubleshooting PLCs",
+      "canonical": "PLC Programming",
+      "status": "affirmed"
+    }
+  ]
+}

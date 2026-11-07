@@ -1,0 +1,42 @@
+{
+  "id": "neg_posting_clause_breaks",
+  "kind": "targeted",
+  "format": "negation (posting)",
+  "note": "';' and ', but' end the negated clause, so SolidWorks and FEA stay required.",
+  "posting_text": "Requirements:\n- No relocation needed; SolidWorks required\n- No prior PLC experience necessary, but FEA is essential",
+  "resume_text": "SolidWorks, FEA",
+  "expected": {
+    "required": [
+      "Finite Element Analysis",
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "Finite Element Analysis",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "No relocation needed",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "No prior PLC",
+      "canonical": "PLC Programming",
+      "status": "negated"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "No prior PLC",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    }
+  ]
+}

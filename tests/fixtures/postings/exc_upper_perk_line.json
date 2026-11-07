@@ -1,0 +1,32 @@
+{
+  "id": "exc_upper_perk_line",
+  "kind": "targeted",
+  "format": "exclusion zones",
+  "note": "Coordinator ruling: inside an excluded section only a KNOWN heading ends it. 'MEDICAL DENTAL VISION' is an ALL CAPS candidate but not in the vocabulary, so BENEFITS continues and Python is excluded.",
+  "posting_text": "Requirements:\n- FEA\nBENEFITS\nMEDICAL DENTAL VISION\nPython lunch-and-learns",
+  "resume_text": "FEA",
+  "expected": {
+    "required": [
+      "Finite Element Analysis"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [
+      "Python"
+    ],
+    "found": [
+      "Finite Element Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "MEDICAL DENTAL VISION",
+      "section": "excluded"
+    },
+    {
+      "contains": "Python lunch-and-learns",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": []
+}

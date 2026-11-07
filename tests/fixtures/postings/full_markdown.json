@@ -1,0 +1,66 @@
+{
+  "id": "full_markdown",
+  "kind": "full",
+  "format": "markdown (## title, **bold** headings, '-' bullets)",
+  "note": "About Us and What We Offer are excluded. 'PFMEA' must not yield DFMEA via the FMEA alias (no word boundary); 'DFMEA' after the slash does. ISO 9001 and AS9100 sit under What You'll Do, so they are unscored.",
+  "posting_text": "## Quality Engineer II\n**About Us**\nWe manufacture aerospace brackets using SAP for planning.\n**What You'll Do**\n- Lead PFMEA/DFMEA and APQP activities\n- Maintain ISO 9001 and AS9100 compliance\n**Requirements**\n- GD&T and SPC\n- Root cause analysis (8D)\n**Preferred**\n- Six Sigma Green Belt\n- SQL or Minitab\n**What We Offer**\n- Python and MATLAB training budget\n- Tuition reimbursement",
+  "resume_text": "Jane Doe, Mechanical Engineer\nSkills: SolidWorks, ANSYS (FEA), GD&T, MATLAB, Python, Minitab\n- Designed injection molded housings, applying DFM\n- Ran root cause analysis (8D) and SPC on assembly line\n- Wrote ladder logic for Allen-Bradley PLC test stand\n- Supported ISO 9001 audits",
+  "expected": {
+    "required": [
+      "GD&T",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ],
+    "preferred": [
+      "Lean Six Sigma Green Belt",
+      "SQL"
+    ],
+    "unscored": [
+      "APQP",
+      "AS9100",
+      "DFMEA",
+      "ISO 9001"
+    ],
+    "excluded": [
+      "ERP Systems",
+      "MATLAB",
+      "Python"
+    ],
+    "found": [
+      "GD&T",
+      "ISO 9001",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "using SAP for planning",
+      "section": "excluded"
+    },
+    {
+      "contains": "PFMEA/DFMEA",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "GD&T and SPC",
+      "section": "required"
+    },
+    {
+      "contains": "Six Sigma Green Belt",
+      "section": "preferred"
+    },
+    {
+      "contains": "Python and MATLAB training",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Six Sigma Green Belt",
+      "canonical": "Lean Six Sigma Green Belt",
+      "status": "affirmed"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "acr_can_word",
+  "kind": "targeted",
+  "format": "acronyms",
+  "note": "The modal verb 'can' is not CAN Bus; 'CAN bus' is.",
+  "posting_text": "Requirements:\n- Candidates can travel 10%\n- Can-do attitude\n- CAN bus diagnostics",
+  "resume_text": "I can learn fast",
+  "expected": {
+    "required": [
+      "CAN Bus"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": []
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

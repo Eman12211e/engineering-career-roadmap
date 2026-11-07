@@ -1,0 +1,21 @@
+{
+  "id": "acr_rnd_csuite",
+  "kind": "targeted",
+  "format": "acronyms",
+  "note": "R&D and C-suite produce nothing; C/C++ is C++.",
+  "posting_text": "Requirements:\n- Support R&D and C-suite reporting\n- C/C++ firmware",
+  "resume_text": "C++ embedded developer",
+  "expected": {
+    "required": [
+      "C++"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "C++"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

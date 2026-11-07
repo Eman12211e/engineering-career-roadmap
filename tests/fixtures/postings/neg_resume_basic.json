@@ -1,0 +1,49 @@
+{
+  "id": "neg_resume_basic",
+  "kind": "targeted",
+  "format": "negation/hypothetical (resume)",
+  "note": "'No FEA experience' and 'Not familiar with CFD' are negated ('not' is the cue; 'familiar with' alone is not). 'Familiar with SolidWorks' is affirmed. 'Learning Python' is hypothetical.",
+  "posting_text": "Requirements:\n- FEA\n- CFD\n- SolidWorks\n- Python",
+  "resume_text": "No FEA experience\nNot familiar with CFD\nFamiliar with SolidWorks\nLearning Python",
+  "expected": {
+    "required": [
+      "CFD",
+      "Finite Element Analysis",
+      "Python",
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "No FEA experience",
+      "canonical": "Finite Element Analysis",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Not familiar with CFD",
+      "canonical": "CFD",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Familiar with SolidWorks",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Learning Python",
+      "canonical": "Python",
+      "status": "hypothetical"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "full_company_site_star",
+  "kind": "full",
+  "format": "company careers page, '*' bullets, mixed colon and plain headings",
+  "note": "'Why Join Us:' and 'Our Culture:' carry a colon so they are heading candidates; they are unknown kinds, so their skills are unscored (not excluded, not scored). Judgement call: if the vocabulary later maps these to excluded, move ERP Systems/Python/Machine Learning from unscored to excluded. Title line is pre-heading unknown.",
+  "posting_text": "Manufacturing Engineer – Composites\nWhy Join Us:\n* We're a fast-growing aerospace startup that runs on SAP and Python tooling.\nThe Role\n* Own the layup process for carbon fiber parts\n* Run DFMEA and drive root cause analysis\n* Apply lean manufacturing and SPC on the line\nRequirements\n* BS in ME or Materials\n* Experience with AS9100\n* GD&T\nBonus Points\n* CATIA or SolidWorks\n* Experience with injection molding\nOur Culture:\n* Weekly Machine Learning reading group",
+  "resume_text": "Jane Doe, Mechanical Engineer\nSkills: SolidWorks, ANSYS (FEA), GD&T, MATLAB, Python, Minitab\n- Designed injection molded housings, applying DFM\n- Ran root cause analysis (8D) and SPC on assembly line\n- Wrote ladder logic for Allen-Bradley PLC test stand\n- Supported ISO 9001 audits",
+  "expected": {
+    "required": [
+      "AS9100",
+      "GD&T"
+    ],
+    "preferred": [
+      "CATIA",
+      "Injection Molding",
+      "SolidWorks"
+    ],
+    "unscored": [
+      "Composites",
+      "DFMEA",
+      "ERP Systems",
+      "Lean Manufacturing",
+      "Machine Learning",
+      "Python",
+      "Root Cause Analysis",
+      "Statistical Process Control"
+    ],
+    "excluded": [],
+    "found": [
+      "GD&T",
+      "Python",
+      "Root Cause Analysis",
+      "SolidWorks",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "fast-growing aerospace startup",
+      "section": "unknown"
+    },
+    {
+      "contains": "layup process",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Experience with AS9100",
+      "section": "required"
+    },
+    {
+      "contains": "CATIA or SolidWorks",
+      "section": "preferred"
+    },
+    {
+      "contains": "Weekly Machine Learning",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "carbon fiber",
+      "canonical": "Composites",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Composites",
+      "posting_line_contains": "Manufacturing Engineer"
+    }
+  ]
+}

@@ -25,9 +25,12 @@ Each stage gets its own unit tests and its own numbers in the evaluation report.
    vocabulary in `data/match_rules.json`. A heading candidate is a non-bullet line that
    ends with ":", or uses `#` / `**` / ALL CAPS styling, or matches a known heading.
    Title Case alone never makes a heading. Text before the first heading, text under an
-   unrecognised heading, and headingless documents are `unknown`.
+   unrecognised heading, and headingless documents are `unknown`. Inside an `excluded`
+   section, only a *known* heading ends the section; an unrecognised heading candidate, such
+   as an ALL CAPS perk line, stays excluded.
 2. **Find.** Every alias of every skill, longest alias first, non-overlapping per line. Case
-   folding applies unless the skill sets `case_sensitive`.
+   folding applies unless the skill sets `case_sensitive`. Generic plural rule: an all-caps
+   alias matched case-exactly may take a trailing lowercase "s" ("PLCs").
 3. **Disambiguate.** One generic rule set, driven by optional per-skill fields in
    `data/keywords.json`:
    - `case_sensitive: bool`: the alias must match case exactly.
@@ -37,13 +40,16 @@ Each stage gets its own unit tests and its own numbers in the evaluation report.
    Python code never names an individual skill.
 4. **Qualify.** Cue lists live in `data/match_rules.json`: `negation`, `hypothetical`,
    `clause_breaks`. A cue applies only when it sits before the mention inside the same clause.
-   "familiar with" is not a negation cue.
+   The one exception is `negation_after` (e.g. "not required", "not needed"), which applies
+   after the mention within the same clause, and only in postings. "familiar with" is not a
+   negation cue; "not familiar with" is. "or" is not a clause break.
 5. **Decide.**
    - **Posting importance.** It starts from the section kind: `required` → required,
      `preferred` → preferred, `excluded` → excluded, everything else → unscored. In any
      section that isn't `excluded`, an inline cue in the mention's clause overrides it:
      `preferred_cues` → preferred, `required_cues` → required.
-   - **Negated or hypothetical posting mentions** don't create requirements.
+   - **Negated or hypothetical posting mentions** don't create requirements and appear in no
+     result group, not even `unscored`.
    - **Precedence when a skill appears more than once:** required > preferred > unscored >
      excluded. The representative evidence is the earliest mention, lowest `start`, within
      the winning tier.
@@ -77,8 +83,10 @@ MatchResult(required, preferred, score, unscored=(), excluded=())
 
 - **Development fixtures.** `tests/fixtures/postings/*.json` are written by the independent
   reviewer, not the implementer. Each has expected `required`, `preferred`, `unscored`,
-  `excluded` and `found` sets. Line labels (substring → section) and mention labels
-  (line substring + canonical → status) are optional.
+  `excluded` and `found` sets. Line labels (substring → section), mention labels
+  (line substring + canonical → status) and evidence labels (canonical → posting line
+  substring) are optional. The implementer may not edit fixture expectations; a disputed
+  fixture goes to the coordinator.
 - **Report.** `python scripts/evaluate_matching.py --fixtures tests/fixtures/postings` prints
   per-stage accuracy for sections, mention precision/recall, status and importance, plus
   document-level exact-set results.

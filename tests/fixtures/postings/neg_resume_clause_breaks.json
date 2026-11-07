@@ -1,0 +1,51 @@
+{
+  "id": "neg_resume_clause_breaks",
+  "kind": "targeted",
+  "format": "negation (resume)",
+  "note": "Clause breaks protect later skills. Judgement: 'zero' is not a negation cue ('zero defects using SPC').",
+  "posting_text": "Requirements:\n- FEA\n- SolidWorks\n- SPC\n- ANSYS",
+  "resume_text": "No experience with ANSYS, but strong FEA background\nNever missed a deadline; SolidWorks power user\nAchieved zero defects using SPC",
+  "expected": {
+    "required": [
+      "ANSYS",
+      "Finite Element Analysis",
+      "SolidWorks",
+      "Statistical Process Control"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "Finite Element Analysis",
+      "SolidWorks",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS",
+      "canonical": "ANSYS",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Never missed",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "zero defects",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    }
+  ]
+}

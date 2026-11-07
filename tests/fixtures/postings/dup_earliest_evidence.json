@@ -1,0 +1,32 @@
+{
+  "id": "dup_earliest_evidence",
+  "kind": "targeted",
+  "format": "duplicate skills",
+  "note": "Python twice in required -> evidence is the first line. SQL in required and preferred -> required, evidence 'Python and SQL'.",
+  "posting_text": "Requirements:\n- Python for test automation\n- Python and SQL\nNice to have:\n- SQL",
+  "resume_text": "SQL",
+  "expected": {
+    "required": [
+      "Python",
+      "SQL"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SQL"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [],
+  "evidence_labels": [
+    {
+      "canonical": "Python",
+      "posting_line_contains": "Python for test automation"
+    },
+    {
+      "canonical": "SQL",
+      "posting_line_contains": "Python and SQL"
+    }
+  ]
+}

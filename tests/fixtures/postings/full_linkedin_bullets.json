@@ -1,0 +1,69 @@
+{
+  "id": "full_linkedin_bullets",
+  "kind": "full",
+  "format": "linkedin with bullet characters",
+  "note": "'Life at Volt:' and 'How to Apply:' carry colons (heading candidates, unknown kind) -> unscored. MATLAB/Simulink is one longest alias -> MATLAB preferred. 'BMS team' -> Battery Management Systems unscored.",
+  "posting_text": "About the job\nOur Mission\nWe're electrifying trucks.\nResponsibilities\n• Design battery enclosures in Creo\n• Develop CAN bus test plans with the BMS team\n• Run thermal analysis and CFD\nQualifications\n• 5+ years in electric powertrain design\n• Knowledge of GD&T and tolerance stack-up\nPreferred Qualifications\n• MATLAB/Simulink\n• Experience with composites\nLife at Volt:\n• Monthly hackathons using Python and SQL\nHow to Apply:\n• Submit through our SAP SuccessFactors portal",
+  "resume_text": "Jane Doe, Mechanical Engineer\nSkills: SolidWorks, ANSYS (FEA), GD&T, MATLAB, Python, Minitab\n- Designed injection molded housings, applying DFM\n- Ran root cause analysis (8D) and SPC on assembly line\n- Wrote ladder logic for Allen-Bradley PLC test stand\n- Supported ISO 9001 audits",
+  "expected": {
+    "required": [
+      "Electric Powertrain",
+      "GD&T",
+      "Tolerance Stack-Up"
+    ],
+    "preferred": [
+      "Composites",
+      "MATLAB"
+    ],
+    "unscored": [
+      "Battery Management Systems",
+      "CAN Bus",
+      "CFD",
+      "Creo",
+      "ERP Systems",
+      "Python",
+      "SQL",
+      "Thermal Analysis"
+    ],
+    "excluded": [],
+    "found": [
+      "GD&T",
+      "MATLAB",
+      "Python"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "electrifying trucks",
+      "section": "unknown"
+    },
+    {
+      "contains": "battery enclosures",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "electric powertrain design",
+      "section": "required"
+    },
+    {
+      "contains": "MATLAB/Simulink",
+      "section": "preferred"
+    },
+    {
+      "contains": "Monthly hackathons",
+      "section": "unknown"
+    },
+    {
+      "contains": "SuccessFactors",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "MATLAB/Simulink",
+      "canonical": "MATLAB",
+      "status": "affirmed"
+    }
+  ]
+}

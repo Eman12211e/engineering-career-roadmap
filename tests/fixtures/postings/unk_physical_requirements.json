@@ -1,0 +1,28 @@
+{
+  "id": "unk_physical_requirements",
+  "kind": "targeted",
+  "format": "unknown headings",
+  "note": "Judgement call: 'Physical Requirements' must NOT map to required just because it contains 'Requirements'. The line avoids 'must' so no inline required cue applies.",
+  "posting_text": "Requirements:\n- GD&T\nPhysical Requirements:\n- Long periods at a CAD station running Creo",
+  "resume_text": "GD&T",
+  "expected": {
+    "required": [
+      "GD&T"
+    ],
+    "preferred": [],
+    "unscored": [
+      "Creo"
+    ],
+    "excluded": [],
+    "found": [
+      "GD&T"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "CAD station running Creo",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": []
+}

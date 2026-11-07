@@ -1,0 +1,106 @@
+{
+  "id": "full_linkedin_lost_bullets",
+  "kind": "full",
+  "format": "linkedin copy-paste, bullet markers lost, plain Title Case headings",
+  "note": "Headings are plain known labels (What You'll Do / What We're Looking For / Nice to Have / Benefits). Title Case items ('Strong Communication Skills', 'Team Player', 'Unlimited PTO') are NOT headings: Title Case alone never makes a heading. Responsibilities are unscored per contract. MATLAB is in keywords.json and sits only in Benefits, so it is excluded and not in found.",
+  "posting_text": "About the job\nAcme Robotics is hiring a Mechanical Design Engineer in Austin, TX.\nWhat You'll Do\nDesign sheet metal and machined parts in SolidWorks\nPerform FEA and tolerance stack-up analysis\nCreate drawings with GD&T per ASME Y14.5\nWhat We're Looking For\nBS in Mechanical Engineering\nProficiency with SolidWorks or Creo\nStrong Communication Skills\nNice to Have\nTeam Player\nExperience with CFD or thermal analysis\nPython scripting\nBenefits\nMedical, Dental, Vision\nUnlimited PTO\nAnnual Learning Stipend for MATLAB Courses\nAcme is an Equal Opportunity Employer.",
+  "resume_text": "Jane Doe, Mechanical Engineer\nSkills: SolidWorks, ANSYS (FEA), GD&T, MATLAB, Python, Minitab\n- Designed injection molded housings, applying DFM\n- Ran root cause analysis (8D) and SPC on assembly line\n- Wrote ladder logic for Allen-Bradley PLC test stand\n- Supported ISO 9001 audits",
+  "expected": {
+    "required": [
+      "Creo",
+      "SolidWorks"
+    ],
+    "preferred": [
+      "CFD",
+      "Python",
+      "Thermal Analysis"
+    ],
+    "unscored": [
+      "Finite Element Analysis",
+      "GD&T",
+      "Sheet Metal Design",
+      "Tolerance Stack-Up"
+    ],
+    "excluded": [
+      "MATLAB"
+    ],
+    "found": [
+      "Finite Element Analysis",
+      "GD&T",
+      "Python",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Acme Robotics is hiring",
+      "section": "unknown"
+    },
+    {
+      "contains": "Design sheet metal",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Create drawings with GD&T",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Proficiency with SolidWorks or Creo",
+      "section": "required"
+    },
+    {
+      "contains": "Strong Communication Skills",
+      "section": "required"
+    },
+    {
+      "contains": "Team Player",
+      "section": "preferred"
+    },
+    {
+      "contains": "Experience with CFD",
+      "section": "preferred"
+    },
+    {
+      "contains": "Python scripting",
+      "section": "preferred"
+    },
+    {
+      "contains": "Unlimited PTO",
+      "section": "excluded"
+    },
+    {
+      "contains": "Annual Learning Stipend",
+      "section": "excluded"
+    },
+    {
+      "contains": "Equal Opportunity Employer",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Proficiency with SolidWorks or Creo",
+      "canonical": "Creo",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Python scripting",
+      "canonical": "Python",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Skills: SolidWorks",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "Proficiency with SolidWorks or Creo"
+    }
+  ]
+}

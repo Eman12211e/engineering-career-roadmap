@@ -1,0 +1,25 @@
+{
+  "id": "email_with_cues",
+  "kind": "targeted",
+  "format": "headingless email",
+  "note": "Inline cues in a headingless email: 'is required' -> required, 'a plus' -> preferred, rest unscored.",
+  "posting_text": "Hi Jane,\nWe use SolidWorks daily. GD&T knowledge is required. Python is a plus.\nThanks!",
+  "resume_text": "GD&T",
+  "expected": {
+    "required": [
+      "GD&T"
+    ],
+    "preferred": [
+      "Python"
+    ],
+    "unscored": [
+      "SolidWorks"
+    ],
+    "excluded": [],
+    "found": [
+      "GD&T"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}
