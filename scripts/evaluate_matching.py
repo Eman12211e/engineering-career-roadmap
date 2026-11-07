@@ -72,23 +72,25 @@ def _is_disputed(disputed, fid: str, label: dict, kind: str) -> dict | None:
 
 
 def _resolve(lab: dict, cands: list):
-    """(mention, None) when the label names exactly one candidate on its line, else (None, error text)."""
+    """(mentions the label claims, None) or ([], error text).
+
+    An indexed label (occurrence / span_text / span) claims exactly one mention; an un-indexed label
+    claims every mention of its canonical on the line and asserts the status for all of them.
+    """
     name = f"{lab['canonical']} in {lab['line_contains'][:30]!r}"
     if not cands:
-        return None, f"missing mention: {name}"
+        return [], f"missing mention: {name}"
     if "occurrence" in lab:  # 1-based among this canonical's mentions on the line, in text order
         i = lab["occurrence"]
-        return (cands[i - 1], None) if 1 <= i <= len(cands) else (None, f"missing mention: {name} occurrence {i} of {len(cands)}")
+        return ([cands[i - 1]], None) if 1 <= i <= len(cands) else ([], f"missing mention: {name} occurrence {i} of {len(cands)}")
     if "span_text" in lab or "span" in lab:
         want = lab.get("span_text")
         hits = [m for m in cands if (m.line.text[m.span[0] - m.line.start:m.span[1] - m.line.start] == want if want is not None
                                      else list(m.span) == list(lab["span"]))]
         if len(hits) != 1:
-            return None, f"{'ambiguous' if hits else 'missing mention'}: {name} span {want or lab['span']}"
-        return hits[0], None
-    if len(cands) > 1:
-        return None, f"ambiguous label: {name} has {len(cands)} mentions, add occurrence or span_text"
-    return cands[0], None
+            return [], f"{'ambiguous span' if hits else 'missing mention'}: {name} span {want or lab['span']}"
+        return hits, None
+    return cands, None
 
 
 def check_fixture(fx: dict, disputed=None) -> dict:
@@ -130,12 +132,16 @@ def check_fixture(fx: dict, disputed=None) -> dict:
         ln = _find_line(post if doc == "posting" else resume, doc, lab["line_contains"])
         cands = [m for m in disambiguate(find_mentions((ln,))) if m.canonical == lab["canonical"]] if ln else []
         tag = f"{lab['canonical']} in {lab['line_contains'][:30]!r}"
-        pick, err = _resolve(lab, cands)
-        pred = "absent" if err else _qualify(pick, doc).status
+        picks, err = _resolve(lab, cands)
+        preds = [_qualify(m, doc).status for m in picks]
+        bad = next((i for i, x in enumerate(preds) if x != lab["status"]), None)
+        pred = "absent" if err else preds[bad if bad is not None else 0]
         if ln:
             labelled[(doc, ln.start)] = ln
-        if pick is not None and claimed.setdefault((doc, pick.span), lab) is not lab:
+        if any(claimed.setdefault((doc, m.span), lab) is not lab for m in picks):
             pred, err = "duplicate", f"duplicate label for {tag}: resolves to a mention another label already claimed"
+        elif bad is not None and len(cands) > 1:
+            err = f"status of {tag} occurrence {cands.index(picks[bad]) + 1} of {len(cands)}: got {pred} expected {lab['status']}"
         key = {k: lab[k] for k in ("doc", "line_contains", "canonical", "status")}
         rec = _is_disputed(disputed, fx["id"], key, "mention_label")
         if rec:

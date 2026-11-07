@@ -165,15 +165,15 @@ Development and regression fixtures (written by the independent reviewer, not tu
 
 | Folder | Fixtures | Exact-set pass |
 |---|---|---|
-| `postings` | 48 | 43 |
-| `regression_r6` | 14 | 10 |
-| total | 62 | 53 |
+| `postings` | 48 | 48 |
+| `regression_r6` | 14 | 14 |
+| total | 62 | 62 |
 
 Per-stage metrics over all fixtures:
 
 - stage 1 section accuracy: 1.00 (200/200)
 - stage 2-3 mention precision 1.00 (377/377), recall 1.00 (377/377)
-- stage 4 status accuracy: 0.93 (123/132)
+- stage 4 status accuracy: 1.00 (132/132)
 - stage 5 importance accuracy: 1.00 (368/368)
 
 Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 2

@@ -38,10 +38,20 @@ def test_duplicate_labels_reported():
     assert any(f.startswith("duplicate label") for f in r["fails"])
 
 
-def test_ambiguous_label_without_occurrence():
-    r = check(mention_labels=[lab("negated")])
+def test_unindexed_label_asserts_every_occurrence():
+    r = check(mention_labels=[lab("negated")])  # occurrence 2 is hypothetical
     assert r["status"] == [False]
-    assert any(f.startswith("ambiguous label") for f in r["fails"])
+    assert any("occurrence 2 of 2" in f and "got hypothetical" in f for f in r["fails"])
+    assert check(mention_labels=[lab("negated", occurrence=1)])["status"] == [True]
+    both = check(mention_labels=[lab("negated")], resume_text="Skills\nNo CFD experience; no CFD training\n")
+    assert both["status"] == [True]
+    one = check(mention_labels=[lab("negated")], resume_text="Skills\nNo CFD experience\n")
+    assert one["status"] == [True]
+
+
+def test_indexed_and_unindexed_label_on_same_mention_is_duplicate():
+    r = check(mention_labels=[lab("negated", occurrence=1), lab("negated")])
+    assert any(f.startswith("duplicate label") for f in r["fails"])
 
 
 def test_missing_mention():
