@@ -18,39 +18,55 @@ R = required skills, P = preferred skills. Weights 0.8 / 0.2.
 Skills come from `data/keywords.json` (canonical name plus aliases), matched with
 the regexes in `engine/keyword_extractor.py`.
 
-Posting sections: headings such as Requirements / Required / Qualifications /
-Must have mark required lines; Preferred / Nice to have / Bonus / Plus mark
-preferred lines. A heading may carry text after a colon ("Requirements: SolidWorks").
-Other headings (Responsibilities, Benefits, About...) end a section, and their
-lines are ignored when the posting has any requirement/preferred section. A
-posting with no such sections treats every recognized skill as required. A skill
-in both groups counts once, as required.
+Posting sections: only Preferred / Nice to have / Bonus (points) / Plus sections
+are preferred. Every other line is required: intro, Responsibilities, Skills,
+About you, Requirements, and unknown headings. Lines under clearly non-skill
+sections (Benefits, Perks, Compensation, Salary, About us, About the company,
+Equal opportunity) are dropped. A heading may carry text after a colon
+("Requirements: SolidWorks"), and an inline "Preferred:" / "Nice to have:" label
+mid-line starts a preferred segment ("Required: X. Preferred: Y."). A line that
+starts with a bullet marker is never a heading. Heading lines are not
+attributed to skills. A skill in both groups counts once, as required.
 
 Attribution: each `SkillMatch` carries `posting_line`, the first posting line in
 its group that mentions the skill, and (if found) `resume_line`, the first resume
-line that mentions it. Lines are split on newlines and bullet characters. Output
-order follows `keywords.json` order, so it is deterministic.
+line that mentions it. Lines are split on newlines and bullet characters and
+capped at about 200 characters, centred on the match, with an ellipsis where
+cut. Output order follows `keywords.json` order, so it is deterministic.
 
 ## Matching rules
 
-- Aliases match case-insensitively on word boundaries ("Solid Works" matches
-  SolidWorks; "FEA" does not match "features").
-- Short all-caps acronyms (3 letters or fewer, e.g. CAN, PLC, R, C) match
-  case-sensitively and not when attached to `&`, `/`, `+`, `#`, `-`, `.` or word
-  characters ("can", "R&D", "C-suite" do not match).
+- Aliases use the shared extractor's regexes: case-insensitive, word
+  boundaries ("Solid Works" matches SolidWorks; "FEA" does not match
+  "features"). `/` and `-` separators work ("FEA/CFD", "PLC-based"). All-caps
+  aliases also match a plural ("PLCs").
+- Ambiguous aliases (explicit set: `CAN`, `R`, `C`) match case-sensitively and
+  not when attached to `& / + # - .` or word characters ("can", "R&D",
+  "C-suite", "C/C++" do not match). The shipped keywords.json currently has no
+  bare R, C or CAN alias.
 - "excel at / excel in" does not match the Excel skill.
-- Negation: a mention preceded within 6 words (same sentence) by no / not /
-  without / never / none / lack(ing) / zero, or followed by "not required /
-  needed / necessary", is ignored. "No FEA experience required" is not a
-  requirement; a resume saying "no experience with X" does not show X.
+
+Negation:
+- Posting: a mention is not a requirement if a negator (no, not, without,
+  never, "don't need") is within 3 words before the skill with no comma,
+  semicolon, sentence end, "but" or "and" between; hyphen compounds such as
+  "no-code" are not negators. It is also negated if "not required / needed /
+  necessary" follows within the same clause, up to 3 words later. "No prior PLC
+  experience necessary but SolidWorks required" keeps only SolidWorks.
+- Resume: only the literal phrases "no experience with X / in X" and "not
+  familiar with X" negate. Anything else counts as having the skill, because a
+  false "missing" is worse than a rare false "found" ("zero defects using FEA",
+  "Not only PLC but also SolidWorks" are found).
 
 ## Known limits
 
 - Regex matching only: no synonyms beyond the alias list, no sense of context,
   seniority or years of experience.
 - Negation is a short-window heuristic. It can miss long-range or unusual
-  negations ("FEA: none") and can wrongly suppress ("not only SolidWorks").
-- Postings with unusual headings are treated as unsectioned or lose lines.
+  negations ("FEA: none"), and a resume saying "no FEA experience" still counts
+  as having FEA.
+- Lines under an unrecognised heading are treated as required, so skills listed
+  in company boilerplate may be counted.
 - A mention anywhere on a resume counts as having the skill, regardless of depth.
 
 ## Evaluation status

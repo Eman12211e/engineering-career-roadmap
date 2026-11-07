@@ -142,3 +142,71 @@ def test_eval_script_synthetic_pair(tmp_path):
     assert "tune (n=1" in p.stdout and "holdout (n=0" in p.stdout
     assert "precision 0.50" in p.stdout and "recall 1.00" in p.stdout
     assert "SecretResumeWord" not in p.stdout
+
+
+# ---- review fixes: real keywords, sections, negation, snippets ----
+def req(posting, resume="x"):
+    return names(match_posting(posting, resume).required)
+
+
+def test_real_acronyms_with_separators_case_and_plurals():
+    assert set(req("FEA/CFD experience; PLC/HMI programming; SQL/Python")) == {
+        "Finite Element Analysis", "CFD", "PLC Programming", "Python", "SQL"}
+    assert set(req("plc, fea, cfd, sql")) == {"Finite Element Analysis", "CFD", "PLC Programming", "SQL"}
+    assert req("PLC-based control systems") == ["PLC Programming"]
+    assert req("Experience programming PLCs") == ["PLC Programming"]
+    assert req("Strong sql skills; Sql Server") == ["SQL"]
+    r = match_posting("PLC and SQL", "plc and sql databases, fea")
+    assert all(m.found for m in r.required)
+
+
+def test_unlabeled_and_unknown_sections_are_required():
+    p = ("About us\nWe build robots.\nResponsibilities\n- Design parts in SolidWorks\n- Run FEA on brackets\n"
+         "- Program PLC logic\nRequirements\n- BS in Mechanical Engineering\n- 3+ years experience")
+    assert set(req(p)) == {"SolidWorks", "Finite Element Analysis", "PLC Programming"}
+
+
+def test_skills_then_preferred():
+    r = match_posting("Skills\n- SolidWorks\n- FEA\nPreferred\n- PLC", "x")
+    assert len(r.required) == 2 and names(r.preferred) == ["PLC Programming"]
+
+
+def test_about_you_is_kept_benefits_dropped():
+    assert set(req("Requirements\n- SolidWorks\nAbout you\n- FEA expert")) == {"SolidWorks", "Finite Element Analysis"}
+    assert req("Benefits\n- Free Python lessons\nRequirements\n- SolidWorks") == ["SolidWorks"]
+
+
+def test_negation_scope():
+    r = match_posting("No prior PLC experience necessary but SolidWorks required", "x")
+    assert names(r.required) == ["SolidWorks"]
+    assert req("PLC experience not required") == []
+
+
+@pytest.mark.parametrize("resume", ["Achieved zero defects using FEA and SolidWorks",
+                                    "Tools: no-code automation, SolidWorks", "Not only PLC but also SolidWorks"])
+def test_resume_negation_is_narrow(resume):
+    r = match_posting("SolidWorks, FEA, PLC", resume)
+    got = {m.skill: m.found for m in r.required}
+    assert got["SolidWorks"]
+    if "FEA" in resume:
+        assert got["Finite Element Analysis"]
+    if "PLC" in resume:
+        assert got["PLC Programming"]
+
+
+def test_resume_not_familiar():
+    assert not match_posting("PLC", "Not familiar with PLC").required[0].found
+
+
+def test_inline_preferred_and_bullet_plus():
+    r = match_posting("Required: SolidWorks. Preferred: Python", "x")
+    assert names(r.required) == ["SolidWorks"] and names(r.preferred) == ["Python"]
+    assert req("Requirements\n- Plus\n- SolidWorks") == ["SolidWorks"]
+    assert names(match_posting("Bonus points\n- Python", "x").preferred) == ["Python"]
+
+
+def test_long_line_is_capped_around_match():
+    line = "word " * 100 + "SolidWorks " + "word " * 100
+    m = match_posting(line, line).required[0]
+    assert len(m.posting_line) <= 202 and "SolidWorks" in m.posting_line
+    assert m.posting_line.startswith("…") and m.posting_line.endswith("…")
