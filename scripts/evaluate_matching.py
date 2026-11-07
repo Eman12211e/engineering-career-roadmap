@@ -6,7 +6,7 @@
       provisional 0.85 gate), 0 PASS. Holdout results are aggregate only.
   python scripts/evaluate_matching.py --fixtures tests/fixtures/postings tests/fixtures/regression_r6
       Per-stage report on the reviewer-written fixtures (exit 0, report only). Labels listed in
-      tests/fixtures/DISPUTED.json (and tests/R3_CONFLICTS.json) are reported separately.
+      tests/fixtures/DISPUTED.json are reported separately.
   python scripts/evaluate_matching.py --update-docs
       Rewrite the generated evaluation section of docs/SCORING.md from a run over both folders.
 
@@ -25,7 +25,7 @@ from engine.match_stages import _qualify, disambiguate, find_mentions, segment  
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURE_DIRS = (ROOT / "tests" / "fixtures" / "postings", ROOT / "tests" / "fixtures" / "regression_r6")
-DISPUTE_FILES = (ROOT / "tests" / "fixtures" / "DISPUTED.json", ROOT / "tests" / "R3_CONFLICTS.json")
+DISPUTE_FILES = (ROOT / "tests" / "fixtures" / "DISPUTED.json",)
 DOC = ROOT / "docs" / "SCORING.md"
 MARK_START, MARK_END = "<!-- eval:start -->", "<!-- eval:end -->"
 GATE = 0.85

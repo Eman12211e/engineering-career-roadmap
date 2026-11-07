@@ -154,7 +154,7 @@ Per-stage metrics over all fixtures:
 
 Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 2
 
-- `r5_linkedin_bonus_if` {"kind": "mention_label", "doc": "posting", "line_contains": "Learning stipend for MATLAB", "canonical": "MATLAB", "status": "affirmed"}: engine now {"status": "hypothetical"}, alternative {"status": "hypothetical"}; R3.1.2: the cue 'learning' opens a scope that runs across ordinary words, so MATLAB in 'Learning stipend for MATLAB courses' is hypothetical. The line sits in an excluded section, so no result set changes.
+- `r5_linkedin_bonus_if` {"kind": "mention_label", "doc": "posting", "line_contains": "Learning stipend for MATLAB", "canonical": "MATLAB", "status": "affirmed"}: engine now {"status": "hypothetical"}, alternative {"status": "hypothetical"}; Labelled under R2. Read literally, R3.1.2 makes 'Learning' open a hypothetical scope, so MATLAB is hypothetical. The line is in an excluded (benefits) section, so no result set or score changes. Coordinator-recorded; the owner decides any relabel.
 - `u6_linkedin_lost_bullets` {"kind": "line_label", "contains": "Northfield Robotics is hiring", "section": "excluded"}: engine now {"section": "unknown"}, alternative {"section": "unknown"}; Sealed under R2.8.12 (About the job = excluded). R2.8.17, committed after the seal, makes About the job a known heading of kind unknown. The line has no skills, so neither the score nor the found set changes.
 
 These are fixture results, not an accuracy estimate on unseen postings.
