@@ -252,3 +252,15 @@ There is no fourth session. Whatever fails after session 3 goes to the owner.
    an unrecognised line that mentions a skill and has no trailing colon is body text, not a
    heading. This keeps a résumé line such as "SQL, PYTHON" from becoming a heading. A known
    vocabulary heading is unaffected.
+8. **Numbered and lettered items.** "1.", "1)" and "a." / "a)" at line start are list items.
+   They are never heading candidates or wrap continuations.
+9. **`cue_fillers` is open-ended data.** It holds words that describe the skill rather than
+   assert something new: "experience", "skills", "knowledge", "proficiency", "programming",
+   "design", "development", "is", "are", "highly", "strongly". It never holds verbs of
+   ability or duty.
+10. **No ability phrases.** "Must be able to <verb> X" binds nothing; only "must have X" and
+    "X is a must" are modal cues. The skill falls back to unscored, which is the safe
+    direction.
+11. **Order of the two heading rules.** R2.8.7 is applied first. R2.8.4 (mentions in heading
+    lines are ignored) applies only to lines that end up as headings.
+12. **Excluded vocabulary also covers** "About the job" and "About the role".

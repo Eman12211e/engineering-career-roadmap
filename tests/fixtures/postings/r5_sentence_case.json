@@ -1,0 +1,84 @@
+{
+  "id": "r5_sentence_case",
+  "kind": "regression",
+  "format": "Sentence-case headings without colons ('Minimum qualifications', 'Preferred qualifications'), an unlisted 'About the job' heading mid-posting, EEO sentence at the end",
+  "note": "Same as review 5. REQUIRES a vocabulary row 'about the job' with a non-scored kind (NOT present at ccc9e91) (unknown or responsibilities). Under R2.2 alone, 'About the job' is Sentence case, has no colon, is not ALL CAPS, and is not followed by a blank line or list, so it is not a heading. The Creo line would then stay in the preferred section and Creo would be invented as preferred. 'Mechanical Engineer, Consumer Hardware' is Title Case followed by a blank line: an unknown heading with no skills. Tolerance Stack-Up evidence is the required line, not the later responsibilities line. Score 100*(0.8*2/3+0.2*2/5)=61.33. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "Mechanical Engineer, Consumer Hardware\n\nMinimum qualifications\nBachelor's degree in Mechanical Engineering or equivalent practical experience.\n4 years of experience in product design for high-volume injection molding.\nExperience with tolerance analysis and GD&T.\n\nPreferred qualifications\nMaster's degree in Mechanical Engineering.\nExperience with structural analysis or FEA using ANSYS.\nExperience with DFM for consumer electronics and sheet metal.\n\nAbout the job\nOur hardware team designs devices used by millions of people. You will work in Creo and collaborate with suppliers in Asia.\n\nResponsibilities\nDesign plastic and metal parts and drive them through EVT, DVT and PVT builds.\nRun tolerance stack-up studies and lead DFMEA reviews.\n\nWe are proud to be an equal opportunity workplace and an affirmative action employer.\n",
+  "resume_text": "JORDAN LEE\nAustin, TX | jordan.lee@email.com | (512) 555-0147\n\nEDUCATION\nB.S. Mechanical Engineering, Texas A&M University, 2019\n\nEXPERIENCE\nMechanical Design Engineer, Lonestar Automation - Austin, TX (2020-Present)\n• Designed sheet metal enclosures and machined fixtures in SolidWorks for robotic cells\n• Performed tolerance stack-up analysis and applied GD&T per ASME Y14.5 on 40+ drawings\n• Ran FEA in SolidWorks Simulation to validate brackets; cut part weight 18%\n• Wrote Python scripts to parse test data\n\nEngineering Intern, Brazos Pumps (Summer 2018)\n• Supported root cause analysis on pump seal failures using 5 Whys\n\nSKILLS\nCAD: SolidWorks, Creo (basic), AutoCAD\nAnalysis: FEA, MATLAB\nCurrently learning CATIA V5\n",
+  "expected": {
+    "required": [
+      "GD&T",
+      "Injection Molding",
+      "Tolerance Stack-Up"
+    ],
+    "preferred": [
+      "ANSYS",
+      "DFM/DFA",
+      "Finite Element Analysis",
+      "Sheet Metal Design",
+      "Structural Analysis"
+    ],
+    "unscored": [
+      "Creo",
+      "DFMEA"
+    ],
+    "excluded": [],
+    "found": [
+      "Creo",
+      "Finite Element Analysis",
+      "GD&T",
+      "Sheet Metal Design",
+      "Tolerance Stack-Up"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "high-volume injection molding",
+      "section": "required"
+    },
+    {
+      "contains": "Experience with DFM",
+      "section": "preferred"
+    },
+    {
+      "contains": "You will work in Creo",
+      "section": "unknown"
+    },
+    {
+      "contains": "Run tolerance stack-up",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "equal opportunity workplace",
+      "section": "responsibilities"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "You will work in Creo",
+      "canonical": "Creo",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "structural analysis or FEA",
+      "canonical": "ANSYS",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Tolerance Stack-Up",
+      "posting_line_contains": "Experience with tolerance analysis"
+    },
+    {
+      "canonical": "Creo",
+      "posting_line_contains": "You will work in Creo"
+    },
+    {
+      "canonical": "DFMEA",
+      "posting_line_contains": "lead DFMEA reviews"
+    }
+  ]
+}

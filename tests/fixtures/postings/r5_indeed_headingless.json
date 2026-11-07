@@ -1,0 +1,52 @@
+{
+  "id": "r5_indeed_headingless",
+  "kind": "regression",
+  "format": "short headingless Indeed blurb, one physical line, inline cues",
+  "note": "DIFFERS from review 5: GD&T moves from required to unscored. R2.4 binds a modal only as 'must have X' or 'X is a must'. 'Must be able to read blueprints and GD&T' is neither, and R2.1 needs positive evidence. CNC Machining is preferred through the postfix 'G-code programming experience preferred'. This needs 'programming' in cue_fillers (R2.8.6 says the R2.4 list is a minimum; cue_fillers is not in match_rules.json at ccc9e91) (see the ambiguity note). Mastercam is not a skill. 'Forklift certification a plus' has no skill. Score: preferred only, 1/1 = 100. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "CNC Machinist / Programmer - 2nd shift. $26-$32/hr. Looking for an experienced machinist to set up and run Haas and Mazak CNC mills. Must be able to read blueprints and GD&T. Mastercam or G-code programming experience preferred. Forklift certification a plus. Weekly pay, health, dental, 401k.",
+  "resume_text": "Tony Russo\nCNC Machinist - 9 years\nSet up and ran Haas VF-2 and Mazak mills; wrote G-code by hand and in Mastercam.\nRead blueprints with GD&T callouts. Forklift certified.\n",
+  "expected": {
+    "required": [],
+    "preferred": [
+      "CNC Machining"
+    ],
+    "unscored": [
+      "GD&T"
+    ],
+    "excluded": [],
+    "found": [
+      "CNC Machining",
+      "GD&T"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Looking for an experienced machinist",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Must be able to read blueprints",
+      "canonical": "GD&T",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "wrote G-code by hand",
+      "canonical": "CNC Machining",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "CNC Machining",
+      "posting_line_contains": "Mastercam or G-code programming experience preferred"
+    },
+    {
+      "canonical": "GD&T",
+      "posting_line_contains": "read blueprints and GD&T"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "id": "r5_staffing_agency",
+  "kind": "regression",
+  "format": "staffing agency: 'JOB TITLE:/LOCATION:/PAY RATE:' header block, 'Job Duties:', 'Skills Required:', 'Skills Preferred:', 'Why work with us?', hashtag codes",
+  "note": "DIFFERS from review 5: Sheet Metal Design is no longer in found. The résumé employer was renamed from 'Midwest Stamping Co.' to 'Midwest Metalform Co.' so the skill is not 'found' only through a company name. Relies on the vocabulary rows 'skills required' -> required and 'skills preferred' -> preferred (present at ccc9e91); without them the scored skills drop to unscored. 'Why work with us?' ends with '?' and is not a heading (R2.2 rule 2 near-miss), so it stays in the Skills Preferred section. The résumé is PDF-wrapped: 'assemblies for GM...' and 'control and Six Sigma tools' start lower-case and join their bullets (R2.3); 'Belt (2021).' starts upper-case and does not join. Score 100. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "JOB TITLE: Manufacturing Engineer (Contract-to-Hire)\nLOCATION: Grand Rapids, MI 49512\nPAY RATE: $38.00 - $45.00/hr W2\nDURATION: 6 months+\n\nOur client, a leading Tier 1 automotive supplier, is seeking a Manufacturing Engineer to join their team!\n\nJob Duties:\n* Develop and improve stamping and welding processes\n* Lead PFMEA and control plan updates per IATF 16949\n* Implement lean manufacturing and 5S initiatives on the shop floor\n* Create work instructions and documentation\n\nSkills Required:\n* Bachelor's degree in Mechanical or Manufacturing Engineering\n* 3+ years in automotive manufacturing\n* Working knowledge of AutoCAD\n* Experience with APQP and PPAP\n\nSkills Preferred:\n* Lean Six Sigma certification\n* PLC experience (Allen-Bradley preferred)\n\nWhy work with us?\nWe offer weekly pay, medical, dental and 401k options to our contractors!\n\n#LI-JB1 #IND123\n",
+  "resume_text": "Priya Raman\nQuality / Manufacturing Engineer\nDearborn, MI · priya.raman@mail.com\nPROFESSIONAL EXPERIENCE\nSupplier Quality Engineer, Midwest Metalform Co., 2019 – Present\n• Led APQP and PPAP submissions for 30+ stamped and welded\nassemblies for GM and Ford programs under IATF 16949.\n• Reduced scrap 22% using statistical process\ncontrol and Six Sigma tools; certified Six Sigma Green\nBelt (2021).\n• Facilitated 8D and fishbone root cause analysis for\ncustomer complaints; maintained the quality management\nsystem documentation.\nManufacturing Engineer, Lakeshore Plastics, 2016 – 2019\n• Supported injection molding process validation and\nlean manufacturing (5S, kaizen) events.\n• Programmed Allen-Bradley PLC\nladder logic for two assembly cells.\nTECHNICAL SKILLS\nMinitab, AutoCAD, SAP, GD&T, SPC, Microsoft Office\nNo experience with CNC programming.\n",
+  "expected": {
+    "required": [
+      "APQP",
+      "AutoCAD"
+    ],
+    "preferred": [
+      "Lean Six Sigma Green Belt",
+      "PLC Programming"
+    ],
+    "unscored": [
+      "IATF 16949",
+      "Lean Manufacturing",
+      "Sheet Metal Design",
+      "Technical Writing"
+    ],
+    "excluded": [],
+    "found": [
+      "APQP",
+      "AutoCAD",
+      "IATF 16949",
+      "Lean Manufacturing",
+      "Lean Six Sigma Green Belt",
+      "PLC Programming",
+      "Technical Writing"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Develop and improve stamping",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Working knowledge of AutoCAD",
+      "section": "required"
+    },
+    {
+      "contains": "Lean Six Sigma certification",
+      "section": "preferred"
+    },
+    {
+      "contains": "Why work with us?",
+      "section": "preferred"
+    },
+    {
+      "contains": "Our client, a leading Tier 1",
+      "section": "unknown"
+    },
+    {
+      "contains": "PAY RATE:",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "PLC experience (Allen-Bradley preferred)",
+      "canonical": "PLC Programming",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with CNC programming",
+      "canonical": "CNC Machining",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Reduced scrap 22%",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Led APQP and PPAP",
+      "canonical": "IATF 16949",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "PLC Programming",
+      "posting_line_contains": "PLC experience (Allen-Bradley preferred)"
+    },
+    {
+      "canonical": "AutoCAD",
+      "posting_line_contains": "Working knowledge of AutoCAD"
+    },
+    {
+      "canonical": "APQP",
+      "posting_line_contains": "Experience with APQP and PPAP"
+    }
+  ]
+}
