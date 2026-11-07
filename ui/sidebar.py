@@ -38,7 +38,7 @@ def render_sidebar() -> Dict:
     )
 
     st.sidebar.markdown("---")
-    export_pdf = st.sidebar.button("Export Report to PDF", use_container_width=True)
+    export_pdf = st.sidebar.button("Export Report to PDF", width="stretch")
 
     return {
         "background": background,

@@ -45,3 +45,13 @@ CATEGORY_COLORS = {
 # ── Defaults ───────────────────────────────────────────────────────────
 DEFAULT_TOP_N = 20
 CHART_TOP_N = 15
+
+# ── Input limits & privacy ─────────────────────────────────────────────
+MAX_PDF_BYTES = 5 * 1024 * 1024
+MAX_PDF_PAGES = 10
+MIN_EXTRACTED_CHARS = 50
+MAX_TEXT_CHARS = 20_000
+PRIVACY_NOTICE = (
+    "Your resume and job posting text are processed in memory for this session only. "
+    "The app does not log or store them."
+)
