@@ -56,14 +56,13 @@ class Mention:
 
 # ---- data ------------------------------------------------------------------------------------
 _ROOT = Path(__file__).resolve().parent.parent
-_MAX_HEADING_WORDS = 8
-_MAX_HEADING_CHARS = 80
 
 
 def _key(label: str) -> str:
-    """Normalise a heading label for vocabulary lookup."""
-    t = label.strip().lstrip("#").strip("*_ \t").rstrip(":").strip("*_ \t")
-    return " ".join(t.lower().replace("’", "'").replace("&", "and").split())
+    """Normalise a heading label for vocabulary lookup (case, symbols, hyphens, "&")."""
+    t = re.sub(r"^[\W_]+", "", label.strip()).replace("\u2019", "'").replace("&", " and ")
+    t = re.sub(r"[^\w']+", " ", t.lower().replace("-", " "))
+    return " ".join(t.split())
 
 
 def _cue_regex(words: list[str]) -> re.Pattern:
@@ -82,6 +81,7 @@ class _Rules:
     required_cues: re.Pattern
     preferred_cues: re.Pattern
     breaks: re.Pattern
+    heading_test: dict
 
 
 @lru_cache(maxsize=1)
@@ -102,6 +102,7 @@ def _rules() -> _Rules:
         required_cues=_cue_regex(d["required_cues"]),
         preferred_cues=_cue_regex(d["preferred_cues"]),
         breaks=re.compile("|".join(f"(?:{b})" for b in d["clause_breaks"]), re.I),
+        heading_test=d["heading_test"],
     )
 
 
@@ -168,20 +169,39 @@ def _has_skill(text: str) -> bool:
     return any(rx.search(text) for sk in _skills() for _, rx in sk.aliases)
 
 
-def _heading_candidate(text: str, doc: DocKind) -> tuple[bool, SectionKind | None, str]:
-    """(is a heading candidate, known kind or None, cleaned label) for a non-bullet line."""
-    label = " ".join(text.strip().lstrip("#").strip("*_ \t").rstrip(":").strip("*_ \t").split())
-    kind = classify_heading(label, doc)
-    if kind is not None:
-        return True, kind, label
-    if not label or len(label) > _MAX_HEADING_CHARS or len(label.split()) > _MAX_HEADING_WORDS:
+def _is_heading(text: str, doc: DocKind, next_text: str | None, blank_after: bool) -> tuple[bool, SectionKind | None, str]:
+    """Structural heading test (R2.2) -> (is heading, known kind or None, cleaned label)."""
+    ht = _rules().heading_test
+    core = re.sub(r"^[\W_]+", "", text.strip()).rstrip("*_ \t")
+    colon = core.endswith(":")
+    label = " ".join(core.rstrip(":").rstrip("*_ \t").split())
+    if not label or len(label.split()) > ht["max_words"]:
         return False, None, label
-    styled = text.startswith(("#", "**", "__"))
-    colon = text.rstrip("*_ \t").endswith(":")
-    # ALL CAPS alone is weak evidence: a caps list of skills ("SAP, GD&T") is body text
-    caps = (len(label.split()) >= 2 and label == label.upper() and any(c.isalpha() for c in label)
-            and not re.search(r"[,;/]", label) and not _has_skill(label))
-    return (styled or colon or caps), None, label
+    if label[-1] in ht["sentence_end_chars"]:
+        return False, None, label
+    kind = classify_heading(label, doc)
+    small = set(ht["small_words"])
+    words = [w for w in label.split() if w.lower() not in small]
+    styles = {
+        "colon": colon,
+        "title_case": all(not w[0].isalpha() or w[0].isupper() for w in words),
+        "all_caps": label == label.upper() and any(c.isalpha() for c in label),
+        "vocabulary": kind is not None,
+    }
+    if not any(styles[k] for k in ht["style_options"]):
+        return False, None, label
+    contexts = {
+        "list_next": next_text is not None and _is_bullet(next_text),
+        "blank_after": blank_after,
+        "colon": colon,
+        "vocabulary": kind is not None,
+    }
+    if not any(contexts[k] for k in ht["context_options"]):
+        return False, None, label
+    # a heading swallows its text, so a skill-bearing unknown line without a colon stays body text
+    if kind is None and not colon and ht["skill_text_is_body"] and _has_skill(label):
+        return False, None, label
+    return True, kind, label
 
 
 def segment(text: str, doc: DocKind) -> tuple[Section, ...]:
@@ -196,19 +216,22 @@ def segment(text: str, doc: DocKind) -> tuple[Section, ...]:
         if body or heading is not None:
             sections.append(Section(kind, heading, hspan, tuple(body)))
 
+    phys: list[tuple[int, str, str]] = []  # (start offset of the stripped text, stripped text, raw chunk)
     pos = 0
     for chunk in text.split("\n"):
-        chunk_start, pos = pos, pos + len(chunk) + 1
         t = chunk.strip()
+        phys.append((pos + len(chunk) - len(chunk.lstrip()), t, chunk))
+        pos += len(chunk) + 1
+    for i, (start, t, _) in enumerate(phys):
         if not t:
             continue
-        start = chunk_start + len(chunk) - len(chunk.lstrip())
         end = start + len(t)
         bullet = _is_bullet(t)
         if not bullet:
-            is_head, known, label = _heading_candidate(t, doc)
-            # inside an excluded section only a known heading ends it
-            if is_head and (known is not None or kind != "excluded"):
+            nxt = next((x[1] for x in phys[i + 1:] if x[1]), None)
+            blank_after = i + 1 < len(phys) and not phys[i + 1][1]
+            is_head, known, label = _is_heading(t, doc, nxt, blank_after)
+            if is_head:  # every heading ends the previous section, known or not
                 close()
                 kind, heading, hspan, body = known or "unknown", label, (start, end), []
                 continue
@@ -313,11 +336,11 @@ _SECTION_IMPORTANCE: dict[str, Importance] = {
 }
 
 
-def importance(mention: Mention) -> Importance:
-    """Posting importance from section kind, overridden by inline cues in the mention's clause."""
-    base = _SECTION_IMPORTANCE.get(mention.line.section, "unscored")
-    if base == "excluded":
-        return base
+def _importance_cue(mention: Mention) -> Importance | None:
+    """The one place a mention's inline importance cue is decided (R2.4 will rebind this).
+
+    Currently: the nearest required/preferred cue inside the mention's clause.
+    """
     r = _rules()
     lo, hi = clause_span(mention.line, mention.span)
     s, e = mention.span
@@ -327,4 +350,13 @@ def importance(mention: Mention) -> Importance:
             gap = max(a - e, s - b, 0)
             if best is None or gap < best[0]:
                 best = (gap, imp)
-    return best[1] if best else base
+    return best[1] if best else None
+
+
+def importance(mention: Mention) -> Importance:
+    """Posting importance (R2.1): required/preferred only from a known required/preferred heading
+    or a bound cue; everything else is unscored. Excluded needs a known excluded heading."""
+    base = _SECTION_IMPORTANCE.get(mention.line.section, "unscored")
+    if base == "excluded":
+        return base
+    return _importance_cue(mention) or base

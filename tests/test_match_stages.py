@@ -55,8 +55,8 @@ def test_segment_spans_are_absolute_and_exact():
     assert secs[1].lines[0].is_bullet and secs[1].lines[0].section == "preferred"
 
 
-def test_title_case_is_not_a_heading_but_styling_is():
-    secs = segment("Requirements\nTeam Player\n**Our Culture**\nTeam Player", "posting")
+def test_title_case_needs_list_or_blank_context():
+    secs = segment("Requirements\nTeam Player\n**Our Culture**\n- x", "posting")
     assert [s.kind for s in secs] == ["required", "unknown"]
     assert secs[0].lines[0].text == "Team Player"
 
@@ -72,10 +72,67 @@ def test_caps_skill_list_is_not_a_heading():
     assert len(s.lines) == 2
 
 
-def test_excluded_section_ends_only_at_known_heading():
-    secs = segment("Benefits:\nWhy Join Us:\nMEDICAL DENTAL\n**Whatever**\nRequirements:\n- x", "posting")
-    assert [s.kind for s in secs] == ["excluded", "required"]
-    assert len(secs[0].lines) == 3
+def test_every_heading_ends_the_previous_section_even_excluded():
+    secs = segment("Benefits:\n- a\nWhy Join Us:\n- b\nRequirements:\n- x", "posting")
+    assert [s.kind for s in secs] == ["excluded", "unknown", "required"]
+
+
+def test_plain_lines_without_heading_context_stay_in_the_excluded_section():
+    secs = segment("BENEFITS\nMEDICAL DENTAL VISION\nPython lunch-and-learns", "posting")
+    assert [s.kind for s in secs] == ["excluded"] and len(secs[0].lines) == 2
+
+
+@pytest.mark.parametrize("text", [
+    "Our team uses Python.",      # rule 2: sentence punctuation
+    "Python lunch-and-learns",    # rules 3 and 4: not Title Case, no list or blank context
+])
+def test_near_miss_sentences_are_not_headings(text):
+    secs = segment(f"Requirements:\n- a\n{text}\n\n- b", "posting")
+    assert [s.kind for s in secs] == ["required"]
+
+
+def test_title_case_perk_lines_in_a_plain_list_are_not_headings():
+    secs = segment("Perks:\nFree Lunch\nHealth Insurance\nGym Membership", "posting")
+    assert [s.kind for s in secs] == ["excluded"] and len(secs[0].lines) == 3
+
+
+def test_title_case_line_before_a_bullet_or_blank_is_a_heading():
+    assert [s.kind for s in segment("Requirements:\n- a\nTeam Culture\n- b", "posting")] == ["required", "unknown"]
+    assert [s.kind for s in segment("Requirements:\n- a\nTeam Culture\n\ntext", "posting")] == ["required", "unknown"]
+
+
+def test_too_many_words_is_not_a_heading():
+    t = "Requirements for the Role of Engineering Lead:"
+    assert [s.kind for s in segment(f"Requirements:\n- a\n{t}\n- b", "posting")] == ["required"]
+
+
+def test_skill_bearing_line_without_colon_stays_body():
+    assert [s.kind for s in segment("Requirements:\n- a\nSolidWorks Experience\n- b", "posting")] == ["required"]
+
+
+def test_emoji_and_symbols_are_stripped_before_lookup():
+    assert classify_heading("\U0001F4CC Requirements", "posting") == "required"
+    secs = segment("✅ Nice to Have:\n- a\n\U0001F381 Benefits\n- b", "posting")
+    assert [s.kind for s in secs] == ["preferred", "excluded"]
+
+
+@pytest.mark.parametrize("label,kind", [
+    ("Job Requirements", "required"), ("Skills Required", "required"), ("Skills Preferred", "preferred"),
+    ("Required Skills and Education", "required"), ("Desired Characteristics", "preferred"),
+    ("Bonus Qualifications", "preferred"), ("Bonus If You Have", "preferred"),
+    ("Your Qualifications", "required"), ("Education and Experience", "required"),
+    ("Knowledge, Skills and Abilities", "required"), ("Preferred Skills and Experience", "preferred"),
+    ("Qualifications & Skills", "required"), ("What You'll Need to Succeed", "required"),
+    ("Must-Haves", "required"), ("Salary Range", "excluded"), ("Pay Transparency", "excluded"),
+    ("Equal Employment Opportunity", "excluded"), ("Essential Duties and Responsibilities", "responsibilities"),
+])
+def test_new_vocabulary_rows(label, kind):
+    assert classify_heading(label, "posting") == kind
+
+
+def test_importance_has_no_inheritance_from_unknown_sections():
+    secs = segment("Requirements:\n- FEA\nOur Culture:\n- Python", "posting")
+    assert [ln.section for sec in secs for ln in sec.lines] == ["required", "unknown"]
 
 
 def test_bullet_characters_and_star_rule():

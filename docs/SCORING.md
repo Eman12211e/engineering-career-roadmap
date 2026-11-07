@@ -24,14 +24,17 @@ markers) and `data/keywords.json` (skills, aliases, optional per-skill fields). 
 
 1. **Segment.** Text is split into lines (spans are absolute offsets) and typed sections:
    required, preferred, responsibilities, skills, experience, excluded, unknown.
-   A heading candidate is a non-bullet line that is a known heading, ends with ":", starts
-   with `#` or `**`/`__`, or is ALL CAPS (two or more words, no comma, slash or skill).
-   Candidates are limited to 80 characters and 8 words unless they are known headings.
-   Only a *known* heading label (exact match in the vocabulary) sets a section type; an
-   unrecognised candidate starts an `unknown` section. Title Case alone is never a heading.
-   Inside an `excluded` section only a known heading ends the section. Text before the first
-   heading and headingless text are `unknown`. Bullets: `-`, `*`, en/em dash, `>` followed by
-   a space, or a bullet character (U+2022, U+00B7, U+25AA, U+25E6).
+   Structural heading test (thresholds in `data/match_rules.json` -> `heading_test`): a
+   non-bullet line is a heading when, after stripping leading emoji/symbols/`#`/`*`/`_`, it has
+   at most 6 words, does not end with `.`, `!` or `?`, is styled (ends with ":", Title Case,
+   ALL CAPS or in the vocabulary), and has context (the next non-blank line is a bullet, a
+   blank line follows, it ends with ":", or it is in the vocabulary). Extra safety: an
+   unknown line that mentions a skill and has no colon stays body text. Every heading ends
+   the previous section, including excluded ones; a heading outside the vocabulary opens an
+   `unknown` section. A plain Title Case or ALL CAPS line inside a list without blank lines
+   or bullets is body text (so a hard-wrapped "HOW TO APPLY" line is not detected).
+   Text before the first heading and headingless text are `unknown`. Bullets: `-`, `*`,
+   en/em dash, `>` followed by a space, or a bullet character (U+2022, U+00B7, U+25AA, U+25E6).
 2. **Find.** Every alias of every skill, longest alias first, no overlaps within a line
    (ties go to the earlier skill in keywords.json). Word-bounded and case-folded; an all-caps
    alias matched in exact case may take a trailing lowercase "s" ("PLCs").
@@ -48,8 +51,10 @@ markers) and `data/keywords.json` (skills, aliases, optional per-skill fields). 
    Learning and FEA") is ignored. In postings only, `negation_after` ("not required", "not
    needed", ...) after the mention in the same clause also negates. Mentions in excluded
    posting sections are not qualified (they cannot create requirements anyway).
-5. **Decide.** Posting importance starts from the section (required, preferred, excluded;
-   everything else unscored). In any non-excluded section an inline cue in the mention's
+5. **Decide.** Positive evidence only: importance is required or preferred only from a known
+   required/preferred heading or an inline cue (decided in one function, `_importance_cue`);
+   everything else is unscored and nothing inherits importance from a previous line or
+   section. Excluded needs a known excluded heading. In any non-excluded section an inline cue in the mention's
    clause overrides it: `preferred_cues` (a plus, nice to have, preferred, ...) or
    `required_cues` (required, must, mandatory, essential, ...); when both occur the nearer
    one wins, required on a tie. Negated and hypothetical posting mentions appear in no
