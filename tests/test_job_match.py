@@ -203,6 +203,17 @@ def test_eval_fail_exit_1_holdout_aggregate_only(tmp_path):
     assert "h0" not in p.stdout and "Creo" not in p.stdout  # no per-item holdout detail
 
 
+def test_eval_duty_only_skill_in_resume_is_not_spurious(tmp_path):
+    def pair(pid, split):
+        return {"id": pid, "split": split,
+                "posting_text": "Responsibilities:\n- Use Python daily\nRequirements:\n- SolidWorks",
+                "resume_text": "SolidWorks and Python", "required_skills": ["SolidWorks"],
+                "preferred_skills": [], "resume_has": ["SolidWorks"]}
+    _write(tmp_path, [pair(f"t{i}", "tune") for i in range(10)] + [pair(f"h{i}", "holdout") for i in range(5)])
+    p = _run("--dir", str(tmp_path))
+    assert p.returncode == 0 and "spurious" not in p.stdout
+
+
 def test_eval_fixtures_report():
     p = _run("--fixtures", str(ROOT / "tests" / "fixtures" / "postings"))
     assert p.returncode == 0 and "document-level exact sets" in p.stdout and "section accuracy" in p.stdout

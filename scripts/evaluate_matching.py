@@ -153,7 +153,7 @@ def _measure(group: list[dict], detail: bool) -> tuple[dict, dict]:
     fails = {n: [] for n in METRICS}
     for p in group:
         r = match_posting(p["posting_text"], p["resume_text"])
-        found = {m.skill for m in (*r.required, *r.preferred, *r.unscored) if m.found}
+        found = {m.skill for m in (*r.required, *r.preferred) if m.found}  # resume_has: scored skills only
         for n, pred, truth in (
             (METRICS[0], {m.skill for m in r.required}, set(p["required_skills"])),
             (METRICS[1], {m.skill for m in r.preferred}, set(p["preferred_skills"])),
