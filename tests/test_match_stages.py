@@ -62,7 +62,7 @@ def test_title_case_needs_list_or_blank_context():
 
 
 def test_heading_candidates_colon_caps_markdown_are_unknown():
-    for h in ("Why Join Us:", "HOW TO APPLY", "## Heading", "**Heading**"):
+    for h in ("Why Join Us:", "HOW WE WORK", "## Heading", "**Heading**"):
         secs = segment(f"Requirements\n- a\n{h}\n- b", "posting")
         assert [s.kind for s in secs] == ["required", "unknown"], h
 
@@ -124,7 +124,7 @@ def test_emoji_and_symbols_are_stripped_before_lookup():
     ("Knowledge, Skills and Abilities", "required"), ("Preferred Skills and Experience", "preferred"),
     ("Qualifications & Skills", "required"), ("What You'll Need to Succeed", "required"),
     ("Must-Haves", "required"), ("Salary Range", "excluded"), ("Pay Transparency", "excluded"),
-    ("Equal Employment Opportunity", "excluded"), ("Essential Duties and Responsibilities", "responsibilities"),
+    ("Equal Employment Opportunity", "excluded"), ("How to Apply", "excluded"), ("Essential Duties and Responsibilities", "responsibilities"),
 ])
 def test_new_vocabulary_rows(label, kind):
     assert classify_heading(label, "posting") == kind
