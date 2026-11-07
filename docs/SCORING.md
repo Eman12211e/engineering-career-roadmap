@@ -125,6 +125,30 @@ section holding the evidence). Output order follows keywords.json order within e
 - Inline bullet characters in the middle of a line do not split the line.
 - A resume mention anywhere counts as having the skill, regardless of depth or recency.
 
+## Known critical-risk patterns
+
+- **Postfix qualifiers.** "Python (learning)", "Python (in progress)", "SolidWorks (beginner, studying)" and
+  similar trailing parentheticals are not recognised as hypothetical: the skill comes out
+  `affirmed`. On a resume that is an invented claim, so the skill would count as confirmed
+  experience the person does not have. Until the engine handles postfix qualifiers, treat a
+  resume match on such a line as unverified.
+- **A negation or prefix-label cue followed by a comma list whose first item is not a known
+  skill.** "Never used LabVIEW, SQL" and "No experience with LabVIEW, SQL" leave SQL affirmed, so a
+  negated skill is counted as present. "Nice to have: LabVIEW, SQL" or "Preferred: LabVIEW, SQL" give
+  SQL the section's importance instead of the label's. Root cause: the R2.8.15 comma exemption in
+  `_clause()` applies only when every list item is a known skill. Status: not fixed; a
+  correction needs a separately reviewed contract change.
+
+## Technical debt
+
+- Two separate rules overlap and are not unified: the hypothetical scope rule (R3.1.2, a cue such
+  as "learn" opens a scope over the rest of the clause) and the negation gap rule (R3.1.3, how far
+  a negation cue reaches over fillers). They differ in reach and in how coordinated lists are
+  handled, so the same phrase can be treated differently depending on which cue it contains.
+  Merging them is deferred.
+- The UI wiring of match results and the bullet-punctuation issues (inline bullet characters
+  mid-line) belong to Wave 2, not to this engine work.
+
 ## Evaluation status
 
 The 0.85 threshold is a **provisional engineering gate on a small sample** (15 owner-labeled

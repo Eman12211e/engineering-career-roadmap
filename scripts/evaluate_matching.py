@@ -71,6 +71,28 @@ def _is_disputed(disputed, fid: str, label: dict, kind: str) -> dict | None:
     return None
 
 
+def _resolve(lab: dict, cands: list):
+    """(mentions the label claims, None) or ([], error text).
+
+    An indexed label (occurrence / span_text / span) claims exactly one mention; an un-indexed label
+    claims every mention of its canonical on the line and asserts the status for all of them.
+    """
+    name = f"{lab['canonical']} in {lab['line_contains'][:30]!r}"
+    if not cands:
+        return [], f"missing mention: {name}"
+    if "occurrence" in lab:  # 1-based among this canonical's mentions on the line, in text order
+        i = lab["occurrence"]
+        return ([cands[i - 1]], None) if 1 <= i <= len(cands) else ([], f"missing mention: {name} occurrence {i} of {len(cands)}")
+    if "span_text" in lab or "span" in lab:
+        want = lab.get("span_text")
+        hits = [m for m in cands if (m.line.text[m.span[0] - m.line.start:m.span[1] - m.line.start] == want if want is not None
+                                     else list(m.span) == list(lab["span"]))]
+        if len(hits) != 1:
+            return [], f"{'ambiguous span' if hits else 'missing mention'}: {name} span {want or lab['span']}"
+        return hits, None
+    return cands, None
+
+
 def check_fixture(fx: dict, disputed=None) -> dict:
     """Return per-stage tallies, failure descriptions and disputed-label records for one fixture."""
     disputed = load_disputed() if disputed is None else disputed
@@ -103,13 +125,23 @@ def check_fixture(fx: dict, disputed=None) -> dict:
     truth = {s for g in GROUPS for s in exp.get(g, [])}
     truth |= {m["canonical"] for m in fx.get("mention_labels", []) if m["doc"] == "posting" and m["status"] != "affirmed"}
     t["mention"] = (len(kept & truth), len(kept), len(truth))
-    # stage 4: status
-    stat = []
+    # stage 4: status. Labels resolve one-to-one to actual mentions (canonical + exact span).
+    stat, claimed, labelled = [], {}, {}
     for lab in fx.get("mention_labels", []):
-        txt = post if lab["doc"] == "posting" else resume
-        ln = _find_line(txt, lab["doc"], lab["line_contains"])
-        ms = [m for m in disambiguate(find_mentions((ln,))) if m.canonical == lab["canonical"]] if ln else []
-        pred = _qualify(ms[0], lab["doc"]).status if ms else "absent"
+        doc = lab["doc"]
+        ln = _find_line(post if doc == "posting" else resume, doc, lab["line_contains"])
+        cands = [m for m in disambiguate(find_mentions((ln,))) if m.canonical == lab["canonical"]] if ln else []
+        tag = f"{lab['canonical']} in {lab['line_contains'][:30]!r}"
+        picks, err = _resolve(lab, cands)
+        preds = [_qualify(m, doc).status for m in picks]
+        bad = next((i for i, x in enumerate(preds) if x != lab["status"]), None)
+        pred = "absent" if err else preds[bad if bad is not None else 0]
+        if ln:
+            labelled[(doc, ln.start)] = ln
+        if any(claimed.setdefault((doc, m.span), lab) is not lab for m in picks):
+            pred, err = "duplicate", f"duplicate label for {tag}: resolves to a mention another label already claimed"
+        elif bad is not None and len(cands) > 1:
+            err = f"status of {tag} occurrence {cands.index(picks[bad]) + 1} of {len(cands)}: got {pred} expected {lab['status']}"
         key = {k: lab[k] for k in ("doc", "line_contains", "canonical", "status")}
         rec = _is_disputed(disputed, fx["id"], key, "mention_label")
         if rec:
@@ -117,16 +149,28 @@ def check_fixture(fx: dict, disputed=None) -> dict:
                          "alternative": rec["alternative"], "alt_ok": {"status": pred} == rec["alternative"],
                          "reason": rec["reason"]})
             continue
-        stat.append(pred == lab["status"])
+        stat.append(pred == lab["status"] and not err)
         if not stat[-1]:
-            fails.append(f"status of {lab['canonical']} in {lab['line_contains'][:30]!r}: got {pred} expected {lab['status']}")
+            fails.append(err or f"status of {tag}: got {pred} expected {lab['status']}")
     t["status"] = stat
+    if fx.get("strict_mentions"):  # opt-in: every mention on a labelled line must be labelled
+        for (doc, _), ln in labelled.items():
+            for m in disambiguate(find_mentions((ln,))):
+                if (doc, m.span) not in claimed:
+                    fails.append(f"unexpected unlabelled mention {m.canonical} on line {ln.text[:30]!r} ({doc})")
     # stage 5: importance and evidence
     t["importance"] = [s in got[g] for g in GROUPS for s in exp.get(g, [])]
     for lab in fx.get("evidence_labels", []):
         m = next((m for g in GROUPS for m in getattr(res, g) if m.skill == lab["canonical"]), None)
-        if not (m is not None and lab["posting_line_contains"] in m.posting_line):
+        if m is None or lab["posting_line_contains"] not in m.posting_line:
             fails.append(f"evidence for {lab['canonical']}: expected line containing {lab['posting_line_contains'][:30]!r}")
+            continue
+        sp = m.posting_span
+        ln = next((x for x in _lines(post, "posting") if sp and x.start <= sp[0] and sp[1] <= x.end), None)
+        if ln is None or lab["posting_line_contains"] not in ln.text:
+            fails.append(f"evidence span for {lab['canonical']} is not on the line containing {lab['posting_line_contains'][:30]!r}")
+        if "requirement" in lab and m.requirement != lab["requirement"]:
+            fails.append(f"evidence for {lab['canonical']}: importance got {m.requirement} expected {lab['requirement']}")
     t["fails"], t["disputed"] = fails, disp
     return t
 
