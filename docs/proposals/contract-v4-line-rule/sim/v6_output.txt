@@ -1,0 +1,23 @@
+== postings: {'mention:affirmed': 116, 'mention:cue_line': 43, 'mention:unsupported_form': 125, 'pairs_scorable': 47, 'pairs_unavailable': 1, 'resumes': 48, 'resumes_with_no_affirmed_skill': 31, 'scored_after': 47, 'scored_before': 3, 'withheld_before': 44}
+   prompts median 1, max 7
+   critical: []
+   after-confirmation mismatches: []
+== regression_r6: {'mention:affirmed': 38, 'mention:cue_line': 76, 'mention:unsupported_form': 33, 'pairs_scorable': 14, 'resumes': 14, 'resumes_all_unresolved_by_doc_trigger': 2, 'resumes_with_no_affirmed_skill': 3, 'scored_after': 14, 'trigger:backref_negation': 2, 'withheld_before': 14}
+   prompts median 4.5, max 6
+   critical: []
+   after-confirmation mismatches: []
+== r7: {'mention:affirmed': 24, 'mention:cue_line': 74, 'mention:unsupported_form': 10, 'pairs_scorable': 12, 'resumes': 12, 'resumes_with_no_affirmed_skill': 1, 'scored_after': 12, 'scored_before': 1, 'withheld_before': 11}
+   prompts median 4.0, max 7
+   critical: []
+   after-confirmation mismatches: []
+== r8: {'mention:affirmed': 32, 'mention:cue_line': 41, 'mention:unsupported_form': 30, 'pairs_scorable': 12, 'resumes': 12, 'resumes_with_no_affirmed_skill': 4, 'scored_after': 12, 'withheld_before': 12}
+   prompts median 3.0, max 6
+   critical: []
+   after-confirmation mismatches: []
+ALL: scorable 85, scored before 4, after 85; prompts median 2, max 7
+REALISTIC (r6-r8): n=38, prompts median 4.0, max 7
+independent pairs: {'unresolved/safe': 23, 'unresolved/loss': 25, 'not-recognised': 3} critical: []
+32 probes: 32 run, critical false affirmations 0: []
+hard-wrap probes: 16 run, critical false affirmations 0: []
+   CONTROL wrapped, no cue {'SolidWorks': 'affirmed'}
+   CONTROL skills on two lines {'SolidWorks': 'affirmed', 'Creo': 'affirmed', 'Python': 'affirmed', 'MATLAB': 'affirmed'}

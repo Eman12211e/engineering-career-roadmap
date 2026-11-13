@@ -1,0 +1,3821 @@
+{
+ "base_commit": "fa1555e9999495cea9e1d4c1b64f3530cedc0daf",
+ "fixtures": {
+  "hyp_resume_learning": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning",
+       "planning to",
+       "planning to take"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "ROS",
+      "doc": "resume",
+      "line_contains": "learning ROS",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning",
+       "planning to",
+       "planning to take"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "FE Exam",
+      "doc": "resume",
+      "line_contains": "Planning to take",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning",
+       "planning to",
+       "planning to take"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "FE Exam"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning",
+       "planning to",
+       "planning to take"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Python"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning",
+       "planning to",
+       "planning to take"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "ROS"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/hyp_resume_learning.json",
+   "source_sha256": "856e56bea8c36571dba3ad7eb991e21ddaf0b3925f6e6080849ec696fb671af7"
+  },
+  "neg_resume_basic": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Finite Element Analysis",
+      "doc": "resume",
+      "line_contains": "No FEA experience",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CFD",
+      "doc": "resume",
+      "line_contains": "Not familiar with CFD",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "SolidWorks",
+      "doc": "resume",
+      "line_contains": "Familiar with SolidWorks",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Python",
+      "doc": "resume",
+      "line_contains": "Learning Python",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "CFD"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Python"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "learning",
+       "no",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/neg_resume_basic.json",
+   "source_sha256": "7fd7ab7fb9b3b19cb35535581858522e8627559d1ba0712845b29160a9f6b086"
+  },
+  "neg_resume_clause_breaks": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "ANSYS",
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Finite Element Analysis",
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "SolidWorks",
+      "doc": "resume",
+      "line_contains": "Never missed",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Statistical Process Control",
+      "doc": "resume",
+      "line_contains": "zero defects",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "ANSYS"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no",
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Statistical Process Control"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/neg_resume_clause_breaks.json",
+   "source_sha256": "b7ffdd3248d2cfaa98ccbae48daf128ca5acd5cc2d8c2fc5d1b757a7ed366a72"
+  },
+  "neg_resume_or_list": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Finite Element Analysis",
+      "doc": "resume",
+      "line_contains": "No experience with FEA or CFD",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CFD",
+      "doc": "resume",
+      "line_contains": "No experience with FEA or CFD",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "CFD"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Finite Element Analysis"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/neg_resume_or_list.json",
+   "source_sha256": "f7d224ff47a1ddf69f9d6bc8bc20afe471c7518a9c7057229c0200f684e97106"
+  },
+  "r5_bigco_basic_preferred": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CATIA",
+      "doc": "resume",
+      "line_contains": "Currently learning CATIA V5",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "MATLAB",
+      "doc": "resume",
+      "line_contains": "Analysis: FEA, MATLAB",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "CATIA"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Creo"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "MATLAB"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/r5_bigco_basic_preferred.json",
+   "source_sha256": "3725be288921199c6ed2b655abbaa1817ccc03cde2de0edf1103035bf287e19f"
+  },
+  "r5_defense_clearance": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "MATLAB",
+      "doc": "resume",
+      "line_contains": "Not familiar with Simulink",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "familiar",
+       "not"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "MATLAB"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/r5_defense_clearance.json",
+   "source_sha256": "917160e6e90e62a038261ba77a84568d7f67edecee57384059c4962465cd488e"
+  },
+  "r5_linkedin_bonus_if": {
+   "doc_triggers": [],
+   "mention_labels": [],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/r5_linkedin_bonus_if.json",
+   "source_sha256": "33ee54915a32a27b4dca006e368acc841bfd52095950d2f6559cc1715d0433c6"
+  },
+  "r5_numbered_lists": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CNC Machining",
+      "doc": "resume",
+      "line_contains": "No experience with CNC programming",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "CNC Machining"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "ERP Systems"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "GD&T"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Statistical Process Control"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/r5_numbered_lists.json",
+   "source_sha256": "5ac4d56ef6c51d2e38bc90d5c7d09ecb1f4b254f7b273fdb9edff8e204bdffc8"
+  },
+  "r5_sentence_case": {
+   "doc_triggers": [],
+   "mention_labels": [],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Creo"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/r5_sentence_case.json",
+   "source_sha256": "6288e169d28f0837c7bb8fdf5416053c277ebf606981b29ec23a210fa06a5726"
+  },
+  "r5_staffing_agency": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CNC Machining",
+      "doc": "resume",
+      "line_contains": "No experience with CNC programming",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "AutoCAD"
+    }
+   ],
+   "source_file": "tests/fixtures/postings/r5_staffing_agency.json",
+   "source_sha256": "467ed40f0f58b09675ab3a00fe3b3a9e70f67ce7362280257395c160ece26038"
+  },
+  "u6_bigco_basic_desired": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Statistical Process Control",
+      "doc": "resume",
+      "line_contains": "without added headcount",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "APQP",
+      "doc": "resume",
+      "line_contains": "never missed a customer PPAP",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "IATF 16949",
+      "doc": "resume",
+      "line_contains": "No experience with IATF 16949",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "ISO 9001",
+      "doc": "resume",
+      "line_contains": "No experience with IATF 16949",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Battery Management Systems",
+      "doc": "resume",
+      "line_contains": "Currently learning battery management",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "APQP"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Battery Management Systems"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "IATF 16949"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Statistical Process Control"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_bigco_basic_desired.json",
+   "source_sha256": "adf9ed8a41d9a2e5db9de7ff5e207a95060a3dcee0691da66c4b32a8157a0397"
+  },
+  "u6_culture_benefits_heavy": {
+   "doc_triggers": [
+    "backref_negation"
+   ],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "DFM/DFA",
+      "doc": "resume",
+      "line_contains": "applying DFM rules",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Finite Element Analysis",
+      "doc": "resume",
+      "line_contains": "never shipped a part",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no",
+       "only"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Composites",
+      "doc": "resume",
+      "line_contains": "No experience with carbon fiber",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no",
+       "only"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Composites"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "DFM/DFA"
+    },
+    {
+     "cause": {
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Fatigue Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Injection Molding"
+    },
+    {
+     "cause": {
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_culture_benefits_heavy.json",
+   "source_sha256": "927a3cdce79b282cf7a065fe4daa4b15633df0db9b604dcc7732dd4d9802474a"
+  },
+  "u6_duty_lines_as_required": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CNC Machining",
+      "doc": "resume",
+      "line_contains": "with zero scrap",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CNC Machining",
+      "doc": "resume",
+      "line_contains": "without supervisor sign-off",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Fusion 360",
+      "doc": "resume",
+      "line_contains": "No experience with Fusion 360",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "without",
+       "zero"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "CNC Machining"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Fusion 360"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_duty_lines_as_required.json",
+   "source_sha256": "14ad634bed7b8310167d75997c64776c2a41cd1bcc18f829bb0d93979309036b"
+  },
+  "u6_gov_defense_clearance": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Finite Element Analysis",
+      "doc": "resume",
+      "line_contains": "with no failed shock",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "MATLAB",
+      "doc": "resume",
+      "line_contains": "No experience with MATLAB",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Systems Engineering",
+      "doc": "resume",
+      "line_contains": "Currently learning model-based",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "ANSYS"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "FE Exam"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Fatigue Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "MATLAB"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Systems Engineering"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_gov_defense_clearance.json",
+   "source_sha256": "860d1a7d49797699f9eed6dad6002ee6c1d482060622addc3962ec1ab7aee1a9"
+  },
+  "u6_headingless_blurb": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "SolidWorks",
+      "doc": "resume",
+      "line_contains": "with no resonance",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Python",
+      "doc": "resume",
+      "line_contains": "No experience with Python",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "MATLAB"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Python"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_headingless_blurb.json",
+   "source_sha256": "893a41e1020b64e5807d6a8ded07fd5cd3aa66ca5f2237d5ca543545c16e32ed"
+  },
+  "u6_linkedin_lost_bullets": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "SolidWorks",
+      "doc": "resume",
+      "line_contains": "no tool failures",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Hydraulics/Pneumatics",
+      "doc": "resume",
+      "line_contains": "without exceeding air",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Industrial Robotics",
+      "doc": "resume",
+      "line_contains": "Currently learning robot programming",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "ANSYS",
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS or PLC",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "PLC Programming",
+      "doc": "resume",
+      "line_contains": "No experience with ANSYS or PLC",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "ANSYS"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "coursework"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Finite Element Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "coursework"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "GD&T"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Hydraulics/Pneumatics"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Industrial Robotics"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "PLC Programming"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "coursework",
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_linkedin_lost_bullets.json",
+   "source_sha256": "d22feceb7be46ddce7cad576e0d49e52a4f2e104d93e4bcd090ba75e58d904f5"
+  },
+  "u6_mfg_technician": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Lean Manufacturing",
+      "doc": "resume",
+      "line_contains": "no overtime was needed",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "ISO 9001",
+      "doc": "resume",
+      "line_contains": "never had a nonconformance",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "PLC Programming",
+      "doc": "resume",
+      "line_contains": "Currently learning PLC",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Root Cause Analysis",
+      "doc": "resume",
+      "line_contains": "Currently learning PLC",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "familiar"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "SolidWorks",
+      "doc": "resume",
+      "line_contains": "Familiar with SolidWorks viewer",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "ISO 9001"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Lean Manufacturing"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "PLC Programming"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Root Cause Analysis"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_mfg_technician.json",
+   "source_sha256": "4214c6031ba0954717474325083628da2cdde669d2bbaf3035b4313bd451e0f9"
+  },
+  "u6_not_required_but_plus": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "SolidWorks",
+      "doc": "resume",
+      "line_contains": "with no off-the-shelf",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Lean Manufacturing",
+      "doc": "resume",
+      "line_contains": "Ran 5S audits",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "MATLAB",
+      "doc": "resume",
+      "line_contains": "No experience with MATLAB",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "MATLAB"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Python"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_not_required_but_plus.json",
+   "source_sha256": "752e1cf5b0e00e2a55dced34bbe4545157ded73287036cd32568fc05fdd71962"
+  },
+  "u6_numbered_lists": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "PLC Programming",
+      "doc": "resume",
+      "line_contains": "PLCs for 25 palletizing",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Industrial Robotics",
+      "doc": "resume",
+      "line_contains": "never needed a return visit",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Predictive Maintenance",
+      "doc": "resume",
+      "line_contains": "No experience with predictive",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Python",
+      "doc": "resume",
+      "line_contains": "Currently learning Python",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Industrial Robotics"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "PLC Programming"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Predictive Maintenance"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Python"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_numbered_lists.json",
+   "source_sha256": "b29251d89426ac37ee4c5f297eb7af035150ba6579f624f7b9bd23dc452b20f8"
+  },
+  "u6_pdf_hardwrap": {
+   "doc_triggers": [
+    "backref_negation"
+   ],
+   "mention_labels": [
+    {
+     "cause": {
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "GD&T",
+      "doc": "resume",
+      "line_contains": "Reviewed drawings for geometric",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Statistical Process Control",
+      "doc": "resume",
+      "line_contains": "without adding inspection",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CATIA",
+      "doc": "resume",
+      "line_contains": "no experience with CATIA",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "AS9100"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "CATIA"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Composites"
+    },
+    {
+     "cause": {
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "GD&T"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Root Cause Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ],
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Statistical Process Control"
+    },
+    {
+     "cause": {
+      "document_trigger": [
+       "backref_negation"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Tolerance Stack-Up"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_pdf_hardwrap.json",
+   "source_sha256": "e3b491b461f67ba071070a2277098b78006ce29bd9c601bc45351214feb6b869"
+  },
+  "u6_sentence_case_no_colons": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Creo",
+      "doc": "resume",
+      "line_contains": "with no tooling rework",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Tolerance Stack-Up",
+      "doc": "resume",
+      "line_contains": "no field returns",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Sheet Metal Design",
+      "doc": "resume",
+      "line_contains": "never missed a release",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Thermal Analysis",
+      "doc": "resume",
+      "line_contains": "Currently learning thermal",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Creo"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Sheet Metal Design"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Thermal Analysis"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Tolerance Stack-Up"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_sentence_case_no_colons.json",
+   "source_sha256": "d28d9db8c01c3dc0c7cbb1a148b0f3038212ea6926f4119ac940069d06b6168b"
+  },
+  "u6_staffing_agency": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Statistical Process Control",
+      "doc": "resume",
+      "line_contains": "Reduced scrap to zero",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "CNC Machining",
+      "doc": "resume",
+      "line_contains": "never scrapped a first article",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "IATF 16949",
+      "doc": "resume",
+      "line_contains": "no prior experience with IATF",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "studying"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Lean Six Sigma Green Belt",
+      "doc": "resume",
+      "line_contains": "Currently studying Six Sigma",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "no"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "CNC Machining"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "IATF 16949"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "studying"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Lean Six Sigma Green Belt"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Statistical Process Control"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_staffing_agency.json",
+   "source_sha256": "019c136fa571e916a1e78a937b43ad2474558b6a43ae1df9fcda23b2926bf605"
+  },
+  "u6_startup_emoji_ev": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Electric Powertrain",
+      "doc": "resume",
+      "line_contains": "zero test-cell damage",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Vibration Analysis",
+      "doc": "resume",
+      "line_contains": "without a dedicated acoustics lab",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no",
+       "only"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Battery Management Systems",
+      "doc": "resume",
+      "line_contains": "No experience with battery management",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "no",
+       "only"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "Battery Management Systems"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "CAN Bus"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Electric Powertrain"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "MATLAB"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ],
+      "unsupported_form": true
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Python"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Vibration Analysis"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_startup_emoji_ev.json",
+   "source_sha256": "a2342a30ba2741a8cb5757ac7faeb3252c45f94cd539c34673a4fb5a0e9e0e1b"
+  },
+  "u6_startup_emoji_robotics": {
+   "doc_triggers": [],
+   "mention_labels": [
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Python",
+      "doc": "resume",
+      "line_contains": "never shipped a fixture",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "Industrial Robotics",
+      "doc": "resume",
+      "line_contains": "zero unplanned stops",
+      "status": "affirmed"
+     },
+     "oracle_answer": "affirmed"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "C++",
+      "doc": "resume",
+      "line_contains": "Currently learning C++",
+      "status": "hypothetical"
+     },
+     "oracle_answer": "hypothetical"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "label": {
+      "canonical": "GD&T",
+      "doc": "resume",
+      "line_contains": "No experience with GD&T",
+      "status": "negated"
+     },
+     "oracle_answer": "negated"
+    }
+   ],
+   "skills": [
+    {
+     "cause": {
+      "cue_line": [
+       "currently learning",
+       "learning"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "C++"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "not_found",
+     "skill": "GD&T"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "zero"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Industrial Robotics"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "never",
+       "without"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "Python"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "hobby"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "ROS"
+    },
+    {
+     "cause": {
+      "cue_line": [
+       "no"
+      ]
+     },
+     "expected": "unresolved",
+     "oracle_answer": "found",
+     "skill": "SolidWorks"
+    }
+   ],
+   "source_file": "tests/fixtures/regression_r6/u6_startup_emoji_robotics.json",
+   "source_sha256": "b9880423ba788a6c942a08271d702781a7ccaad9549e8b1da9b69b6459bfad9f"
+  }
+ },
+ "generated_by": "sim/gen_expectations_v6.py (non-production simulation, not an implementation)",
+ "line_rule_cases": [
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    },
+    "Root Cause Analysis": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "Root Cause Analysis": "unresolved"
+   },
+   "input": "Currently learning PLC troubleshooting and root cause analysis",
+   "oracle_answer": {
+    "PLC Programming": "hypothetical",
+    "Root Cause Analysis": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning",
+      "never"
+     ]
+    },
+    "Root Cause Analysis": {
+     "cue_line": [
+      "learning",
+      "never"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "Root Cause Analysis": "unresolved"
+   },
+   "input": "Never used PLC, but interested in learning root cause analysis",
+   "oracle_answer": {
+    "PLC Programming": "negated",
+    "Root Cause Analysis": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "Root Cause Analysis": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "Root Cause Analysis": "unresolved"
+   },
+   "input": "Learning PLC and already proficient in root cause analysis",
+   "oracle_answer": {
+    "PLC Programming": "hypothetical",
+    "Root Cause Analysis": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Used SolidWorks; currently learning FEA",
+   "oracle_answer": {
+    "Finite Element Analysis": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Learning FEA. Expert in SolidWorks",
+   "oracle_answer": {
+    "Finite Element Analysis": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "SolidWorks and learning FEA",
+   "oracle_answer": {
+    "Finite Element Analysis": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "familiar"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved"
+   },
+   "input": "Familiar with FEA",
+   "oracle_answer": {
+    "Finite Element Analysis": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "familiar",
+      "not"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved"
+   },
+   "input": "Not familiar with FEA",
+   "oracle_answer": {
+    "Finite Element Analysis": "negated"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Statistical Process Control": {
+     "cue_line": [
+      "without"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Statistical Process Control": "unresolved"
+   },
+   "input": "Without rework by applying SPC",
+   "oracle_answer": {
+    "Statistical Process Control": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_r31_minimal_pairs"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "PLC Programming": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Learning PLC, SolidWorks / FEA and RCA",
+   "oracle_answer": {
+    "Finite Element Analysis": "hypothetical",
+    "PLC Programming": "hypothetical",
+    "SolidWorks": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Learning PLC, however SolidWorks daily",
+   "oracle_answer": {
+    "PLC Programming": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Learning PLC although SolidWorks daily",
+   "oracle_answer": {
+    "PLC Programming": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Learning PLC whereas SolidWorks daily",
+   "oracle_answer": {
+    "PLC Programming": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved"
+   },
+   "input": "Learning: PLC",
+   "oracle_answer": {
+    "PLC Programming": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Learning PLC; SolidWorks",
+   "oracle_answer": {
+    "PLC Programming": "hypothetical",
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning",
+      "never"
+     ]
+    },
+    "PLC Programming": {
+     "cue_line": [
+      "learning",
+      "never"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "PLC Programming": "unresolved"
+   },
+   "input": "Learning PLC, never used FEA",
+   "oracle_answer": {
+    "Finite Element Analysis": "negated",
+    "PLC Programming": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning",
+      "no"
+     ]
+    },
+    "PLC Programming": {
+     "cue_line": [
+      "learning",
+      "no"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "PLC Programming": "unresolved"
+   },
+   "input": "No experience with FEA, learning PLC",
+   "oracle_answer": {
+    "Finite Element Analysis": "negated",
+    "PLC Programming": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "Machine Learning": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "Machine Learning": "unresolved"
+   },
+   "input": "Machine learning and FEA",
+   "oracle_answer": {
+    "Finite Element Analysis": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_ends_and_later_cues"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    },
+    "Root Cause Analysis": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "Root Cause Analysis": "unresolved"
+   },
+   "input": "- Currently learning PLC\nand root cause analysis",
+   "oracle_answer": {
+    "Root Cause Analysis": "hypothetical"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_continues_across_a_joined_hard_wrap_but_not_a_blank_line"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "currently learning",
+      "learning"
+     ]
+    },
+    "Root Cause Analysis": {
+     "unsupported_form": true
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "Root Cause Analysis": "unresolved"
+   },
+   "input": "- Currently learning PLC\n\nRoot cause analysis",
+   "oracle_answer": {
+    "Root Cause Analysis": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_scope_continues_across_a_joined_hard_wrap_but_not_a_blank_line"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "learning"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "learning"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "SolidWorks, then learning FEA",
+   "oracle_answer": {
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_cues_never_reach_back"
+  },
+  {
+   "cause": {
+    "CFD": {
+     "cue_line": [
+      "no"
+     ]
+    },
+    "Finite Element Analysis": {
+     "cue_line": [
+      "no"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "CFD": "unresolved",
+    "Finite Element Analysis": "unresolved"
+   },
+   "input": "No experience with FEA or CFD",
+   "oracle_answer": {
+    "Finite Element Analysis": "negated"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_negation_keeps_the_gap_rule_and_does_not_spread"
+  },
+  {
+   "cause": {
+    "Statistical Process Control": {
+     "cue_line": [
+      "no"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Statistical Process Control": "unresolved"
+   },
+   "input": "No rework using SPC",
+   "oracle_answer": {
+    "Statistical Process Control": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_negation_keeps_the_gap_rule_and_does_not_spread"
+  },
+  {
+   "cause": {
+    "SolidWorks": {
+     "cue_line": [
+      "never"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "SolidWorks": "unresolved"
+   },
+   "input": "Never missed a deadline in SolidWorks",
+   "oracle_answer": {
+    "SolidWorks": "affirmed"
+   },
+   "source_test": "tests/test_stage4_scope.py::test_negation_keeps_the_gap_rule_and_does_not_spread"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "not"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved"
+   },
+   "input": "FEA is not required",
+   "oracle_answer": {
+    "Finite Element Analysis": "affirmed"
+   },
+   "source_test": "tests/test_cue_binding.py::test_negation_after_is_posting_only"
+  },
+  {
+   "cause": {
+    "Finite Element Analysis": {
+     "cue_line": [
+      "zero"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "zero"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "Finite Element Analysis": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Achieved zero defects using FEA and SolidWorks",
+   "oracle_answer": {
+    "SolidWorks": "found"
+   },
+   "source_test": "tests/test_job_match.py::test_resume_negation_is_narrow"
+  },
+  {
+   "cause": {
+    "SolidWorks": {
+     "unsupported_form": true
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "SolidWorks": "unresolved"
+   },
+   "input": "Tools: no-code automation, SolidWorks",
+   "oracle_answer": {
+    "SolidWorks": "found"
+   },
+   "source_test": "tests/test_job_match.py::test_resume_negation_is_narrow"
+  },
+  {
+   "cause": {
+    "PLC Programming": {
+     "cue_line": [
+      "not",
+      "only"
+     ]
+    },
+    "SolidWorks": {
+     "cue_line": [
+      "not",
+      "only"
+     ]
+    }
+   },
+   "doc": "resume",
+   "expected": {
+    "PLC Programming": "unresolved",
+    "SolidWorks": "unresolved"
+   },
+   "input": "Not only PLC but also SolidWorks",
+   "oracle_answer": {
+    "SolidWorks": "found"
+   },
+   "source_test": "tests/test_job_match.py::test_resume_negation_is_narrow"
+  }
+ ],
+ "not_permitted": [
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "acr_mls_not_ml",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "acr_rnd_csuite",
+   "oracle_answer": "found",
+   "skill": "C++"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "acr_slash_lowercase",
+   "label": {
+    "canonical": "CFD",
+    "doc": "resume",
+    "line_contains": "fea, cfd, sql",
+    "status": "affirmed"
+   },
+   "oracle_answer": "affirmed"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "acr_slash_lowercase",
+   "oracle_answer": "found",
+   "skill": "CFD"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "acr_slash_lowercase",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "acr_slash_lowercase",
+   "oracle_answer": "found",
+   "skill": "SQL"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "dup_earliest_evidence",
+   "oracle_answer": "found",
+   "skill": "SQL"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "dup_excluded_only",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "dup_negated_then_preferred",
+   "oracle_answer": "found",
+   "skill": "CFD"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "dup_precedence_tiers",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "email_no_cues",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "email_with_cues",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "exc_bare_bonus_line",
+   "oracle_answer": "found",
+   "skill": "PLC Programming"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "exc_benefits_bullets",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "exc_offer_comp_titlecase",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "exc_perks_plain_titlecase",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "exc_upper_perk_line",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_company_site_star",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_company_site_star",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_company_site_star",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_bullets",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_bullets",
+   "oracle_answer": "found",
+   "skill": "MATLAB"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_bullets",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_lost_bullets",
+   "label": {
+    "canonical": "Finite Element Analysis",
+    "doc": "resume",
+    "line_contains": "Skills: SolidWorks",
+    "status": "affirmed"
+   },
+   "oracle_answer": "affirmed"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_lost_bullets",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_lost_bullets",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_lost_bullets",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_linkedin_lost_bullets",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_markdown",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_markdown",
+   "oracle_answer": "found",
+   "skill": "ISO 9001"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_plain_email_cues",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_plain_email_cues",
+   "oracle_answer": "found",
+   "skill": "MATLAB"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_plain_email_cues",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "full_plain_email_cues",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "inl_a_plus",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "inl_required_preferred_labels",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "inl_semicolon_mixed",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "lost_bullets_nice_to_have",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "lost_bullets_what_you_do",
+   "oracle_answer": "found",
+   "skill": "ANSYS"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "lost_bullets_what_you_do",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "neg_posting_basic",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "neg_posting_clause_breaks",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "neg_posting_clause_breaks",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "neg_posting_familiar_hypothetical",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "neg_posting_familiar_hypothetical",
+   "oracle_answer": "found",
+   "skill": "Statistical Process Control"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "neg_posting_not_required_after",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_bigco_basic_preferred",
+   "oracle_answer": "found",
+   "skill": "Root Cause Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_defense_clearance",
+   "oracle_answer": "found",
+   "skill": "Lean Six Sigma Green Belt"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_defense_clearance",
+   "oracle_answer": "found",
+   "skill": "Systems Engineering"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_desired_characteristics",
+   "oracle_answer": "found",
+   "skill": "Lean Six Sigma Green Belt"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_indeed_headingless",
+   "label": {
+    "canonical": "CNC Machining",
+    "doc": "resume",
+    "line_contains": "wrote G-code by hand",
+    "status": "affirmed"
+   },
+   "oracle_answer": "affirmed"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_indeed_headingless",
+   "oracle_answer": "found",
+   "skill": "CNC Machining"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_indeed_headingless",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_numbered_lists",
+   "label": {
+    "canonical": "ISO 9001",
+    "doc": "resume",
+    "line_contains": "maintained the quality management",
+    "status": "affirmed"
+   },
+   "oracle_answer": "affirmed"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_numbered_lists",
+   "oracle_answer": "found",
+   "skill": "ISO 9001"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_numbered_lists",
+   "oracle_answer": "found",
+   "skill": "Root Cause Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "label": {
+    "canonical": "Fatigue Analysis",
+    "doc": "resume",
+    "line_contains": "Performed finite element analysis and fatigue",
+    "status": "affirmed"
+   },
+   "oracle_answer": "affirmed"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "ANSYS"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "Creo"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "Fatigue Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "Hydraulics/Pneumatics"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_pdf_wrapped",
+   "oracle_answer": "found",
+   "skill": "Lean Manufacturing"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_staffing_agency",
+   "oracle_answer": "found",
+   "skill": "Lean Manufacturing"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_staffing_agency",
+   "oracle_answer": "found",
+   "skill": "Technical Writing"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_startup_emoji",
+   "label": {
+    "canonical": "Composites",
+    "doc": "resume",
+    "line_contains": "carbon fiber layup",
+    "status": "affirmed"
+   },
+   "oracle_answer": "affirmed"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_startup_emoji",
+   "oracle_answer": "found",
+   "skill": "ANSYS"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_startup_emoji",
+   "oracle_answer": "found",
+   "skill": "Composites"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_startup_emoji",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "r5_startup_emoji",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "unk_apply_environment",
+   "oracle_answer": "found",
+   "skill": "Finite Element Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "unk_culture_why",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "unk_culture_why",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "unk_physical_requirements",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_bigco_basic_desired",
+   "oracle_answer": "found",
+   "skill": "DFMEA"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_bigco_basic_desired",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_bigco_basic_desired",
+   "oracle_answer": "found",
+   "skill": "Python"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_bigco_basic_desired",
+   "oracle_answer": "found",
+   "skill": "Root Cause Analysis"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_duty_lines_as_required",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_duty_lines_as_required",
+   "oracle_answer": "found",
+   "skill": "Hydraulics/Pneumatics"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_linkedin_lost_bullets",
+   "oracle_answer": "found",
+   "skill": "ERP Systems"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_mfg_technician",
+   "oracle_answer": "found",
+   "skill": "ERP Systems"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_mfg_technician",
+   "oracle_answer": "found",
+   "skill": "Statistical Process Control"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_numbered_lists",
+   "oracle_answer": "found",
+   "skill": "AutoCAD"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_numbered_lists",
+   "oracle_answer": "found",
+   "skill": "Hydraulics/Pneumatics"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_staffing_agency",
+   "oracle_answer": "found",
+   "skill": "GD&T"
+  },
+  {
+   "cause": {
+    "unsupported_form": true
+   },
+   "expected": "unresolved",
+   "fixture": "u6_startup_emoji_ev",
+   "oracle_answer": "found",
+   "skill": "SolidWorks"
+  }
+ ],
+ "permitted_causes": [
+  "cue_line",
+  "document_trigger"
+ ],
+ "permitted_change": "a résumé label or skill may change to 'unresolved' only when a cue line or a document-level trigger causes it; the cause is recorded per record; the original value is kept as oracle_answer; source_sha256 is the sha256 of the file's blob at base_commit",
+ "rule": "CONTRACT_V4_LINE_RULE.md revision 3 (2026-11-13)",
+ "schema": "expectations_line_rule/2",
+ "status": "DRAFT - not approved; not read by any test"
+}

@@ -1,0 +1,38 @@
+diff --git a/tests/test_check_fixture.py b/tests/test_check_fixture.py
+index 2a1be98..ab7a8be 100644
+--- a/tests/test_check_fixture.py
++++ b/tests/test_check_fixture.py
+@@ -6,8 +6,10 @@ _spec = importlib.util.spec_from_file_location("evaluate_matching", ROOT / "scri
+ ev = importlib.util.module_from_spec(_spec)
+ _spec.loader.exec_module(ev)
+ 
+-POST = "Requirements:\n- Python\n- CFD\n\nNice to have:\n- CFD\n"
+-RESUME = "Skills\nNo CFD experience; currently studying CFD\n"  # engine: 1st negated, 2nd hypothetical
++# The two-status line is in the posting: a résumé line gives one state to every skill on it (contract v4).
++POST = ("Requirements:\n- Python\n- CFD\n\nNice to have:\n- CFD\n\n"
++        "Notes:\nNo CFD experience; currently studying CFD\n")  # engine: 1st negated, 2nd hypothetical
++RESUME = "Skills\nCFD\n"
+ 
+ 
+ def check(**kw):
+@@ -16,7 +18,7 @@ def check(**kw):
+ 
+ 
+ def lab(status, **kw):
+-    return {"doc": "resume", "line_contains": "No CFD", "canonical": "CFD", "status": status, **kw}
++    return {"doc": "posting", "line_contains": "No CFD", "canonical": "CFD", "status": status, **kw}
+ 
+ 
+ def test_per_occurrence_labels_pass():
+@@ -43,9 +45,9 @@ def test_unindexed_label_asserts_every_occurrence():
+     assert r["status"] == [False]
+     assert any("occurrence 2 of 2" in f and "got hypothetical" in f for f in r["fails"])
+     assert check(mention_labels=[lab("negated", occurrence=1)])["status"] == [True]
+-    both = check(mention_labels=[lab("negated")], resume_text="Skills\nNo CFD experience; no CFD training\n")
++    both = check(mention_labels=[lab("negated")], posting_text=POST.replace("currently studying CFD", "no CFD training"))
+     assert both["status"] == [True]
+-    one = check(mention_labels=[lab("negated")], resume_text="Skills\nNo CFD experience\n")
++    one = check(mention_labels=[lab("negated")], posting_text=POST.replace("; currently studying CFD", ""))
+     assert one["status"] == [True]
+ 
+ 
