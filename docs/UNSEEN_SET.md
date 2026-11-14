@@ -63,3 +63,67 @@ a3032010c52b8bad01b7ce8153218fc9dfa621570be5dc2900fccd4e3c8bc388  u7_headingless
 
 combined  2c0c7ac8568f98c2ec615c12952b977e9d65f19e2b9d02dd77873d22479d8f22
 ```
+
+---
+
+# Sealed unseen set (round 9)
+
+Written by a new independent author for the Path B (confirmation-first) acceptance criteria,
+from the author kit committed at `dd6ae28` (`docs/proposals/contract-v4-line-rule/round9/`).
+It is stored outside the repository. Implementers and their prompts must never read it.
+Gate 1 remains blocked.
+
+Round 8 is not missing: its manifest is recorded in this file on branch `fix/comma-lists`
+(commit `c9a3897`), which is not merged into this branch.
+
+- **Sealed (UTC):** 2026-11-14T07:27:34Z. That is after the acceptance criteria were frozen
+  (`dd6ae28`, 07:10Z) and before any production change on the integration branch (still at `fa1555e`).
+- **Files:** 30 posting + résumé pairs (`split: "holdout"`, ids `u9_`), 3 in each of the eight
+  trap categories and 6 ordinary pairs.
+- **Hashes checked by the coordinator (2026-11-14):** every per-file hash and the combined hash
+  match the author's manifest.
+- **Blind validation:** a script that prints only counts, rule names, filenames and hashes checked
+  the file shape, one pair per file, unique ids equal to filenames, unique texts, category counts, canonical
+  skill names, `resume_has` within required plus preferred, 3 to 12 skills per pair and the
+  word-count limits. 0 failures. No pair text or label was shown to the coordinator.
+- **Author isolation:** a fresh general-purpose agent whose prompt named only its kit folder.
+  Its recorded tool calls read only the three kit files and wrote only inside that folder. The
+  kit holds skill names and aliases only; it does not hold `data/match_rules.json`.
+- **Not checked:** the rule that each trap category puts a doubtful skill in the required list
+  at least once, and the quality of the labels. Both need a reader of the pairs. Keeping the
+  set from implementers relies on instructions; nothing on the filesystem enforces it.
+
+```
+1be2ed606f20da95f96452a9430c1cea5ee9c0f9e27b6dc1cbd52a7b15643a8b  u9_aero_marks.json
+08f61afd71fa68a3e00fdd5bec3d977d3bfa5396c7e0a2fc4dec4504b7d4e0ec  u9_april_sitting.json
+66981d9578a480c57d241e604329db5ba9d259c16240837a99a8b869a01f3e63  u9_blister_columns.json
+2d816b942e0bd401f3e412cba168c274cd0c77f8ea71ae9acd2936ab2f962197  u9_bus_bms.json
+d6210605b1499f7208fce73aac6eb073b6e8fdc4835b9b64dc7ec334512e5f18  u9_contractor_ladder.json
+18343f1d4a59271f0fc05b45db8515ea6632298b846f52cd51aad50b8492d73a  u9_cordless_housings.json
+c022df25199f033495f74d45a3e9032ed5d62da9f0073f23997dbaf9c58858de  u9_drive_unit_pagebreak.json
+e399cdf51ae6f4017560ccc52d51f068f91d8dd2b956d8d7cdf8fa3ce2882d47  u9_ferry_pack_next.json
+99ffb6421f17754d172f4da8bce3e9828d2aec5335387424c2d5e6be3c541ba0  u9_fixture_symbols.json
+c9b1774d6870d082961e1685010c7daceed05775a7d2886543f5849af54c609b  u9_forge_matrix.json
+967e005cbed530dd8fc5f67d388cc233581b090367af96b95a150ad3052073dd  u9_headlamp_launch.json
+472e89f5f38e06352515192e3529989006f85846a828c237df43d7d46d7e5b2d  u9_honing_zero.json
+f62fc9861fa82cfc41db9793321ea84250bdd93b978e3aa9585c5a1b08c782ed  u9_integrator_robots.json
+dc7838311eccc97492116fba9e0703d6bcfce1385920cc66ba8e273985f40d33  u9_kiosk_wrapped.json
+cf1ea9af5de1ddcfdf270b222ae6499e39d2a35cd8915eefb16cd7259cdb5ed8  u9_kitchen_lack.json
+8831f8a42010774e14b5cfd7432952bbf58f9eda2f8985932296260da06a06e9  u9_landing_gear_stress.json
+6e3dc6403d872aa0b850e6cad7c1e6b42d99cbeb812a60838c34e74e10192932  u9_lathe_cells_goals.json
+3708b8b1a70b9ad745d20eae56aa7c489b7dcc6ed53ec0838d6ab222af8a4a61  u9_mill_downtime.json
+3db798fcfaeb56fda42db9e5bc19837999cadafb9cfd8b6fecdc449557eb4489  u9_parcel_sorter.json
+8c1e33b24774c8121657570c98c9605238a0567b35a1d73011f8bcbdba5924f2  u9_partner_cfrp.json
+f2c9da516a4e272c7857f368cfa92d6b841fbd57b14b1d20749bfc4dc180adc2  u9_projector_cfd.json
+fc18cfc028e0746cf524504f3a40da950222ecc2a143129b2bc436b0c9d0f9b7  u9_pump_caveat.json
+38c6d7569969cd8cc2ebd38d5da3ba9a54d2f2e24924a31e63398408352891a1  u9_scooter_gaps.json
+46727d2ed53a89a1c0edb5ee7810840afd2bec8f08e3da1096b0becd4d23153a  u9_seat_form.json
+9d85e2cb3ec3ffa3bf34c3e5800fe32ca0c00b8a228450ba67faaea4c7008de5  u9_supplier_ticks.json
+977d8fb2a2d21c56a7df6a2051b98642281d9a4a4baa20cc5c49c4e9c079c4be  u9_van_legend.json
+4c40b2e7b3db2e66242fd2bef6007a301147850c12c5d6af11f7124a5184595d  u9_viewer_catia.json
+a291fdf202e9f75353658b05d70b39941bc96e45016e8e6f177b0482078d4dc8  u9_weeder_robot.json
+89a18ae878b24ea23f59e9f4802849c0ccdc538210e636f4f9da864c79aa211f  u9_weld_cells_upfront.json
+c64f345fd1de7ea63355f317c001b50c121c90e758f6759178ed678ce7e793b1  u9_wing_fold_found.json
+
+combined  f6f9febe86289556109cc0cf932ebc4e76b8e4fc5e1de27e55817afa73df0a80
+```
