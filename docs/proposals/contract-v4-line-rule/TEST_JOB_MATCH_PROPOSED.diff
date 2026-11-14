@@ -1,0 +1,46 @@
+diff --git a/tests/test_job_match.py b/tests/test_job_match.py
+index 4221193..56ea595 100644
+--- a/tests/test_job_match.py
++++ b/tests/test_job_match.py
+@@ -45,7 +45,7 @@ def test_split_wrapper():
+ 
+ 
+ def test_headingless_posting_is_unscored_with_score_none():
+-    r = match_posting("Need SolidWorks and Python.", "Python dev")
++    r = match_posting("Need SolidWorks and Python.", "Skills\nPython")
+     assert not r.required and not r.preferred and r.score is None
+     assert names(r.unscored) == ["SolidWorks", "Python"]
+     assert [m.found for m in r.unscored] == [False, True]
+@@ -58,12 +58,12 @@ def test_skill_in_both_sections_counts_once_as_required():
+ 
+ 
+ def test_required_and_preferred_score():
+-    r = match_posting("Requirements:\n- SolidWorks\nPreferred:\n- Python", "SolidWorks")
++    r = match_posting("Requirements:\n- SolidWorks\nPreferred:\n- Python", "Skills\nSolidWorks")
+     assert r.score == pytest.approx(80)
+ 
+ 
+ def test_excluded_section_never_scores():
+-    r = match_posting("Requirements:\n- SolidWorks\nBenefits:\n- Python training", "Python, SolidWorks")
++    r = match_posting("Requirements:\n- SolidWorks\nBenefits:\n- Python training", "Skills\nPython, SolidWorks")
+     assert names(r.excluded) == ["Python"] and r.excluded[0].requirement == "excluded"
+     assert names(r.required) == ["SolidWorks"] and r.score == 100
+ 
+@@ -115,7 +115,7 @@ def test_solid_works_variant_and_plc_acronym():
+ # ---- attribution, order, errors ----
+ def test_lines_and_spans_attributed():
+     post = "Requirements:\nSolidWorks expert\nANSYS"
+-    res = "Intro\nDesigned parts in SolidWorks"
++    res = "Intro\n\nDesigned parts in SolidWorks"
+     a, b = match_posting(post, res).required
+     assert a.posting_line == "SolidWorks expert" and a.resume_line == "Designed parts in SolidWorks"
+     assert post[slice(*a.posting_span)] == "SolidWorks" and res[slice(*a.resume_span)] == "SolidWorks"
+@@ -147,7 +147,7 @@ def test_error_does_not_echo_text():
+ def test_long_line_snippet_is_capped_and_span_exact():
+     line = "word " * 100 + "SolidWorks " + "word " * 100
+     post = "Requirements:\n" + line
+-    m = match_posting(post, line).required[0]
++    m = match_posting(post, "Used " + line).required[0]
+     assert len(m.posting_line) <= 200 and len(m.resume_line) <= 200
+     assert "SolidWorks" in m.posting_line and m.posting_line.startswith("…")
+     assert post[slice(*m.posting_span)] == "SolidWorks"
