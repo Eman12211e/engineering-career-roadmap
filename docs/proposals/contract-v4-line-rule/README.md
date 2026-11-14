@@ -7,6 +7,9 @@ file is changed by this folder. Base: `upgrade/review-revisions` @ `fa1555e`.
 
 | File | Status |
 |---|---|
+| `ACCEPTANCE_CRITERIA.md` | **FROZEN** 2026-11-13 by owner ruling. Final owner decisions, proposed details awaiting confirmation (A2), the single `Coverage` result, four release gates, the required integration test, work packages and round 9 rules. Supersedes contract §10 and plan §7 where they differ, and lists corrections to the contract. |
+| `round9/` | The author kit for the independent round-9 set: exactly three files the author may see (instructions, a fake schema example, the skill list). They contain no rule content. |
+| `ROUND9_KIT_README.md` | **Not part of the kit.** How the kit is copied outside the repository, who may write probes, and where the hashes go. |
 | `CONTRACT_V4_LINE_RULE.md` | **DRAFT**, revision 4 (2026-11-13): confirmation-first, owner rulings R1–R7 and final rulings F1–F5 applied. Open decisions are in its §10. Revision 3 is commit `d49574a`. |
 | `API_AND_MIGRATION_PLAN.md` | **DRAFT plan, nothing implemented.** The two interfaces, every consumer of the legacy `score`/`found`, the 11 assertions, the evaluator, the bullet integration test, the legacy keyword screens, and the work packages. Its new assertions have not been run. |
 | `EXPECTATIONS_LINE_RULE.DRAFT.json` | **DRAFT** migration expectations for revision 4 (250 records, three permitted causes). Not approved. No test reads it. |

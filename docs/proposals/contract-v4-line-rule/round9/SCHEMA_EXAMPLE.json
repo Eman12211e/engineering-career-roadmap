@@ -1,0 +1,16 @@
+{
+  "_note": "FAKE example of the file shape. Not evaluation data. Do not copy its content or style.",
+  "pairs": [
+    {
+      "id": "u9_example",
+      "split": "holdout",
+      "category": "Ordinary realistic pairs with no traps",
+      "posting_text": "FAKE POSTING at Example Co.\nRequirements:\n- Skill A\n- Skill B\nNice to have:\n- Skill C",
+      "resume_text": "FAKE RESUME.\nExample Co, Fake Engineer\n- Skill A work, described here as fake text.",
+      "required_skills": ["Skill A", "Skill B"],
+      "preferred_skills": ["Skill C"],
+      "resume_has": ["Skill A"],
+      "note": "Fake note. Say here what makes a real pair hard and why each doubtful skill is in or out."
+    }
+  ]
+}
