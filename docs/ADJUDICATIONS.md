@@ -15,8 +15,9 @@ original labels and with the adjudicated labels, separately.
 
 **Running tally:** 2 engine-favoured, 0 engine-disfavoured.
 
-**Recorded but not ruled** (`tests/fixtures/DISPUTED.json`; the original labels still count):
+**Recorded but not ruled** (`tests/fixtures/DISPUTED.json`; the original labels are kept unchanged, excluded from the headline metrics, and reported alongside as original-label totals):
 - `u6_linkedin_lost_bullets`: line section;
-- `r5_linkedin_bonus_if`: MATLAB status.
+- `r5_linkedin_bonus_if`: MATLAB status;
+- `u6_bigco_basic_desired`: Statistical Process Control status and found set (R2.4 vs R4.7.1).
 
 Every ruling so far has favoured the engine. Weigh the next dispute with that in mind.

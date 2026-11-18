@@ -6,7 +6,7 @@
       provisional 0.85 gate), 0 PASS. Holdout results are aggregate only.
   python scripts/evaluate_matching.py --fixtures tests/fixtures/postings tests/fixtures/regression_r6
       Per-stage report on the reviewer-written fixtures (exit 0, report only). Labels listed in
-      tests/fixtures/DISPUTED.json are reported separately.
+      tests/fixtures/DISPUTED.json (line_label, mention_label, expected_set) are reported separately.
   python scripts/evaluate_matching.py --update-docs
       Rewrite the generated evaluation section of docs/SCORING.md from a run over both folders.
 
@@ -99,10 +99,20 @@ def check_fixture(fx: dict, disputed=None) -> dict:
     post, resume = fx["posting_text"], fx["resume_text"]
     res = match_posting(post, resume)
     got, exp = result_sets(res), fx["expected"]
-    fails, t, disp = [], {}, []
+    fails, t, disp, skip = [], {}, [], set()
     for g in (*GROUPS, "found"):
-        if got[g] != sorted(exp.get(g, [])):
-            fails.append(f"{g}: got {got[g]} expected {sorted(exp.get(g, []))}")
+        have, want = got[g], sorted(exp.get(g, []))
+        for rec in disputed:  # expected_set dispute: drop the canonical from both sides, report it
+            lab = rec["label"]
+            if rec["fixture"] == fx["id"] and lab["kind"] == "expected_set" and lab["group"] == g and (lab["canonical"] in want) == lab["present"]:
+                present = lab["canonical"] in have
+                disp.append({"fixture": fx["id"], "label": lab, "got": {"present": present}, "alternative": rec["alternative"],
+                             "alt_ok": {"present": present} == rec["alternative"], "reason": rec["reason"]})
+                skip.add((g, lab["canonical"]))
+                have = [s for s in have if s != lab["canonical"]]
+                want = [s for s in want if s != lab["canonical"]]
+        if have != want:
+            fails.append(f"{g}: got {have} expected {want}")
     t["doc_ok"] = not fails
     # stage 1: sections
     sec = []
@@ -159,7 +169,7 @@ def check_fixture(fx: dict, disputed=None) -> dict:
                 if (doc, m.span) not in claimed:
                     fails.append(f"unexpected unlabelled mention {m.canonical} on line {ln.text[:30]!r} ({doc})")
     # stage 5: importance and evidence
-    t["importance"] = [s in got[g] for g in GROUPS for s in exp.get(g, [])]
+    t["importance"] = [s in got[g] for g in GROUPS for s in exp.get(g, []) if (g, s) not in skip]
     for lab in fx.get("evidence_labels", []):
         m = next((m for g in GROUPS for m in getattr(res, g) if m.skill == lab["canonical"]), None)
         if m is None or lab["posting_line_contains"] not in m.posting_line:
@@ -175,9 +185,9 @@ def check_fixture(fx: dict, disputed=None) -> dict:
     return t
 
 
-def run_fixtures(dirs) -> dict:
+def run_fixtures(dirs, disputed=None) -> dict:
     """{folder name: [(fixture id, result)]} for every *.json in each directory."""
-    disputed = load_disputed()
+    disputed = load_disputed() if disputed is None else disputed
     out = {}
     for d in dirs:
         d = Path(d)
@@ -214,6 +224,15 @@ def _disputed_lines(sm: dict) -> list[str]:
             f"({'engine matches the alternative' if d['alt_ok'] else 'engine matches neither'})" for d in sm["disputed"]]
 
 
+def _original_line(dirs) -> str:
+    """Totals with every disputed label counted as written (computed, not hard-coded)."""
+    sm = _summary(run_fixtures(dirs, disputed=[]))
+    sec, stat = sm["section"], sm["status"]
+    return (f"with original labels (disputes counted as failures): fixtures passing {sm['ok']}/{sm['fixtures']}; "
+            f"section accuracy {_ratio(sum(sec), len(sec))} ({sum(sec)}/{len(sec)}); "
+            f"status accuracy {_ratio(sum(stat), len(stat))} ({sum(stat)}/{len(stat)})")
+
+
 def report_fixtures(dirs) -> str:
     runs = run_fixtures(dirs)
     if not any(runs.values()):
@@ -222,6 +241,7 @@ def report_fixtures(dirs) -> str:
     out = [f"fixtures: {sm['fixtures']} ({', '.join(f'{k} {len(v)}' for k, v in runs.items())})"]
     out += _metric_lines(sm)
     out.append(f"document-level exact sets: {sm['ok']}/{sm['fixtures']} fixtures")
+    out.append(_original_line(dirs))
     out.append(f"disputed labels reported separately: {len(sm['disputed'])}")
     out += _disputed_lines(sm)
     for folder, rows in runs.items():
@@ -243,6 +263,7 @@ def generated_section(dirs=FIXTURE_DIRS) -> str:
         out.append(f"| `{folder}` | {len(rows)} | {sum(1 for _, r in rows if r['doc_ok'] and not r['fails'])} |")
     out += [f"| total | {sm['fixtures']} | {sm['ok']} |", "", "Per-stage metrics over all fixtures:", ""]
     out += [f"- {m}" for m in _metric_lines(sm)]
+    out += ["", f"With {_original_line(dirs)[5:]}"]
     out += ["", f"Disputed or conflicting labels, kept unchanged and excluded from the metrics above: {len(sm['disputed'])}", ""]
     out += [f"- `{d['fixture']}` {json.dumps(d['label'], ensure_ascii=False)}: engine now {json.dumps(d['got'])}, "
             f"alternative {json.dumps(d['alternative'])}; {d['reason']}" for d in sm["disputed"]]
