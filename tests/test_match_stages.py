@@ -218,7 +218,7 @@ def test_clause_span_ignores_decimal_points():
     ("Willingness to learn FEA", "hypothetical"),
     ("No experience with FEA or CFD", "negated"),
     ("FEA not required", "negated"),
-    ("FEA, not required: PLC", "affirmed"),
+    ("FEA, not required: PLC", "negated"),  # R4.7.3: negation_after binds the list just before it
     ("Machine Learning and FEA", "affirmed"),  # "learning" sits inside another mention
 ])
 def test_qualify(text, status):

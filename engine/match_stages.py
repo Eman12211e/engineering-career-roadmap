@@ -80,16 +80,21 @@ class _Rules:
     bullets_always: str
     bullets_spaced: str
     numbered: re.Pattern
-    neg_before: re.Pattern          # negator then only fillers, ending at the skill
+    neg_cue: re.Pattern             # a negator
+    neg_after_cue: re.Pattern       # "not required" and friends (postings only, after the list)
     hyp_cue: re.Pattern             # a hypothetical cue anywhere (starts a scope)
     hyp_ends: re.Pattern            # contrast or hard stop that ends a hypothetical scope
-    neg_after: re.Pattern           # fillers then a "not required" cue, starting after the skill
-    not_required_then_pref: re.Pattern
-    breaks: re.Pattern
-    connectors: re.Pattern          # a gap made only of list connectors
-    postfix: dict                   # importance -> pattern, starting after the last skill of a list
-    modal_before: dict              # importance -> pattern, ending at the first skill of a list
-    labels: dict                    # importance -> pattern, at the start of a clause
+    then_pref: re.Pattern           # after "not required": ", but is a plus"
+    breaks: re.Pattern              # clause breaks (clause_span only)
+    stops: re.Pattern               # hard stops and contrasts: they end every list and scope
+    splitter: re.Pattern            # list coordinators
+    neg_lead: re.Pattern            # leading negation fillers
+    neg_fillers_only: re.Pattern    # only negation fillers (the gap between a cue and its first item)
+    fillers_only: re.Pattern        # only cue fillers (the remainder of an item after its skill)
+    postfix: dict                   # importance -> bounded cue phrase after a list
+    modal: dict                     # importance -> bounded cue phrase before a list
+    labels: dict                    # importance -> label before a colon
+    max_item_words: int
     heading_test: dict
 
 
@@ -101,36 +106,32 @@ def _rules() -> _Rules:
         doc: {_key(label): kind for kind, labels in kinds.items() for label in labels}
         for doc, kinds in d["headings"].items()
     }
-    fill_b = _bounded(d["negation_fillers"])
     cue_fill = _bounded(d["cue_fillers"])
-    prefix_fill = _bounded(d["negation_fillers"] + d["cue_fillers"])
-    after_gap = r"\s*(?:" + cue_fill + r"\s+)*"
+    neg_fill = _bounded(d["negation_fillers"] + d["cue_fillers"])
+    sym = [c for c in d["list_connectors"] if not c[0].isalpha()]
+    words = [c for c in d["list_connectors"] if c[0].isalpha()]
     return _Rules(
         headings=heads,
         bullets_always="".join(d["bullets"]["always"]),
         bullets_spaced="".join(d["bullets"]["with_space"]),
         numbered=re.compile(d["bullets"]["numbered"]),
-        neg_before=re.compile(_bounded(d["negation"]) + r"(?:\s+" + fill_b + r")*\s*$", re.I),
+        neg_cue=re.compile(_bounded(d["negation"]), re.I),
+        neg_after_cue=re.compile(_bounded(d["negation_after"]), re.I),
         hyp_cue=re.compile(_bounded(d["hypothetical"]), re.I),
         hyp_ends=re.compile("|".join(f"(?:{b})" for b in d["hypothetical_scope_ends"]), re.I),
-        neg_after=re.compile(r"^" + after_gap + _bounded(d["negation_after"]), re.I),
-        not_required_then_pref=re.compile(
-            r"^" + after_gap + _bounded(d["negation_after"]) + r"\s*,?\s*(?:but|though|however)\s*,?\s*"
-            r"(?:(?:is|are)\s+)?" + _bounded(d["not_required_then_preferred"]), re.I),
+        then_pref=re.compile(
+            r"^\s*,?\s*(?:but|though|however)\s*,?\s*(?:(?:is|are)\s+)?" + _bounded(d["not_required_then_preferred"]),
+            re.I),
         breaks=re.compile("|".join(f"(?:{b})" for b in d["clause_breaks"]), re.I),
-        connectors=re.compile(r"^(?:\s*(?:" + _alt(d["list_connectors"]) + r")\s*)+$", re.I),
-        postfix={
-            imp: re.compile(r"^\s*\(?\s*(?:" + cue_fill + r"\s+)*" + _bounded(words), re.I)
-            for imp, words in d["postfix_cues"].items()
-        },
-        modal_before={
-            imp: re.compile(_bounded(words) + r"(?:\s+" + prefix_fill + r")*\s*$", re.I)
-            for imp, words in d["modal_prefix"].items()
-        },
-        labels={
-            imp: re.compile(r"^[\W_]*(?:" + _alt(words) + r")\s*:", re.I)
-            for imp, words in d["prefix_labels"].items()
-        },
+        stops=re.compile("|".join(f"(?:{b})" for b in d["hard_stops"] + d["contrasts"]), re.I),
+        splitter=re.compile(r"\s*(?:" + "|".join(re.escape(c) for c in sym) + r")\s*|" + _bounded(words), re.I),
+        neg_lead=re.compile(r"\s*(?:" + neg_fill + r"\s*)*", re.I),
+        neg_fillers_only=re.compile(r"^\s*(?:" + neg_fill + r"\s*)*$", re.I),
+        fillers_only=re.compile(r"^[\s()]*(?:" + cue_fill + r"[\s()]*)*$", re.I),
+        postfix={imp: re.compile(_bounded(w), re.I) for imp, w in d["postfix_cues"].items()},
+        modal={imp: re.compile(_bounded(w), re.I) for imp, w in d["modal_prefix"].items()},
+        labels={imp: re.compile(r"^[\W_]*(?:" + _alt(w) + r")\s*$", re.I) for imp, w in d["prefix_labels"].items()},
+        max_item_words=d["max_item_words"],
         heading_test=d["heading_test"],
     )
 
@@ -363,111 +364,182 @@ def disambiguate(mentions: tuple[Mention, ...]) -> tuple[Mention, ...]:
 
 
 # ---- Stage 4 -- Qualify ----------------------------------------------------------------------
+# Coordinated lists (R4.1) are a grammatical unit: items are whatever sits between coordinators
+# (",", "and", "or", "/", "&", ...), and whether an item is a recognised skill never decides where
+# a list starts or ends. A list ends at a hard stop, a contrast, or a new qualification cue.
+@dataclass(frozen=True)
+class _Boundary:
+    start: int
+    end: int
+    kind: str   # stop | neg | hyp | negafter | post:<importance> | modal:<importance>
+
+
 @lru_cache(maxsize=8192)
-def _chains(line: Line) -> tuple[tuple[tuple[int, int], ...], ...]:
-    """Coordinated skill lists ("X, Y or Z") as tuples of normalised spans, in line order."""
-    n = _norm(line)
-    spans = []
-    for m in disambiguate(find_mentions((line,))):
-        a, b = norm_span(line, m.span)[1:]
-        spans.append((a, b))
-    chains: list[list[tuple[int, int]]] = []
-    for sp in spans:
-        if chains and (sp[0] == chains[-1][-1][1] or _rules().connectors.match(n.text[chains[-1][-1][1]:sp[0]])):
-            chains[-1].append(sp)
-        else:
-            chains.append([sp])
-    return tuple(tuple(c) for c in chains)
+def _kept_spans(line: Line) -> tuple[tuple[int, int], ...]:
+    return tuple(norm_span(line, m.span)[1:] for m in disambiguate(find_mentions((line,))))
 
 
-def _chain_of(line: Line, nspan: tuple[int, int]) -> tuple[tuple[int, int], ...]:
-    return next((c for c in _chains(line) if nspan in c), (nspan,))
+@lru_cache(maxsize=8192)
+def _boundaries(line: Line) -> tuple[_Boundary, ...]:
+    """Every list or scope boundary in the line, in text order (normalised coordinates)."""
+    r = _rules()
+    text = _norm(line).text
+    own = [norm_span(line, m.span)[1:] for m in find_mentions((line,))]
+    inside = lambda m: any(m.start() < e and s < m.end() for s, e in own)  # noqa: E731
+    found = [_Boundary(m.start(), m.end(), "stop") for m in r.stops.finditer(text)]
+    after = [m for m in r.neg_after_cue.finditer(text) if not inside(m)]
+    found += [_Boundary(m.start(), m.end(), "negafter") for m in after]
+    for rx, kind in ((r.neg_cue, "neg"), (r.hyp_cue, "hyp")):
+        found += [_Boundary(m.start(), m.end(), kind) for m in rx.finditer(text)
+                  if not inside(m) and not any(m.start() < a.end() and a.start() < m.end() for a in after)]
+    for table, tag in ((r.postfix, "post"), (r.modal, "modal")):
+        for imp, rx in table.items():
+            found += [_Boundary(m.start(), m.end(), f"{tag}:{imp}") for m in rx.finditer(text) if not inside(m)]
+    return tuple(sorted(found, key=lambda b: (b.start, -b.end)))
 
 
-def _clause(line: Line, nspan: tuple[int, int]) -> tuple[int, int]:
-    """Clause bounds in normalised coordinates; breaks inside a coordinated list do not count."""
-    n = _norm(line)
-    gaps = [(a[1], b[0]) for c in _chains(line) for a, b in zip(c, c[1:])]
-    lo, hi = 0, len(n.text)
-    for b in _rules().breaks.finditer(n.text):
-        if any(b.start() < ge and gs < b.end() for gs, ge in gaps):
-            continue
-        if b.end() <= nspan[0]:
-            lo = b.end()
-        elif b.start() >= nspan[1]:
-            hi = b.start()
+def _around(line: Line, nspan: tuple[int, int]) -> tuple[_Boundary | None, _Boundary | None]:
+    """The nearest boundary before and after a span."""
+    prev = nxt = None
+    for b in _boundaries(line):
+        if b.end <= nspan[0]:
+            prev = b
+        elif b.start >= nspan[1]:
+            nxt = b
             break
-    return lo, hi
+    return prev, nxt
+
+
+def _pieces_ok(line: Line, lo: int, hi: int) -> bool:
+    """Items between coordinators in text[lo:hi]: short, and a skill is followed only by fillers."""
+    r = _rules()
+    text = _norm(line).text
+    kept = _kept_spans(line)
+    pos = lo
+    for sp in [*r.splitter.finditer(text, lo, hi), None]:
+        end = sp.start() if sp else hi
+        piece = text[pos:end]
+        if piece.strip():
+            in_piece = [s for s in kept if pos <= s[0] and s[1] <= end]
+            if in_piece:
+                if not r.fillers_only.match(text[in_piece[-1][1]:end]):
+                    return False
+            elif len(piece.split()) > r.max_item_words:
+                return False
+        pos = sp.end() if sp else hi
+    return True
+
+
+def _list_before_cue(line: Line, nspan: tuple[int, int], cue_start: int) -> bool:
+    """Is the skill in the coordinated list that ends right before a postfix cue at `cue_start`?
+
+    Its own item may carry only fillers after it ("SQL scripting"); later items must be short
+    names or skills followed only by fillers. "reviews as required" therefore binds nothing.
+    """
+    r = _rules()
+    text = _norm(line).text
+    first = r.splitter.search(text, nspan[1], cue_start)
+    own_end = first.start() if first else cue_start
+    return bool(r.fillers_only.match(text[nspan[1]:own_end])) and _pieces_ok(line, own_end, cue_start)
+
+
+def _after_prefix_ok(line: Line, start: int, nspan: tuple[int, int]) -> bool:
+    """Is the skill in the list that follows a prefix cue ending at `start`?
+
+    Directly after the cue (only fillers between), or in a later item of the same list: the
+    items before it are short names or skills followed by fillers, and its own item is short.
+    """
+    r = _rules()
+    text = _norm(line).text
+    coords = list(r.splitter.finditer(text, start, nspan[0]))
+    if not coords:
+        return bool(r.neg_fillers_only.match(text[start:nspan[0]]))
+    last = coords[-1]
+    return _pieces_ok(line, start, last.start()) and len(text[last.end():nspan[0]].split()) <= r.max_item_words
+
+
+def _hyp_start(line: Line, pos: int) -> int | None:
+    """Start of the hypothetical scope covering normalised index `pos`, or None (R3.1, R4.3).
+
+    The nearest earlier hypothetical cue whose scope has not ended (no contrast and no hard stop
+    between it and `pos`). Commas, coordinators and ordinary words do not end a scope.
+    """
+    best = None
+    for b in _boundaries(line):
+        if b.start >= pos:
+            break
+        if b.kind == "hyp" and not _rules().hyp_ends.search(_norm(line).text, b.end, pos):
+            best = b.start
+    return best
+
+
+def _negated_by_list(line: Line, nspan: tuple[int, int], prev: _Boundary, nxt: _Boundary | None) -> bool:
+    """R4.2 / R4.7.1: negation from the nearest cue before the skill.
+
+    The first item starts after the cue and any negation fillers. A skill directly there is
+    negated (the R2 gap rule). If a coordinator follows inside the same list, every skill of the
+    list is negated, whatever the items contain (the conservative model).
+    """
+    r = _rules()
+    text = _norm(line).text
+    end = nxt.start if nxt else len(text)
+    p0 = r.neg_lead.match(text, prev.end).end()
+    if not text[p0:nspan[0]].strip():
+        return True
+    return r.splitter.search(text, p0, end) is not None
+
+
+def _qualify(mention: Mention, doc: DocKind) -> Mention:
+    """Stage 4 (R3.1, R4): affirmed by default; the latest applicable cue sets the state.
+
+    Hypothetical: a scope that runs on until a contrast or hard stop. Negation: the gap rule
+    applied to the start of the coordinated list, covering every skill in it. Posting only: a
+    "not required" cue after the list.
+    """
+    r = _rules()
+    n = _norm(mention.line)
+    nspan = norm_span(mention.line, mention.span)[1:]
+    prev, nxt = _around(mention.line, nspan)
+    neg_at = prev.start if prev and prev.kind == "neg" and _negated_by_list(mention.line, nspan, prev, nxt) else None
+    hyp_at = _hyp_start(mention.line, nspan[0])
+    status: Status = "affirmed"
+    if neg_at is not None and (hyp_at is None or neg_at > hyp_at):
+        status = "negated"
+    elif hyp_at is not None:
+        status = "hypothetical"
+    elif doc == "posting" and nxt and nxt.kind == "negafter" and _list_before_cue(mention.line, nspan, nxt.start):
+        if not r.then_pref.match(n.text[nxt.end:]):
+            status = "negated"
+    return dataclasses.replace(mention, status=status)
+
+
+def qualify(mention: Mention) -> Mention:
+    """Return the mention with status set by scope and list (R3.1, R4).
+
+    Affirmed by default. A hypothetical cue opens a scope that spans ordinary words,
+    coordinators and commas until a contrast ("but", "however", "although", "whereas") or a hard
+    stop (period, semicolon, colon, end of the logical line). A negator applies to the skills of
+    the coordinated list that starts right after it (and its fillers); with no coordinator only
+    the skill directly after it is negated. A later cue sets a new state; cues never reach back.
+    Posting rules apply, including "not required" after the list.
+    """
+    return _qualify(mention, "posting")
 
 
 def clause_span(line: Line, span: tuple[int, int]) -> tuple[int, int]:
     """Absolute span of the clause containing `span`, bounded by clause breaks from data."""
     n = _norm(line)
     _, a, b = norm_span(line, span)
-    lo, hi = _clause(line, (a, b))
+    lo, hi = 0, len(n.text)
+    for m in _rules().breaks.finditer(n.text):
+        if m.end() <= a:
+            lo = m.end()
+        elif m.start() >= b:
+            hi = m.start()
+            break
     start = n.to_orig[lo] if lo < len(n.to_orig) else len(line.text)
     end = n.to_orig[hi - 1] + 1 if hi > 0 else 0
     return line.start + start, line.start + max(end, start)
-
-
-def _hyp_start(line: Line, pos: int) -> int | None:
-    """Start of the hypothetical scope covering normalised index `pos`, or None.
-
-    The nearest earlier hypothetical cue whose scope has not ended (no contrast and no hard stop
-    between it and `pos`). Commas and ordinary words do not end a scope. A cue inside a skill's
-    own matched span ("machine learning") never starts one.
-    """
-    r = _rules()
-    n = _norm(line)
-    own = [norm_span(line, m.span)[1:] for m in find_mentions((line,))]
-    best = None
-    for c in r.hyp_cue.finditer(n.text):
-        if c.end() > pos:
-            break
-        if any(c.start() < e and s < c.end() for s, e in own):
-            continue
-        if not r.hyp_ends.search(n.text, c.end(), pos):
-            best = c.start()
-    return best
-
-
-def _qualify(mention: Mention, doc: DocKind) -> Mention:
-    """Stage 4 (R3.1): affirmed by default; the latest applicable cue sets the state.
-
-    Hypothetical: a scope that runs on until a contrast or hard stop. Negation: the gap rule
-    (directly before the skill or its coordinated list, only fillers between). Posting only:
-    "not required" cues after the skill.
-    """
-    r = _rules()
-    n = _norm(mention.line)
-    nspan = norm_span(mention.line, mention.span)[1:]
-    chain = _chain_of(mention.line, nspan)
-    lo, hi = _clause(mention.line, nspan)
-    neg = r.neg_before.search(n.text[lo:chain[0][0]])
-    neg_at = lo + neg.start() if neg else None
-    hyp_at = _hyp_start(mention.line, chain[0][0])
-    status: Status = "affirmed"
-    if neg_at is not None and (hyp_at is None or neg_at > hyp_at):
-        status = "negated"
-    elif hyp_at is not None:
-        status = "hypothetical"
-    elif doc == "posting":
-        after = n.text[chain[-1][1]:hi]
-        if r.neg_after.match(after) and not r.not_required_then_pref.match(n.text[chain[-1][1]:]):
-            status = "negated"
-    return dataclasses.replace(mention, status=status)
-
-
-def qualify(mention: Mention) -> Mention:
-    """Return the mention with status set by scope (R3.1).
-
-    Affirmed by default. A hypothetical cue opens a scope that spans ordinary words, commas and
-    slashes until a contrast ("but", "however", "although", "whereas") or a hard stop (period,
-    semicolon, colon, end of the logical line). A negator applies directly before the skill (or
-    its coordinated list), separated only by fillers. A later cue sets a new state; cues never
-    reach back. Posting rules apply, including the "not required" cues after the skill.
-    """
-    return _qualify(mention, "posting")
 
 
 # ---- Stage 5 -- Decide -----------------------------------------------------------------------
@@ -477,31 +549,31 @@ _SECTION_IMPORTANCE: dict[str, Importance] = {
 
 
 def _importance_cue(mention: Mention) -> Importance | None:
-    """The one place a mention's inline importance cue is decided (R2.4).
+    """The one place a mention's inline importance cue is decided (R2.4, R4.4).
 
-    Grammatical binding only: a prefix label at the start of the clause, a postfix phrase right
-    after the last skill of its coordinated list, or a modal/"preferably" cue right before the
-    first skill. Only filler words may sit in the gap. "X is not required, but is a plus" is preferred.
+    Grammatical binding to whole coordinated lists: a postfix cue binds the list just before it,
+    a modal or adverb prefix ("must have", "preferably") binds the list that follows, and a
+    prefix label ("Preferred:") binds everything up to the next stop or cue. Unknown items do not
+    break a list. "X is not required, but is a plus" is preferred.
     """
     r = _rules()
     n = _norm(mention.line)
     nspan = norm_span(mention.line, mention.span)[1:]
-    chain = _chain_of(mention.line, nspan)
-    lo, hi = _clause(mention.line, nspan)
-    after = n.text[chain[-1][1]:]
-    if r.not_required_then_pref.match(after):
+    prev, nxt = _around(mention.line, nspan)
+    if nxt and nxt.kind == "negafter" and r.then_pref.match(n.text[nxt.end:]) \
+            and _list_before_cue(mention.line, nspan, nxt.start):
         return "preferred"
-    clause_after = n.text[chain[-1][1]:hi]
-    for imp in ("preferred", "required"):
-        if r.postfix[imp].match(clause_after):
-            return imp
-    before = n.text[lo:chain[0][0]]
-    for imp in ("preferred", "required"):
-        if r.modal_before[imp].search(before):
-            return imp
-    for imp in ("preferred", "required"):
-        if r.labels[imp].match(n.text[lo:hi]):
-            return imp
+    if nxt and nxt.kind.startswith("post:") and _list_before_cue(mention.line, nspan, nxt.start):
+        return nxt.kind.split(":")[1]
+    if prev and prev.kind.startswith("modal:") and _after_prefix_ok(mention.line, prev.end, nspan):
+        return prev.kind.split(":")[1]
+    if prev and prev.kind == "stop" and n.text[prev.start:prev.end] == ":":
+        before = [b for b in _boundaries(mention.line)
+                  if b.end <= prev.start and not b.kind.startswith(("post:", "modal:"))]
+        lo = before[-1].end if before else 0
+        for imp in ("preferred", "required"):
+            if r.labels[imp].match(n.text[lo:prev.start]):
+                return imp
     return None
 
 
