@@ -1,0 +1,77 @@
+diff --git a/tests/test_check_fixture.py b/tests/test_check_fixture.py
+index 2a1be98..994bb10 100644
+--- a/tests/test_check_fixture.py
++++ b/tests/test_check_fixture.py
+@@ -19,33 +19,45 @@ def lab(status, **kw):
+     return {"doc": "resume", "line_contains": "No CFD", "canonical": "CFD", "status": status, **kw}
+ 
+ 
++# A résumé unit gives one status to every skill on it (contract v4), so the two-status line is labelled in the posting.
++POST_NOTES = POST + "\nNotes:\nNo CFD experience; currently studying CFD\n"  # engine: 1st negated, 2nd hypothetical
++
++
++def pcheck(**kw):
++    return check(**{"posting_text": POST_NOTES, **kw})
++
++
++def plab(status, **kw):
++    return {**lab(status, **kw), "doc": "posting"}
++
++
+ def test_per_occurrence_labels_pass():
+-    r = check(mention_labels=[lab("negated", occurrence=1), lab("hypothetical", occurrence=2)])
++    r = pcheck(mention_labels=[plab("negated", occurrence=1), plab("hypothetical", occurrence=2)])
+     assert r["status"] == [True, True]
+-    assert check(mention_labels=[lab("negated", span_text="CFD", occurrence=1)])["status"] == [True]
++    assert pcheck(mention_labels=[plab("negated", span_text="CFD", occurrence=1)])["status"] == [True]
+ 
+ 
+ def test_wrong_second_occurrence_fails_even_though_first_is_right():
+     # the old checker compared every label to the first mention, so "negated" for occurrence 2 passed
+-    r = check(mention_labels=[lab("negated", occurrence=1), lab("negated", occurrence=2)])
++    r = pcheck(mention_labels=[plab("negated", occurrence=1), plab("negated", occurrence=2)])
+     assert r["status"] == [True, False]
+     assert any(f.startswith("status of CFD") and "got hypothetical" in f for f in r["fails"])
+ 
+ 
+ def test_duplicate_labels_reported():
+-    r = check(mention_labels=[lab("negated", occurrence=1), lab("negated", occurrence=1)])
++    r = pcheck(mention_labels=[plab("negated", occurrence=1), plab("negated", occurrence=1)])
+     assert r["status"] == [True, False]
+     assert any(f.startswith("duplicate label") for f in r["fails"])
+ 
+ 
+ def test_unindexed_label_asserts_every_occurrence():
+-    r = check(mention_labels=[lab("negated")])  # occurrence 2 is hypothetical
++    r = pcheck(mention_labels=[plab("negated")])  # occurrence 2 is hypothetical
+     assert r["status"] == [False]
+     assert any("occurrence 2 of 2" in f and "got hypothetical" in f for f in r["fails"])
+-    assert check(mention_labels=[lab("negated", occurrence=1)])["status"] == [True]
+-    both = check(mention_labels=[lab("negated")], resume_text="Skills\nNo CFD experience; no CFD training\n")
++    assert pcheck(mention_labels=[plab("negated", occurrence=1)])["status"] == [True]
++    both = pcheck(mention_labels=[plab("negated")], posting_text=POST_NOTES.replace("currently studying CFD", "no CFD training"))
+     assert both["status"] == [True]
+-    one = check(mention_labels=[lab("negated")], resume_text="Skills\nNo CFD experience\n")
++    one = pcheck(mention_labels=[plab("negated")], posting_text=POST_NOTES.replace("; currently studying CFD", ""))
+     assert one["status"] == [True]
+ 
+ 
+@@ -74,3 +86,18 @@ def test_same_skill_in_requirements_and_nice_to_have():
+     assert any(f.startswith("evidence") for f in check(evidence_labels=wrong_line)["fails"])
+     wrong_imp = [{"canonical": "CFD", "posting_line_contains": "- CFD", "requirement": "preferred"}]
+     assert any("importance" in f for f in check(evidence_labels=wrong_imp)["fails"])
++
++
++def test_resume_labels_one_state_per_unit():
++    resume = "Experience\n- Ran CFD on the intake manifold\n- Ran CFD and repeated CFD without a mesh study\n"
++
++    def rlab(needle, status, **kw):
++        return {"doc": "resume", "line_contains": needle, "canonical": "CFD", "status": status, **kw}
++
++    ok = check(resume_text=resume, mention_labels=[rlab("intake", "affirmed"), rlab("mesh study", "unresolved")])
++    assert ok["status"] == [True, True]
++    per = check(resume_text=resume, mention_labels=[rlab("mesh study", "unresolved", occurrence=1),
++                                                    rlab("mesh study", "unresolved", occurrence=2)])
++    assert per["status"] == [True, True]
++    bad = check(resume_text=resume, mention_labels=[rlab("mesh study", "affirmed")])
++    assert bad["status"] == [False] and any("got unresolved" in f for f in bad["fails"])

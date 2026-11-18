@@ -1,0 +1,28 @@
+== postings: {'mention:affirmed': 116, 'mention:cue_line': 43, 'mention:unsupported_form': 125, 'resumes': 48, 'resumes_with_no_affirmed_skill': 31}
+   confirmation: {'counted_without_confirmation': 0, 'pairs': 47, 'pairs_unavailable': 1, 'prompt:no_mention': 41, 'prompt:no_mention:gold_no': 41, 'prompt:suggested': 24, 'prompt:suggested:gold_yes': 24, 'prompt:unresolved': 76, 'prompt:unresolved:gold_no': 9, 'prompt:unresolved:gold_yes': 67}
+   prompts per pair: median 2, max 8
+   wrong suggestions (suggested yes, gold not found): []
+   disclaimed mention or skill left in supported form: []
+== regression_r6: {'mention:affirmed': 38, 'mention:cue_line': 76, 'mention:unsupported_form': 33, 'resumes': 14, 'resumes_all_unresolved_by_doc_trigger': 2, 'resumes_with_no_affirmed_skill': 3, 'trigger:backref_negation': 2}
+   confirmation: {'counted_without_confirmation': 0, 'pairs': 14, 'prompt:no_mention': 7, 'prompt:no_mention:gold_no': 7, 'prompt:suggested': 10, 'prompt:suggested:gold_yes': 10, 'prompt:unresolved': 59, 'prompt:unresolved:gold_no': 21, 'prompt:unresolved:gold_yes': 38}
+   prompts per pair: median 5.5, max 8
+   wrong suggestions (suggested yes, gold not found): []
+   disclaimed mention or skill left in supported form: []
+== r7: {'mention:affirmed': 24, 'mention:cue_line': 74, 'mention:unsupported_form': 10, 'resumes': 12, 'resumes_with_no_affirmed_skill': 1}
+   confirmation: {'counted_without_confirmation': 0, 'pairs': 12, 'prompt:no_mention': 2, 'prompt:no_mention:gold_no': 2, 'prompt:suggested': 12, 'prompt:suggested:gold_yes': 12, 'prompt:unresolved': 48, 'prompt:unresolved:gold_no': 31, 'prompt:unresolved:gold_yes': 17}
+   prompts per pair: median 5.0, max 7
+   wrong suggestions (suggested yes, gold not found): []
+   disclaimed mention or skill left in supported form: []
+== r8: {'mention:affirmed': 32, 'mention:cue_line': 41, 'mention:unsupported_form': 30, 'resumes': 12, 'resumes_with_no_affirmed_skill': 4}
+   confirmation: {'counted_without_confirmation': 0, 'pairs': 12, 'prompt:no_mention': 2, 'prompt:no_mention:gold_no': 2, 'prompt:suggested': 14, 'prompt:suggested:gold_yes': 14, 'prompt:unresolved': 38, 'prompt:unresolved:gold_no': 18, 'prompt:unresolved:gold_yes': 20}
+   prompts per pair: median 4.0, max 6
+   wrong suggestions (suggested yes, gold not found): []
+   disclaimed mention or skill left in supported form: []
+ALL: pairs 85; prompts per pair median 4, max 8; prompts suggested 60, unresolved 221, no mention 52
+REALISTIC (r6-r8): n=38, prompts per pair median 5.0, max 8
+independent pairs: {'unresolved, gold not affirmed': 23, 'unresolved, gold affirmed': 25, 'not-recognised': 3}
+32 probes: wrong suggestions 0 of 32: []
+16 hard-wrap probes: wrong suggestions 0 of 16: []
+10 known-pattern examples: wrong suggestions 5 of 10: ['paragraph: done by a teammate', 'punctuation: MATLAB: -', 'limited: once in a class', 'limited: managed a team', 'limited: completed a tutorial']
+label and skill-name checks: 17 of 17 as expected; unexpected: {}
+category labels: ['analysis', 'cad', 'certifications', 'controls', 'manufacturing', 'programming', 'quality', 'soft skills', 'standards']
