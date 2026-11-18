@@ -99,7 +99,7 @@ def test_prefix_label_binds_every_skill_in_its_clause():
 
 
 def test_no_binding_across_a_clause_break():
-    assert imp("FEA, and degree preferred") == "unscored"
+    assert imp("FEA, and degree preferred") == "preferred"  # R4: an unknown item does not break the list
     assert imp("FEA. Python preferred") == "unscored"
 
 

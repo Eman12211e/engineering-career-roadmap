@@ -337,7 +337,10 @@
     "excellent",
     "extensive",
     "working",
-    "relevant"
+    "relevant",
+    "scripting",
+    "exposure",
+    "modeling"
   ],
   "list_connectors": [
     ",",
@@ -420,5 +423,23 @@
     "\\.(?=\\s|$)",
     ";",
     ":"
-  ]
+  ],
+  "hard_stops": [
+    ";",
+    "!",
+    "\\?",
+    "\\.(?=\\s|$)",
+    ":",
+    "\\|",
+    "\\s[–—-]\\s",
+    "[–—]"
+  ],
+  "contrasts": [
+    "\\bbut\\b",
+    "\\bhowever\\b",
+    "\\bexcept\\b",
+    "\\balthough\\b",
+    "\\bwhereas\\b"
+  ],
+  "max_item_words": 3
 }

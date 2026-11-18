@@ -60,30 +60,35 @@ optional per-skill fields). Code names no skill.
      "however", "although", "whereas") or a hard stop (period, semicolon, colon, end of the
      logical line, so it continues across a joined hard wrap). A cue inside another skill's own
      span ("machine learning") never opens one.
-   - A negator (no, not, without, never, lack of, ...) keeps the gap rule: it applies to a skill
-     directly after it, separated only by `negation_fillers` ("prior", "experience with",
-     "used", "the", ...), and to every skill in that skill's coordinated list. It does not spread
-     across ordinary words, so achievement bullets ("without rework by applying SPC", "never
-     missed a deadline in X") stay affirmed. "familiar with" is affirmed; "not familiar with" is
-     negated.
+   - A negator (no, not, without, never, lack of, ...) applies to the coordinated list that starts
+     right after it (R4.1, R4.2). A *coordinated list* is a run of items joined by coordinators
+     (",", "and", "or", "/", "&", "and/or", "as well as"); an item is any text between
+     coordinators, so whether a word is a recognised skill never decides where a list starts or
+     ends. The first item starts after the cue and any `negation_fillers` ("prior", "experience
+     with", "used", "the", ...). A skill directly there is negated; if a coordinator follows inside
+     the same list, every skill in the list is negated, whatever the items contain. With no
+     coordinator there is no list, so the gap rule decides: "without rework by applying SPC"
+     stays affirmed. A list ends at a hard stop, a contrast, or a new cue. "familiar with" is
+     affirmed; "not familiar with" is negated.
    - A later cue sets a new state from that point; a cue never reaches back to a mention before it.
-   - Postings only: a `negation_after` cue ("not required", "not needed", ...) after the skill
-     negates when only `cue_fillers` sit between; "X is not required, but is a plus" is not
-     negated (and is preferred).
-   - Clause breaks (comma, semicolon, sentence end, "but", "however", "although", "whereas",
-     spaced dashes, ...) still bound cue binding and negation, but commas do not end a
-     hypothetical scope. Mentions in excluded posting sections are not qualified.
+   - Postings only: a `negation_after` cue ("not required", "not needed", ...) negates the
+     coordinated list just before it ("X, Y or Z is not required"); "X is not required, but is a
+     plus" is not negated (and is preferred).
+   - Hard stops (`; ! ? . : |` and dashes) and contrasts end every list and scope. Commas are
+     coordinators, not clause breaks; they do not end a hypothetical scope either. Mentions in
+     excluded posting sections are not qualified.
 5. **Decide.** Positive evidence only: a posting skill is required or preferred only from a known
    required/preferred heading or a bound cue; everything else is unscored and nothing inherits
    importance from a previous line or section. Cue binding is grammatical (`_importance_cue`):
-   - prefix label at the start of the clause ("Preferred: X", "Required: X", "Nice to have: X",
-     "Bonus: X") binds every skill of the clause;
-   - postfix phrase right after the last skill of a list ("X (preferred)", "X is a plus",
-     "X and Y a plus", "X is required", "X is a must") binds the whole list; only `cue_fillers`
-     ("experience", "skills", "knowledge", "programming", "is", "are", "highly", ...) may sit
-     between;
-   - modal or preference prefix directly before the first skill: "must have X", "preferably X",
-     "ideally X";
+   - a prefix label ("Preferred:", "Required:", "Nice to have:", "Bonus:") binds every skill
+     up to the next hard stop, contrast or cue;
+   - a postfix phrase ("X (preferred)", "X is a plus", "X and Y a plus", "X is required", "X is a
+     must") binds the whole coordinated list just before it. Only fillers may follow a skill in its
+     own item, and the other items must be short (at most `max_item_words`, 3) names or skills with
+     fillers, so "technical reports and engineering change proposals as required" binds nothing
+     but an unknown name such as "Foobar" does not break a list;
+   - a modal or adverb prefix ("must have X", "preferably X", "ideally X") binds the list that
+     follows it, with the same item limits;
    - "Must be able to <verb> X", "as required" and "desired tolerances" bind nothing.
    Negated and hypothetical posting mentions appear in no group. With several mentions of a skill
    the precedence is required > preferred > unscored > excluded; the evidence is the earliest
@@ -117,8 +122,13 @@ section holding the evidence). Output order follows keywords.json order within e
 - A hypothetical scope has no way to tell an assertion from the cue's object: in "Learning PLC and
   already proficient in root cause analysis" both skills are hypothetical, although the second
   is claimed outright. Ambiguous claims are never counted as confirmed experience (R3.1.8).
-- "X or Y" alternatives count as separate skills; commas end a clause outside a coordinated
-  list ("No experience with FEA, CFD" negates both only because they form a list).
+- "X or Y" alternatives count as separate skills.
+- **Major (R4.2 conservative model).** Once a negator is followed by a coordinator, the whole list is
+  negated, so a real skill is reported missing: "No PLC experience, proficient in SQL" negates
+  SQL, and "without added headcount by applying statistical process control and poka-yoke"
+  negates SPC. A contrast ("but", "however") ends the list and is the only way out. The same
+  holds for lists introduced by a postfix or prefix cue: "We use SolidWorks daily, and Python is
+  a plus" binds nothing to SolidWorks, but "SQL, Foobar (preferred)" binds SQL.
 - Hard-wrap joining needs the next line to start with a lower-case letter; wrapped lines that
   start with an upper-case word (a product name) or a digit do not join, and an alias split
   across them is missed.
@@ -132,12 +142,13 @@ section holding the evidence). Output order follows keywords.json order within e
   `affirmed`. On a resume that is an invented claim, so the skill would count as confirmed
   experience the person does not have. Until the engine handles postfix qualifiers, treat a
   resume match on such a line as unverified.
-- **A negation or prefix-label cue followed by a comma list whose first item is not a known
-  skill.** "Never used LabVIEW, SQL" and "No experience with LabVIEW, SQL" leave SQL affirmed, so a
-  negated skill is counted as present. "Nice to have: LabVIEW, SQL" or "Preferred: LabVIEW, SQL" give
-  SQL the section's importance instead of the label's. Root cause: the R2.8.15 comma exemption in
-  `_clause()` applies only when every list item is a known skill. Status: not fixed; a
-  correction needs a separately reviewed contract change.
+- **Comma lists after a negation or prefix-label cue (fixed by Revision 4).** "Never used LabVIEW,
+  SQL", "No experience with LabVIEW, SQL", "Nice to have: LabVIEW, SQL" and "Preferably LabVIEW,
+  SQL" used to leave SQL affirmed or give it the section's importance, because the R2.8.15
+  comma exemption required every list item to be a known skill. Lists are now a grammatical
+  unit independent of skill recognition (R4.1) and covered by `tests/test_comma_lists.py`,
+  including the metamorphic check that adding an unknown item never changes a recognised
+  skill's result. The price is the major conservative-model limitation listed above.
 
 ## Technical debt
 
@@ -166,14 +177,14 @@ Development and regression fixtures (written by the independent reviewer, not tu
 | Folder | Fixtures | Exact-set pass |
 |---|---|---|
 | `postings` | 48 | 48 |
-| `regression_r6` | 14 | 14 |
-| total | 62 | 62 |
+| `regression_r6` | 14 | 13 |
+| total | 62 | 61 |
 
 Per-stage metrics over all fixtures:
 
 - stage 1 section accuracy: 1.00 (200/200)
 - stage 2-3 mention precision 1.00 (377/377), recall 1.00 (377/377)
-- stage 4 status accuracy: 1.00 (132/132)
+- stage 4 status accuracy: 0.99 (131/132)
 - stage 5 importance accuracy: 1.00 (368/368)
 
 Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 2

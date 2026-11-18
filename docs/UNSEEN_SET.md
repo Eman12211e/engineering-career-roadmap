@@ -66,15 +66,42 @@ combined  2c0c7ac8568f98c2ec615c12952b977e9d65f19e2b9d02dd77873d22479d8f22
 
 ---
 
+# Sealed unseen set (round 8)
+
+Written by a new independent author under contract Revision 4 (`fix/comma-lists` at
+`11af7e0`). It is stored outside the repository and runs only in the final review. Round 7 is
+now retrospective regression data.
+
+- **Sealed (UTC):** 2026-11-07T20:28:48Z. That is after the R4 contract and the
+  coordinator tests were committed (`11af7e0`, 20:18Z) and before any implementation.
+- **Files:** 12 posting + résumé pairs (`kind: "unseen"`, ids `u8_`)
+- **Hashes checked by the coordinator:** every per-file hash and the combined hash match the
+  manifest. The check used `sha256sum` only; no file was opened.
+
+```
+07d604f8a25012c476a71c8cb74a1c8d3e143fcb35c22726462ab49ef5847156  u8_composites_culture_benefits.json
+d941ccf8abd45842bc7487db9f21639290eadf41c3ba08fe792ddcbe62360c60  u8_controls_hypothetical_lists.json
+86e4dd10ea9f5abd2435b3f0ea991cdd718a9b79fbc9ca5e2bdd6549e06856db  u8_design_agency_whereas_reset.json
+b0febe0412ffea7cb57bcca447d140d99ca409b592f7a7866ccd190a6b7eae8d  u8_ev_pack_modal_and_adverb_prefix.json
+aa8c6220233419fdb566cda34cd2f0af4aff2fa75970f4bc2c5879a97dbb56ac  u8_molding_pdf_wraps.json
+c4ca1745172debaa266556ab4e39ddcef0f186cfc47623d110e5250a81f9cc7e  u8_quality_staffing_negation_lists.json
+46eb6f3cd903912ce99efe532bbba50fec11f62ae5bd0b5253ef221f008003a7  u8_recruiter_email_inline_cues.json
+43570876522f2ffb8bb24ca6756951c9d262bbafa6ead32fb7437c44729f4c61  u8_robotics_startup_emoji.json
+d6d419772ee8edf2390aa408a5d1611c020aab47842383262b7a3fd13db1f7f4  u8_sensor_test_nice_to_have.json
+c1e03567c78fb0317cfd5b1aa372fdaa4e0e411a84544560115273ab429d4eb9  u8_stress_bonus_and_conservative_list.json
+9c1bc5f55db06617168ddb6fd885ab9bf40ee0f23ca65b845e19e07ba7bbceb8  u8_systems_test_mixed_cues.json
+4172d7e1e104b83aa23de6f171a8416fa2aac350835102cb68a43bf23553a33d  u8_valve_mfg_required_label_in_preferred.json
+
+combined  5b30627c341c7009191f9af31a2cf81b7e08f321db646125837f3049548b8c27
+
+---
+
 # Sealed unseen set (round 9)
 
 Written by a new independent author for the Path B (confirmation-first) acceptance criteria,
 from the author kit committed at `dd6ae28` (`docs/proposals/contract-v4-line-rule/round9/`).
 It is stored outside the repository. Implementers and their prompts must never read it.
 Gate 1 remains blocked.
-
-Round 8 is not missing: its manifest is recorded in this file on branch `fix/comma-lists`
-(commit `c9a3897`), which is not merged into this branch.
 
 - **Sealed (UTC):** 2026-11-14T07:27:34Z. That is after the acceptance criteria were frozen
   (`dd6ae28`, 07:10Z) and before any production change on the integration branch (still at `fa1555e`).

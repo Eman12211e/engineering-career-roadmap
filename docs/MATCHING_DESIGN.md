@@ -357,3 +357,121 @@ be updated to match it.
    scope therefore continues across a joined hard wrap.
 3. **Cues inside skill names.** A cue word inside another skill's matched span (e.g.
    "learning" in "machine learning") never starts a scope. This restates existing behaviour.
+
+---
+
+# Revision 4: coordinated lists (frozen 2026-11-07, final bounded correction)
+
+The owner approved this as the final correction before a product-scope decision. It
+replaces R2.8.15's "commas inside a coordinated *skill* list" exemption. That exemption made
+list boundaries depend on whether neighbouring words were recognised skills, which broke
+"Never used LabVIEW, SQL" (a critical-class error) and "Nice to have: LabVIEW, SQL".
+
+## R4.1 What a coordinated list is
+
+- A comma, "and", "or", "/", ", and" and ", or" are coordinators by default.
+- A **coordinated list** is the run of items joined by coordinators inside one clause. It is
+  one grammatical unit.
+- An item is any text between coordinators: a skill, an unknown word ("LabVIEW",
+  "Foobar") or a phrase ("PLC experience", "proficient in SQL").
+- Whether an item is a recognised skill **never** decides where the list starts or ends.
+- A list ends at a hard stop (`.` `;` `:` `!` `?` `|` `–` `—`, end of the logical line), a
+  contrast ("but", "however", "although", "whereas", "except"), or a new qualification
+  cue (negation, hypothetical, or a posting importance cue).
+
+## R4.2 Negation
+
+- **Inside a list:** the R2 gap rule is kept, but the gap is measured from the cue to the
+  **start of the list**. If the list starts within the permitted gap (only
+  `negation_fillers` between them), the negation applies to every skill in the list.
+- **Outside a list:** a single skill with no coordinator uses the R2 gap rule unchanged.
+- Expected results:
+
+  | Text | Expected |
+  |---|---|
+  | "Never used LabVIEW, SQL" | SQL negated |
+  | "Without rework by applying SPC" | SPC affirmed (gap rule, no list) |
+  | "No PLC experience, but proficient in SQL" | PLC negated, SQL affirmed (the contrast ends it) |
+  | "No PLC experience, proficient in SQL" | PLC negated, SQL **negated** |
+
+  The last row is the conservative model. It is a documented **major** known limitation,
+  because a real skill is reported missing.
+
+## R4.3 Hypothetical scope
+
+Unchanged from R3.1.2 and R3.3. Coordinators and ordinary words don't end it; contrasts,
+new cues and hard stops do.
+
+## R4.4 Posting importance cues
+
+- A prefix label ("Nice to have:", "Preferred:", "Required:", "Bonus:") or a modal or
+  adverb prefix ("must have", "preferably", "ideally") binds every skill in the
+  coordinated list that follows it, up to the end of that list.
+- A postfix cue binds every skill in the coordinated list just before it.
+- Unknown items anywhere in the list do not break the binding.
+
+## R4.5 Metamorphic invariant
+
+For every list-bearing minimal pair, inserting one whole unrecognised item ("Foobar") at
+the start, middle or end of the list must not change any recognised skill's status or
+importance. Unknown words are never inserted inside an alias.
+
+## R4.6 Evaluation controls
+
+- **Tests come first.** The regression and metamorphic tests are coordinator-written
+  (`tests/test_comma_lists.py`) and committed before any implementation. The implementer
+  may not edit them, exempt them, or edit any fixture.
+- **Round 8.** A new sealed set, written by a new independent author, is sealed before the
+  implementation and recorded in `docs/UNSEEN_SET.md`.
+- **Round 7.** Its sealed files are unchanged. It is retrospective regression data: run by
+  the script and reported, not counted as unseen accuracy evidence.
+- **Disputed labels.** The `u7_gov_later_cue_state` adjudication
+  (`docs/ADJUDICATION_u7_gov_later_cue_state.md`) is a PROPOSAL and is not authoritative
+  until the owner approves it.
+- **Stopping rule.** Any critical error on round 8 stops implementation. A scope-narrowing
+  proposal then goes to the owner. There is no further remediation cycle.
+
+## R4.7 Clarifications (coordinator, after the round-8 seal and before implementation)
+
+The sealed set avoids all of these phrasings, so the rulings don't affect its labels.
+1. **Where the first item starts.** After a negation cue, the first item starts after the
+   cue and any `negation_fillers`, and runs to the first coordinator. This is the
+   conservative model, and it matches R4.2's "No PLC experience, proficient in SQL". So
+   "without new tooling by applying kaizen and 5S" negates the whole list. With no
+   coordinator, there is no list, and the R2 gap rule applies.
+2. **Postfix cues.** A postfix cue binds every skill in the list just before it in the same
+   clause. Items may contain non-skill words ("MoveIt exposure is a must", "Python
+   scripting, preferred").
+3. **`negation_after`** binds the whole list just before it in the same clause
+   ("X, Y or Z is not required").
+4. **More coordinators.** "&", "and/or" and "as well as" are coordinators too, as in the
+   existing `list_connectors` data.
+5. **"except"** remains a contrast that ends a list. It is not a negation cue.
+
+## R4.8 PROPOSED addendum, 2026-11-07: list-item word cap (needs owner approval)
+
+R4.1 and R4.4 did not authorise this rule; the implementer added it in `13cda7b` as
+`max_item_words` = 3 in `data/match_rules.json`. It is recorded here so it isn't silently
+retained, and Revision 3 and Revision 4 above are left unchanged.
+
+- **What it does:** for posting importance cues, a non-skill list item longer than 3 words
+  ends the coordinated list.
+- **Why it exists:** without it, a postfix cue binds across long duty phrases. "technical
+  reports and engineering change proposals as required" would bind earlier skills. That
+  contradicts R2.4 and R2.8.10, under which "as required" binds nothing.
+- **Locked tests that need it:** removing it (setting it to 99) breaks
+  `u6_duty_lines_as_required` and `u6_gov_defense_clearance` (regression_r6). Round 8 gives
+  the same result for any value from 2 to 99.
+- **Limitation:** a long unknown alternative ends the binding. In "SolidWorks, Creo or any
+  other parametric CAD package preferred", the skills stay at the section's importance (for
+  example required), a major-class swap. It fails toward the section kind, never toward an
+  invented claim.
+- **Coordinator recommendation:** retain it as a defensible temporary product rule, list the
+  limitation in `docs/SCORING.md`, and replace it with real phrase structure in the
+  post-Gate-1 architecture work.
+
+## Post-Gate-1 architecture issue (high priority, not fixed in this round)
+
+Trailing qualification cues on résumé and posting text ("Python (learning)",
+"FEA (in progress)", "SQL, basic") come after the skill, and R3.1.6 says a cue never reaches
+back. Fixing it needs phrase-level structure, not another cue rule.
