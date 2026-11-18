@@ -12,6 +12,18 @@
       "label": {"kind": "mention_label", "doc": "posting", "line_contains": "Learning stipend for MATLAB", "canonical": "MATLAB", "status": "affirmed"},
       "alternative": {"status": "hypothetical"},
       "reason": "Labelled under R2. Read literally, R3.1.2 makes 'Learning' open a hypothetical scope, so MATLAB is hypothetical. The line is in an excluded (benefits) section, so no result set or score changes. Coordinator-recorded; the owner decides any relabel."
+    },
+    {
+      "fixture": "u6_bigco_basic_desired",
+      "label": {"kind": "mention_label", "doc": "resume", "line_contains": "without added headcount", "canonical": "Statistical Process Control", "status": "affirmed"},
+      "alternative": {"status": "negated"},
+      "reason": "Labelled under R2.4, whose own example 'without added headcount by applying lean' is not negated. R4.7.1, committed after this fixture was locked, negates the whole coordinated list after a negator whatever the items contain, and 'statistical process control and poka-yoke' is a list. The engine follows R4.7.1. This is the R4.2 documented major limitation (a real skill reported missing). The skill is required in the posting, so the found set and the score change (see the expected_set record). Coordinator-recorded; the owner decides any relabel. The Path B migration ledger tracks it."
+    },
+    {
+      "fixture": "u6_bigco_basic_desired",
+      "label": {"kind": "expected_set", "group": "found", "canonical": "Statistical Process Control", "present": true},
+      "alternative": {"present": false},
+      "reason": "Set-level effect of the mention_label record for the same fixture (R2.4 vs R4.7.1): the engine negates Statistical Process Control on the resume line, so it is not in the found set. Coordinator-recorded; the owner decides any relabel."
     }
   ]
 }

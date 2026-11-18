@@ -32,6 +32,18 @@ def test_wrong_second_occurrence_fails_even_though_first_is_right():
     assert any(f.startswith("status of CFD") and "got hypothetical" in f for f in r["fails"])
 
 
+def test_expected_set_dispute_is_removed_and_reported():
+    rec = {"fixture": "t", "label": {"kind": "expected_set", "group": "found", "canonical": "CFD", "present": True},
+           "alternative": {"present": False}, "reason": "r"}
+    fx = {"id": "t", "posting_text": POST, "resume_text": RESUME, "expected": {"found": ["CFD"]}}
+    found = lambda r: [f for f in r["fails"] if f.startswith("found:")]  # noqa: E731
+    assert found(ev.check_fixture(fx, disputed=[])) == ["found: got [] expected ['CFD']"]
+    r = ev.check_fixture(fx, disputed=[rec])
+    assert found(r) == [] and r["disputed"][0]["got"] == {"present": False} and r["disputed"][0]["alt_ok"]
+    fx["expected"] = {"found": ["CFD", "Python"]}  # a non-disputed mismatch still fails
+    assert found(ev.check_fixture(fx, disputed=[rec])) == ["found: got [] expected ['Python']"]
+
+
 def test_duplicate_labels_reported():
     r = check(mention_labels=[lab("negated", occurrence=1), lab("negated", occurrence=1)])
     assert r["status"] == [True, False]
@@ -74,3 +86,20 @@ def test_same_skill_in_requirements_and_nice_to_have():
     assert any(f.startswith("evidence") for f in check(evidence_labels=wrong_line)["fails"])
     wrong_imp = [{"canonical": "CFD", "posting_line_contains": "- CFD", "requirement": "preferred"}]
     assert any("importance" in f for f in check(evidence_labels=wrong_imp)["fails"])
+
+
+def test_expected_set_dispute_on_scored_group_keeps_importance():
+    rec = {"fixture": "t", "label": {"kind": "expected_set", "group": "required", "canonical": "Python", "present": True},
+           "alternative": {"present": False}, "reason": "r"}
+    fx = {"id": "t", "posting_text": POST, "resume_text": RESUME, "expected": {"required": ["CFD", "Python"]}}
+    r = ev.check_fixture(fx, disputed=[rec])
+    assert r["importance"] == [True] and r["disputed"][0]["got"] == {"present": True}
+    assert not r["disputed"][0]["alt_ok"]
+
+
+def test_expected_set_dispute_with_mismatched_present_is_not_applied():
+    rec = {"fixture": "t", "label": {"kind": "expected_set", "group": "found", "canonical": "CFD", "present": False},
+           "alternative": {"present": True}, "reason": "r"}
+    fx = {"id": "t", "posting_text": POST, "resume_text": RESUME, "expected": {"found": ["CFD"]}}
+    r = ev.check_fixture(fx, disputed=[rec])
+    assert r["disputed"] == [] and "found: got [] expected ['CFD']" in r["fails"]

@@ -177,19 +177,23 @@ Development and regression fixtures (written by the independent reviewer, not tu
 | Folder | Fixtures | Exact-set pass |
 |---|---|---|
 | `postings` | 48 | 48 |
-| `regression_r6` | 14 | 13 |
-| total | 62 | 61 |
+| `regression_r6` | 14 | 14 |
+| total | 62 | 62 |
 
 Per-stage metrics over all fixtures:
 
 - stage 1 section accuracy: 1.00 (200/200)
 - stage 2-3 mention precision 1.00 (377/377), recall 1.00 (377/377)
-- stage 4 status accuracy: 0.99 (131/132)
+- stage 4 status accuracy: 1.00 (131/131)
 - stage 5 importance accuracy: 1.00 (368/368)
 
-Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 2
+With original labels (disputes counted as failures): fixtures passing 59/62; section accuracy 1.00 (200/201); status accuracy 0.98 (131/133)
+
+Disputed or conflicting labels, kept unchanged and excluded from the metrics above: 4
 
 - `r5_linkedin_bonus_if` {"kind": "mention_label", "doc": "posting", "line_contains": "Learning stipend for MATLAB", "canonical": "MATLAB", "status": "affirmed"}: engine now {"status": "hypothetical"}, alternative {"status": "hypothetical"}; Labelled under R2. Read literally, R3.1.2 makes 'Learning' open a hypothetical scope, so MATLAB is hypothetical. The line is in an excluded (benefits) section, so no result set or score changes. Coordinator-recorded; the owner decides any relabel.
+- `u6_bigco_basic_desired` {"kind": "expected_set", "group": "found", "canonical": "Statistical Process Control", "present": true}: engine now {"present": false}, alternative {"present": false}; Set-level effect of the mention_label record for the same fixture (R2.4 vs R4.7.1): the engine negates Statistical Process Control on the resume line, so it is not in the found set. Coordinator-recorded; the owner decides any relabel.
+- `u6_bigco_basic_desired` {"kind": "mention_label", "doc": "resume", "line_contains": "without added headcount", "canonical": "Statistical Process Control", "status": "affirmed"}: engine now {"status": "negated"}, alternative {"status": "negated"}; Labelled under R2.4, whose own example 'without added headcount by applying lean' is not negated. R4.7.1, committed after this fixture was locked, negates the whole coordinated list after a negator whatever the items contain, and 'statistical process control and poka-yoke' is a list. The engine follows R4.7.1. This is the R4.2 documented major limitation (a real skill reported missing). The skill is required in the posting, so the found set and the score change (see the expected_set record). Coordinator-recorded; the owner decides any relabel. The Path B migration ledger tracks it.
 - `u6_linkedin_lost_bullets` {"kind": "line_label", "contains": "Northfield Robotics is hiring", "section": "excluded"}: engine now {"section": "unknown"}, alternative {"section": "unknown"}; Sealed under R2.8.12 (About the job = excluded). R2.8.17, committed after the seal, makes About the job a known heading of kind unknown. The line has no skills, so neither the score nor the found set changes.
 
 These are fixture results, not an accuracy estimate on unseen postings.
