@@ -1,0 +1,16 @@
+[tool.ruff]
+target-version = "py311"
+extend-exclude = [".claude"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+# Pre-existing lint in files owned elsewhere; remove as they get cleaned up.
+[tool.ruff.lint.per-file-ignores]
+"app.py" = ["F401"]
+"ui/*.py" = ["F401", "F841"]
+"tests/test_bullet_generator.py" = ["F401"]
+"tests/test_keyword_extractor.py" = ["F401"]

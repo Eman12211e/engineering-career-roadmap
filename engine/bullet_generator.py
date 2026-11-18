@@ -1,256 +1,162 @@
-"""Dynamic resume bullet generator.
+"""Evidence-based resume bullet builder.
 
-Uses string templates with {PLACEHOLDERS} that get filled based on
-the user's selected industry, background, and the specific skill.
-Produces ATS-optimized bullet points packed with real keywords.
+Bullets are assembled only from text the user supplies. Nothing here invents
+metrics, verbs, tools or ownership, and nothing is random.
 """
 
-import random
+import re
+from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 from typing import Dict, List
 
-# ── Templates by skill category ───────────────────────────────────────
-# Each template has slots: {SKILL}, {CONTEXT}, {METRIC}, {DETAIL}
+from engine.keyword_extractor import load_keywords
 
-TEMPLATES = {
-    "cad": [
-        "Designed {CONTEXT} using {SKILL}, reducing design iteration time by {METRIC}.",
-        "Created detailed 3D models and assemblies of {CONTEXT} in {SKILL} with full GD&T documentation per ASME Y14.5.",
-        "Led CAD modeling of {CONTEXT} in {SKILL}, delivering production-ready drawings {METRIC} ahead of schedule.",
-        "Developed parametric models of {CONTEXT} in {SKILL}, enabling rapid design-of-experiments that cut prototyping costs by {METRIC}.",
-    ],
-    "analysis": [
-        "Performed {SKILL} on {CONTEXT}, identifying critical stress concentrations and achieving a {METRIC} weight reduction.",
-        "Conducted {SKILL} simulations to validate {CONTEXT}, meeting all load requirements with a factor of safety above {METRIC}.",
-        "Executed {SKILL} studies on {CONTEXT}, correlating simulation results within {METRIC} of physical test data.",
-        "Applied {SKILL} to optimize {CONTEXT}, reducing peak thermal loads by {METRIC} while maintaining structural integrity.",
-    ],
-    "controls": [
-        "Programmed and commissioned {SKILL} to automate {CONTEXT}, increasing line throughput by {METRIC}.",
-        "Developed {SKILL} logic for {CONTEXT}, reducing operator intervention by {METRIC} and improving cycle consistency.",
-        "Integrated {SKILL} with {CONTEXT}, achieving {METRIC} uptime improvement through real-time diagnostics.",
-    ],
-    "manufacturing": [
-        "Optimized {CONTEXT} process using {SKILL} principles, reducing scrap rate by {METRIC}.",
-        "Implemented {SKILL} techniques for {CONTEXT}, cutting cycle time by {METRIC} across 3 production lines.",
-        "Designed tooling and fixtures for {CONTEXT} leveraging {SKILL} knowledge, improving first-pass yield by {METRIC}.",
-    ],
-    "standards": [
-        "Applied {SKILL} standards to {CONTEXT}, ensuring full compliance and passing all audit criteria with zero findings.",
-        "Documented {CONTEXT} per {SKILL} requirements, reducing engineering change orders by {METRIC}.",
-    ],
-    "quality": [
-        "Led {SKILL} initiatives on {CONTEXT}, identifying root causes and reducing defect rate by {METRIC}.",
-        "Implemented {SKILL} methodology for {CONTEXT}, saving ${METRIC} annually through waste elimination.",
-        "Conducted {SKILL} on {CONTEXT}, driving corrective actions that improved process capability (Cpk) by {METRIC}.",
-    ],
-    "programming": [
-        "Developed {SKILL} scripts to automate {CONTEXT}, reducing manual processing time by {METRIC}.",
-        "Built {CONTEXT} analysis pipeline in {SKILL}, enabling data-driven decisions that improved {METRIC}.",
-        "Created {SKILL}-based tool for {CONTEXT}, processing {METRIC} data points and generating automated reports.",
-    ],
-    "certifications": [
-        "Earned {SKILL} certification, demonstrating proficiency in {CONTEXT} and applied engineering fundamentals.",
-        "Leveraged {SKILL} credential to lead {CONTEXT} initiatives, delivering measurable improvements of {METRIC}.",
-    ],
-    "soft_skills": [
-        "Managed {CONTEXT} using {SKILL} methodology, delivering all milestones on time across {METRIC} cross-functional teams.",
-        "Produced {SKILL} for {CONTEXT}, enabling clear stakeholder communication and reducing review cycles by {METRIC}.",
-    ],
+# Offered as suggestions only (suggest_verbs); never applied automatically.
+STRONG_VERBS = {
+    "cad": ["Designed", "Modeled", "Drafted", "Detailed"],
+    "analysis": ["Analyzed", "Simulated", "Validated", "Evaluated"],
+    "controls": ["Programmed", "Configured", "Tested", "Commissioned"],
+    "manufacturing": ["Improved", "Assembled", "Machined", "Documented"],
+    "standards": ["Applied", "Documented", "Reviewed", "Verified"],
+    "quality": ["Inspected", "Investigated", "Measured", "Documented"],
+    "programming": ["Wrote", "Automated", "Built", "Scripted"],
+    "certifications": ["Earned", "Completed", "Studied"],
+    "soft_skills": ["Coordinated", "Presented", "Documented", "Communicated"],
 }
+_DEFAULT_VERBS = ["Used", "Applied", "Built", "Tested"]
 
-# ── Context phrases by industry + category ────────────────────────────
-
-CONTEXTS = {
-    "EV/Automotive": {
-        "cad": [
-            "battery enclosure assembly",
-            "EV drivetrain housing",
-            "thermal management cold plate",
-            "high-voltage junction box",
-            "suspension knuckle",
-            "motor stator lamination stack",
-        ],
-        "analysis": [
-            "battery pack crash load case",
-            "motor thermal runaway scenario",
-            "suspension linkage fatigue",
-            "EV chassis torsional stiffness",
-            "inverter heat sink thermal profile",
-        ],
-        "controls": [
-            "Battery Management System (BMS) firmware",
-            "CAN bus vehicle diagnostics",
-            "regenerative braking control strategy",
-            "EV charging protocol handler",
-        ],
-        "manufacturing": [
-            "battery module assembly line",
-            "EV motor lamination stamping",
-            "high-voltage harness routing",
-            "adhesive bonding for battery enclosures",
-        ],
-        "standards": [
-            "EV battery enclosure per IATF 16949",
-            "high-voltage connector specifications",
-            "GD&T callouts for drivetrain components",
-        ],
-        "quality": [
-            "battery cell incoming inspection",
-            "weld quality on battery trays",
-            "EV powertrain DFMEA review",
-        ],
-        "programming": [
-            "test data post-processing for dyno runs",
-            "BMS log parsing and anomaly detection",
-            "vehicle telemetry dashboards",
-        ],
-        "certifications": [
-            "CAD design and analysis workflows",
-            "automotive quality and design processes",
-        ],
-        "soft_skills": [
-            "cross-functional EV platform development",
-            "design review documentation packages",
-        ],
-    },
-    "Factory Automation": {
-        "cad": [
-            "robotic end-effector gripper assembly",
-            "conveyor system frame layout",
-            "safety guarding enclosure",
-            "custom fixture for CNC workholding",
-            "pneumatic actuator mounting bracket",
-        ],
-        "analysis": [
-            "pick-and-place cycle structural loads",
-            "conveyor drive shaft fatigue",
-            "vibration on linear actuator mount",
-            "press frame deflection under load",
-        ],
-        "controls": [
-            "PLC-controlled palletizing cell",
-            "FANUC robot pick-and-place sequence",
-            "Allen-Bradley safety PLC integration",
-            "predictive maintenance sensor network",
-        ],
-        "manufacturing": [
-            "CNC turning and milling operations",
-            "sheet metal fabrication for enclosures",
-            "injection molding tool changeover",
-            "automated packaging line",
-        ],
-        "standards": [
-            "production floor ISO 9001 compliance",
-            "GD&T specifications for machined parts",
-            "machine safety per OSHA and ANSI standards",
-        ],
-        "quality": [
-            "incoming raw material inspection process",
-            "SPC implementation on critical dimensions",
-            "assembly line defect reduction",
-        ],
-        "programming": [
-            "production database queries and reporting",
-            "vibration sensor data pipeline",
-            "automated OEE dashboards",
-        ],
-        "certifications": [
-            "manufacturing process optimization",
-            "quality management and lean practices",
-        ],
-        "soft_skills": [
-            "factory expansion capital project",
-            "standard operating procedure documentation",
-        ],
-    },
-    "Aerospace/Robotics": {
-        "cad": [
-            "UAV airframe composite structure",
-            "satellite bracket assembly",
-            "robotic arm joint housing",
-            "rocket engine turbopump manifold",
-            "landing gear strut assembly",
-        ],
-        "analysis": [
-            "wing spar fatigue load spectrum",
-            "spacecraft thermal cycling environment",
-            "launch vehicle vibration qualification",
-            "propulsion system thermal envelope",
-            "robotic gripper contact stress",
-        ],
-        "controls": [
-            "flight control actuator system",
-            "robotic arm inverse-kinematics controller",
-            "UAV autopilot integration",
-            "reaction wheel attitude control",
-        ],
-        "manufacturing": [
-            "composite layup for UAV skins",
-            "CNC machining of titanium fittings",
-            "additive-manufactured rocket nozzle",
-            "robotic arm joint bearing assembly",
-        ],
-        "standards": [
-            "structures per AS9100 Rev D",
-            "spacecraft component GD&T callouts",
-            "flight hardware configuration management",
-        ],
-        "quality": [
-            "non-conformance review board process",
-            "first-article inspection of machined parts",
-            "DFMEA on flight-critical mechanisms",
-        ],
-        "programming": [
-            "FEA post-processing automation",
-            "telemetry data analysis pipeline",
-            "robot path-planning algorithms in ROS",
-        ],
-        "certifications": [
-            "structural analysis and design validation",
-            "aerospace engineering fundamentals",
-        ],
-        "soft_skills": [
-            "multi-site satellite development program",
-            "test campaign technical reports",
-        ],
-    },
-}
-
-# ── Metrics by category ───────────────────────────────────────────────
-
-METRICS = {
-    "cad": ["30%", "25%", "40%", "2 weeks", "15%", "20%"],
-    "analysis": [
-        "15% weight reduction",
-        "2.0",
-        "5% of test data",
-        "18%",
-        "12%",
-        "factor of safety of 2.5",
-    ],
-    "controls": ["22%", "35%", "98.5%", "40%", "15%"],
-    "manufacturing": ["30%", "18%", "25%", "12%", "20%"],
-    "standards": ["45%", "30%", "20%"],
-    "quality": ["60%", "$150K", "0.35", "40%", "$200K"],
-    "programming": ["85%", "10,000+", "yield by 8%", "4 hours to 10 minutes"],
-    "certifications": ["15%", "cross-functional quality initiatives"],
-    "soft_skills": ["4", "3", "50%", "5"],
-}
-
-# ── Background adjustments ────────────────────────────────────────────
-
-_STUDENT_PREFIXES = [
-    "In senior capstone project, ",
-    "During undergraduate research, ",
-    "As part of coursework project, ",
-    "In student design competition, ",
+_PROMPTS = [
+    "What did you actually do with {skill}? Use your own verb (helped, built, tested...).",
+    "What was the project, part or system? Name it as you would to a colleague.",
+    "Was there a result you can state truthfully (a number, a finished deliverable)? Leave blank if not.",
 ]
+_CATEGORY_PROMPTS = {
+    "cad": "Which parts, assemblies or drawings did you create or edit?",
+    "analysis": "What did you analyze, and what did you compare the result against?",
+    "controls": "What equipment or process did the program run, and what did you do on it?",
+    "programming": "What did the code do, and who or what used it?",
+    "certifications": "Which exam or course, and when did you complete it?",
+}
 
-_GRAD_PREFIXES = [
-    "As a new graduate engineer, ",
-    "In first engineering role, ",
-    "",  # Sometimes no prefix
-]
+# Verbs/phrases that imply ownership or impact: supported only if the user's
+# action contains them. Nothing else in the evidence can vouch for them.
+_VERBS = {
+    "led", "lead", "leading", "managed", "owned", "spearheaded", "directed",
+    "headed", "oversaw", "supervised", "architected", "optimized", "improved",
+    "drove", "mentored", "owner of", "responsible for",
+}
+# Other inflation and number words: supported if in the user's own text.
+_WORDS = {
+    "ownership", "principal", "senior", "expert", "certified", "pmp",
+    "six sigma", "green belt", "black belt", "p.e.", "one", "two", "three",
+    "four", "five", "six", "seven", "eight", "nine", "ten", "twenty", "thirty",
+    "forty", "fifty", "hundred", "thousand", "half", "doubled", "tripled",
+    "halved", "twice", "percent",
+}
+_NUM = re.compile(r"(\$?\d[\d,]*(?:\.\d+)?[KkMmBb]?%?)(?:\s+([A-Za-z]+))?")
+
+
+@lru_cache(maxsize=1)
+def _tool_terms() -> tuple:
+    """Canonicals and aliases from data/keywords.json (read-only)."""
+    path = Path(__file__).resolve().parent.parent / "data" / "keywords.json"
+    terms = {"Minitab", "Siemens TIA Portal", "TIA Portal", "CLSSGB"}  # not in keywords.json
+    for sk in load_keywords(path):
+        terms.update([sk["canonical"], *sk.get("aliases", [])])
+    return tuple(sorted(terms))
+
+
+def _has(term: str, text: str, exact_case: bool = False) -> bool:
+    pat = r"(?<![\w&])" + re.escape(term) + r"(?![\w&])"
+    return bool(re.search(pat, text, 0 if exact_case else re.I))
+
+
+@dataclass(frozen=True)
+class BulletEvidence:
+    skill: str
+    action: str  # required: the user's own words and verb
+    context: str = ""
+    result: str = ""  # blank -> bullet has no result
+
+
+def _clean(text: str) -> str:
+    return " ".join((text or "").split())
+
+
+def build_bullet(evidence: BulletEvidence) -> str:
+    """Assemble a bullet from the user's own words; the verb is never changed."""
+    skill, action = _clean(evidence.skill), _clean(evidence.action)
+    if not skill:
+        raise ValueError("skill is required and cannot be blank")
+    if not action:
+        raise ValueError("action is required and cannot be blank")
+    context, result = _clean(evidence.context), _clean(evidence.result)
+    text = f"{action} {context}".strip()
+    if result:
+        text += f", {result.rstrip('.')}"
+    return text[0].upper() + text[1:].rstrip(".") + "."
+
+
+def skill_mentioned(bullet: str, skill: str) -> bool:
+    """True if the skill appears in the bullet (it is never inserted for you)."""
+    return _has(_clean(skill), bullet)
+
+
+def find_unsupported_claims(bullet: str, evidence: BulletEvidence) -> List[str]:
+    """Return numbers, inflation terms and tools in `bullet` that the user's own
+    action/context/result do not support. The skill field is not evidence."""
+    action = _clean(evidence.action)
+    source = " ".join(_clean(x) for x in (action, evidence.context, evidence.result))
+    def norm(n):
+        return n.replace(",", "").lower()
+    src = [(norm(n), u.lower()) for n, u in _NUM.findall(source)]
+    flagged: List[str] = []
+
+    def add(t):
+        if t not in flagged:
+            flagged.append(t)
+
+    for n, u in _NUM.findall(bullet):
+        k, u = norm(n), u.lower()
+        if not any(k == sn and (not u or not su or u == su) for sn, su in src):
+            add(n.rstrip(".,"))
+    for term in sorted(_VERBS):
+        if _has(term, bullet) and not _has(term, action):
+            add(term)
+    for term in sorted(_WORDS):
+        if _has(term, bullet) and not _has(term, source):
+            add(term)
+    for term in _tool_terms():
+        exact = len(term) <= 3  # short aliases like ROS are case-sensitive
+        if _has(term, bullet, exact) and not _has(term, source, exact):
+            add(term.lower())
+    return flagged
+
+
+def split_claims(bullet: str, evidence: BulletEvidence):
+    """Split flags into (unsupported, personal_check).
+
+    unsupported: terms found nowhere in the user's action/context/result.
+    personal_check: ownership/impact verbs the user typed in context or result
+    (not action); keep only if they personally did it.
+    """
+    own = " ".join(_clean(x) for x in (evidence.context, evidence.result))
+    flags = find_unsupported_claims(bullet, evidence)
+    check = [t for t in flags if t in _VERBS and _has(t, own)]
+    return [t for t in flags if t not in check], check
+
+
+def suggest_prompts(skill: str, category: str) -> List[str]:
+    prompts = [p.format(skill=skill) for p in _PROMPTS]
+    if category in _CATEGORY_PROMPTS:
+        prompts.insert(1, _CATEGORY_PROMPTS[category])
+    return prompts
+
+
+def suggest_verbs(category: str) -> List[str]:
+    """Suggestions only; the user chooses, and must be able to defend the verb."""
+    return list(STRONG_VERBS.get(category, _DEFAULT_VERBS))
 
 
 def generate_bullets(
@@ -260,61 +166,12 @@ def generate_bullets(
     skills_metadata: List[Dict],
     num_bullets: int = 2,
 ) -> List[Dict]:
-    """Generate ATS-optimized resume bullets for selected skills.
+    """Compatibility shim: no bullets are invented, only prompts to answer.
 
-    For each skill, picks a template based on category, fills in
-    industry-specific context and realistic metrics.
-
-    Returns: [{"skill": "FEA", "bullets": ["Performed FEA on...", ...]}]
+    industry, background and num_bullets are ignored.
     """
-    # Build a lookup: canonical -> category
     cat_map = {s["canonical"]: s["category"] for s in skills_metadata}
-
-    results = []
-    for skill in skills:
-        category = cat_map.get(skill, "programming")
-        templates = TEMPLATES.get(category, TEMPLATES["programming"])
-        contexts = CONTEXTS.get(industry, {}).get(category, ["engineering components"])
-        metrics = METRICS.get(category, ["20%"])
-
-        bullets = []
-        used_templates = set()
-        for _ in range(min(num_bullets, len(templates))):
-            # Pick a template we haven't used yet for this skill
-            available = [t for i, t in enumerate(templates) if i not in used_templates]
-            if not available:
-                break
-            template = random.choice(available)
-            used_templates.add(templates.index(template))
-
-            context = random.choice(contexts)
-            metric = random.choice(metrics)
-
-            bullet = template.format(
-                SKILL=skill,
-                CONTEXT=context,
-                METRIC=metric,
-                DETAIL="full dimensional",
-            )
-
-            # Adjust framing for student / recent grad backgrounds
-            bullet = _adjust_for_background(bullet, background)
-            bullets.append(bullet)
-
-        results.append({"skill": skill, "bullets": bullets})
-
-    return results
-
-
-def _adjust_for_background(bullet: str, background: str) -> str:
-    """Prepend context framing for student vs. professional background."""
-    if background == "Current ME Student":
-        prefix = random.choice(_STUDENT_PREFIXES)
-        # Lowercase the first char of bullet when prepending
-        bullet = prefix + bullet[0].lower() + bullet[1:]
-    elif background == "Recent ME Graduate":
-        prefix = random.choice(_GRAD_PREFIXES)
-        if prefix:
-            bullet = prefix + bullet[0].lower() + bullet[1:]
-    # Experienced Engineer and Career Changer keep professional framing
-    return bullet
+    return [
+        {"skill": s, "bullets": [], "prompts": suggest_prompts(s, cat_map.get(s, ""))}
+        for s in skills
+    ]

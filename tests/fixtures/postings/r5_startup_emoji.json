@@ -1,0 +1,105 @@
+{
+  "id": "r5_startup_emoji",
+  "kind": "regression",
+  "format": "startup posting with emoji-prefixed headings (rocket title, wrench / check / sparkles / gift headings)",
+  "note": "Same as review 5. R2.2 strips leading emoji before the word count and vocabulary lookup, so 'What you'll do' / 'What you bring' / 'Bonus points' / 'Perks' are known headings. The title line has more than 6 words and is not a heading. The trailing EEO sentence ends with '.', is not a heading, and stays in the Perks (excluded) section. Résumé: 'alexkim.dev | Oakland, CA' starts lower-case and joins the name line under R2.3 (harmless). Score 100*(0.8*5/5+0.2*2/3)=93.33. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "🚀 Senior Mechanical Engineer – Battery Pack (Series A, hybrid in Oakland)\n\nHey 👋 we're Voltaic, a 25-person team building battery packs for electric boats.\n\n🔧 What you'll do\n• Own the mechanical design of our 800V pack from concept to production\n• Run thermal simulation and CFD for cooling plates\n• Work with our firmware folks on BMS and CAN bus integration\n\n✅ What you bring\n• 5+ years designing EV powertrain or battery hardware\n• Strong SolidWorks skills and GD&T\n• Hands-on prototyping (3D printing, sheet metal)\n\n✨ Bonus points\n• ANSYS Fluent\n• Experience with composites or injection molding\n\n🎁 Perks\n• Equity, 401k, unlimited PTO\n• Annual budget for Python or MATLAB courses\n\nVoltaic is an equal opportunity employer.\n",
+  "resume_text": "Alex Kim - Mechanical Engineer\nalexkim.dev | Oakland, CA\n\nExperience\nBattery Mechanical Engineer, Ampere Marine (2021-present)\n- Designed EV powertrain battery enclosures in SolidWorks; owned GD&T on all drawings\n- Ran thermal simulation and CFD (ANSYS Fluent) to size cold plates\n- Prototyped brackets with 3D printing and laser-cut sheet metal\n- Integrated the BMS harness with the firmware team over CAN bus\n\nSkills\nSolidWorks, ANSYS, GD&T, Python, carbon fiber layup\n",
+  "expected": {
+    "required": [
+      "3D Printing",
+      "Electric Powertrain",
+      "GD&T",
+      "Sheet Metal Design",
+      "SolidWorks"
+    ],
+    "preferred": [
+      "ANSYS",
+      "Composites",
+      "Injection Molding"
+    ],
+    "unscored": [
+      "Battery Management Systems",
+      "CAN Bus",
+      "CFD",
+      "Thermal Analysis"
+    ],
+    "excluded": [
+      "MATLAB",
+      "Python"
+    ],
+    "found": [
+      "3D Printing",
+      "ANSYS",
+      "Battery Management Systems",
+      "CAN Bus",
+      "CFD",
+      "Composites",
+      "Electric Powertrain",
+      "GD&T",
+      "Sheet Metal Design",
+      "SolidWorks",
+      "Thermal Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "we're Voltaic",
+      "section": "unknown"
+    },
+    {
+      "contains": "Run thermal simulation",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Strong SolidWorks skills",
+      "section": "required"
+    },
+    {
+      "contains": "ANSYS Fluent",
+      "section": "preferred"
+    },
+    {
+      "contains": "Annual budget for Python",
+      "section": "excluded"
+    },
+    {
+      "contains": "equal opportunity employer",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "ANSYS Fluent",
+      "canonical": "ANSYS",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "EV powertrain or battery",
+      "canonical": "Electric Powertrain",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "carbon fiber layup",
+      "canonical": "Composites",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "Strong SolidWorks skills"
+    },
+    {
+      "canonical": "Python",
+      "posting_line_contains": "Annual budget for Python"
+    },
+    {
+      "canonical": "CFD",
+      "posting_line_contains": "thermal simulation and CFD"
+    }
+  ]
+}

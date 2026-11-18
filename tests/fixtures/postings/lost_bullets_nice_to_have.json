@@ -1,0 +1,40 @@
+{
+  "id": "lost_bullets_nice_to_have",
+  "kind": "targeted",
+  "format": "lost bullet markers",
+  "note": "Title Case items under Nice to Have ('Team Player', 'CFD Experience') are not headings.",
+  "posting_text": "Requirements\nSolidWorks\nGD&T\nNice to Have\nTeam Player\nStrong Communicator\nCFD Experience\nPython Scripting\nBenefits\nUnlimited PTO\nMATLAB Courses",
+  "resume_text": "Python",
+  "expected": {
+    "required": [
+      "GD&T",
+      "SolidWorks"
+    ],
+    "preferred": [
+      "CFD",
+      "Python"
+    ],
+    "unscored": [],
+    "excluded": [
+      "MATLAB"
+    ],
+    "found": [
+      "Python"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Team Player",
+      "section": "preferred"
+    },
+    {
+      "contains": "Python Scripting",
+      "section": "preferred"
+    },
+    {
+      "contains": "MATLAB Courses",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": []
+}

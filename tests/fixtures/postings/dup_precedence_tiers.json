@@ -1,0 +1,42 @@
+{
+  "id": "dup_precedence_tiers",
+  "kind": "targeted",
+  "format": "duplicate skills",
+  "note": "SolidWorks: unscored+required+preferred -> required. FEA: unscored+preferred+excluded -> preferred, never excluded. Evidence is the earliest mention in the winning tier.",
+  "posting_text": "Responsibilities:\n- Run FEA on brackets\n- Model parts in SolidWorks\nRequirements:\n- SolidWorks\nPreferred:\n- FEA\n- SolidWorks certification helpful\nBenefits:\n- FEA training budget",
+  "resume_text": "SolidWorks",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [
+      "Finite Element Analysis"
+    ],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Run FEA on brackets",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "FEA training budget",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "- SolidWorks"
+    },
+    {
+      "canonical": "Finite Element Analysis",
+      "posting_line_contains": "- FEA"
+    }
+  ]
+}

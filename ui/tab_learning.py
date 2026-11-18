@@ -87,7 +87,7 @@ def render_learning_tab(ranked_df: pd.DataFrame) -> None:
 
     # Bonus recommendation
     st.markdown("---")
-    st.subheader("Bonus: Emerging 2026 Skills")
+    st.subheader("Bonus: Emerging Skills (in the synthetic sample)")
     st.markdown(
         "- **AI for Mechanical Engineers** — If available on Codecademy, "
         "this combines ML with engineering data analysis.\n"

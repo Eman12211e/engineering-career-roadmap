@@ -1,0 +1,126 @@
+{
+  "id": "u6_staffing_agency",
+  "kind": "unseen",
+  "format": "staffing agency: key-value header, Job Duties: / Skills Required: / Skills Preferred: / About Us:",
+  "note": "'Skills Required' and 'Skills Preferred' are vocabulary (required / preferred). The key-value 'Job Title: CNC Programmer / ...' line mentions a skill and has no trailing colon, so it is body text (R2.8.7), pre-heading unknown; CNC wins required via G-code. PLC appears only in the agency's About Us text: excluded. 'Perform other duties as required' has no skill. Resume: IATF negated ('no prior experience with'), Six Sigma hypothetical ('studying'); 'reduced scrap to zero ... using SPC', 'never scrapped', 'with no added fixtures' are not negations.",
+  "posting_text": "Job Title: CNC Programmer / Manufacturing Engineer\nLocation: Kenosha, WI\nDuration: 6-month contract-to-hire\nPay Rate: $38 - $46/hr W2\nClient: Tier 1 automotive supplier (name withheld)\n\nJob Duties:\n- Write and prove out CNC programs for 4- and 5-axis machining centers\n- Create fixtures and setup sheets in SolidWorks\n- Support PPAP submissions and respond to customer 8D requests\n- Perform other duties as required\n\nSkills Required:\n- 3+ years of G-code programming on Haas or Mazak equipment\n- Mastercam or Esprit CAM experience\n- Ability to read prints with GD&T\n- Experience in an IATF 16949 environment\n\nSkills Preferred:\n- Six Sigma Green Belt\n- ERP experience (Plex or SAP)\n- Familiarity with SPC software\n\nAbout Us:\nPrecision Talent Partners is a staffing firm specializing in manufacturing talent. We've placed over 4,000 SolidWorks, CNC and PLC professionals since 2009. Benefits for contract employees include medical, dental, and 401(k).\n\nPrecision Talent Partners is an Equal Opportunity Employer.",
+  "resume_text": "Tomas Brennan\nKenosha, WI • (262) 555-0147\n\nCNC Programmer, Lakeshore Precision, 2020-Present\n- Program Haas VF-4 and Mazak Integrex machines in G-code and Mastercam; cut\nsetup time 35% with no added fixtures\n- Read customer prints with GD&T callouts and built inspection plans\n- Reduced scrap to zero on the flagship housing job using SPC charts\n- Built PPAP dimensional packages for two automotive launches\nMachinist, Badger Fab, 2016-2020\n- Ran manual and CNC mills; never scrapped a first article in four years\n- Supported a QMS rollout; no prior experience with IATF 16949 audits\n\nCertifications: OSHA 10. Currently studying Six Sigma Green Belt material.",
+  "expected": {
+    "required": [
+      "CNC Machining",
+      "GD&T",
+      "IATF 16949"
+    ],
+    "preferred": [
+      "ERP Systems",
+      "Lean Six Sigma Green Belt",
+      "Statistical Process Control"
+    ],
+    "unscored": [
+      "APQP",
+      "Root Cause Analysis",
+      "SolidWorks"
+    ],
+    "excluded": [
+      "PLC Programming"
+    ],
+    "found": [
+      "APQP",
+      "CNC Machining",
+      "GD&T",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Job Title: CNC Programmer",
+      "section": "unknown"
+    },
+    {
+      "contains": "Write and prove out CNC programs",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "G-code programming on Haas",
+      "section": "required"
+    },
+    {
+      "contains": "IATF 16949 environment",
+      "section": "required"
+    },
+    {
+      "contains": "ERP experience (Plex or SAP)",
+      "section": "preferred"
+    },
+    {
+      "contains": "staffing firm specializing",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "Reduced scrap to zero",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never scrapped a first article",
+      "canonical": "CNC Machining",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "no prior experience with IATF",
+      "canonical": "IATF 16949",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently studying Six Sigma",
+      "canonical": "Lean Six Sigma Green Belt",
+      "status": "hypothetical"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "CNC Machining",
+      "posting_line_contains": "G-code programming on Haas"
+    },
+    {
+      "canonical": "Statistical Process Control",
+      "posting_line_contains": "Familiarity with SPC software"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "staffing firm specializing",
+      "canonical": "PLC Programming",
+      "trap": "company",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "staffing firm specializing",
+      "canonical": "SolidWorks",
+      "trap": "company",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "no prior experience with IATF",
+      "canonical": "IATF 16949",
+      "trap": "negated",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently studying Six Sigma",
+      "canonical": "Lean Six Sigma Green Belt",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    }
+  ]
+}

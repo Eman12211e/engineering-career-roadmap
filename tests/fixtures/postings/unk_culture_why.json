@@ -1,0 +1,35 @@
+{
+  "id": "unk_culture_why",
+  "kind": "targeted",
+  "format": "unknown headings",
+  "note": "Unknown headings (colon and ** styled) start unknown sections -> unscored, never required.",
+  "posting_text": "Requirements:\n- SolidWorks\nOur Culture:\n- Our team uses Python dashboards to share wins\n**Why Join Us**\n- We invest in machine learning and CFD research",
+  "resume_text": "SolidWorks, Python",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [
+      "CFD",
+      "Machine Learning",
+      "Python"
+    ],
+    "excluded": [],
+    "found": [
+      "Python",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Python dashboards",
+      "section": "unknown"
+    },
+    {
+      "contains": "machine learning and CFD",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": []
+}

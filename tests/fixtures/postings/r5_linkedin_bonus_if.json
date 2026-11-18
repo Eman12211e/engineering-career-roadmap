@@ -1,0 +1,90 @@
+{
+  "id": "r5_linkedin_bonus_if",
+  "kind": "regression",
+  "format": "LinkedIn copy-paste, bullet markers lost, Title Case headings including the unlisted 'Bonus If You Have'",
+  "note": "Same as review 5. Relies on the vocabulary row 'bonus if you have' -> preferred (present at ccc9e91). With bullet markers lost, the next line is not a list item and there is no blank line after the heading, so R2.2 rule 4 fails and the Title Case line is not a structural heading. ROS and Composites would then stay in 'Who You Are' and be marked required (a Major swap). 'Hands-on with FEA and GD&T' is a Title-Case near-miss: rule 4 fails and it holds skill text, so it stays body text (R2.8.4). 'Learning stipend for MATLAB courses': 'Learning' is not directly before MATLAB, so the mention is affirmed, and it is excluded by section. Score 100*(0.8*3/3+0.2*0/2)=80. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "About the job\nAt Helix Robotics, we build autonomous mobile robots for warehouses.\n\nWhat You'll Do\nDesign drive modules and chassis in SolidWorks\nLead DFM reviews with contract manufacturers\n\nWho You Are\n4+ years of mechanical design experience\nHands-on with FEA and GD&T\nComfortable with Python for test automation\n\nBonus If You Have\nROS experience\nExperience with composites\n\nCompensation & Benefits\nBase salary $130k-$165k + equity\nLearning stipend for MATLAB courses\n",
+  "resume_text": "JORDAN LEE\nAustin, TX | jordan.lee@email.com | (512) 555-0147\n\nEDUCATION\nB.S. Mechanical Engineering, Texas A&M University, 2019\n\nEXPERIENCE\nMechanical Design Engineer, Lonestar Automation - Austin, TX (2020-Present)\n• Designed sheet metal enclosures and machined fixtures in SolidWorks for robotic cells\n• Performed tolerance stack-up analysis and applied GD&T per ASME Y14.5 on 40+ drawings\n• Ran FEA in SolidWorks Simulation to validate brackets; cut part weight 18%\n• Wrote Python scripts to parse test data\n\nEngineering Intern, Brazos Pumps (Summer 2018)\n• Supported root cause analysis on pump seal failures using 5 Whys\n\nSKILLS\nCAD: SolidWorks, Creo (basic), AutoCAD\nAnalysis: FEA, MATLAB\nCurrently learning CATIA V5\n",
+  "expected": {
+    "required": [
+      "Finite Element Analysis",
+      "GD&T",
+      "Python"
+    ],
+    "preferred": [
+      "Composites",
+      "ROS"
+    ],
+    "unscored": [
+      "DFM/DFA",
+      "SolidWorks"
+    ],
+    "excluded": [
+      "MATLAB"
+    ],
+    "found": [
+      "Finite Element Analysis",
+      "GD&T",
+      "Python",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Hands-on with FEA and GD&T",
+      "section": "required"
+    },
+    {
+      "contains": "Comfortable with Python",
+      "section": "required"
+    },
+    {
+      "contains": "ROS experience",
+      "section": "preferred"
+    },
+    {
+      "contains": "Experience with composites",
+      "section": "preferred"
+    },
+    {
+      "contains": "Lead DFM reviews",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Learning stipend",
+      "section": "excluded"
+    },
+    {
+      "contains": "autonomous mobile robots",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Learning stipend for MATLAB",
+      "canonical": "MATLAB",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "ROS experience",
+      "canonical": "ROS",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Python",
+      "posting_line_contains": "Comfortable with Python"
+    },
+    {
+      "canonical": "ROS",
+      "posting_line_contains": "ROS experience"
+    },
+    {
+      "canonical": "MATLAB",
+      "posting_line_contains": "Learning stipend for MATLAB"
+    }
+  ]
+}

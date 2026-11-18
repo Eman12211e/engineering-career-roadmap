@@ -1,0 +1,142 @@
+{
+  "id": "u6_numbered_lists",
+  "kind": "unseen",
+  "format": "numbered lists ('1.' items) under colon headings",
+  "note": "Numbered items are list items (R2.8.8), never headings or wrap continuations. 'Willing to travel 20% and have AutoCAD skills' is not hypothetical (R2.4 example): AutoCAD required. 'No prior CNC experience is needed' is negated (no + filler 'prior'): CNC is in no group, so the resume's CNC is not found. Resume: Python hypothetical ('Currently learning Python'), predictive maintenance really negated; 'with zero safety-circuit findings' and 'never needed a return visit' are not negations; PLCs uses the all-caps plural rule.",
+  "posting_text": "Controls Engineer – Packaging Automation\nLocation: Columbus, OH\n\nResponsibilities:\n1. Design, program and commission PLC-based control systems for case packers and palletizers.\n2. Program and integrate FANUC and ABB robot cells with vision systems.\n3. Develop HMI screens and write commissioning documentation for each line.\n4. Troubleshoot pneumatics and servo drives during customer start-ups.\n\nRequirements:\n1. Bachelor's degree in Electrical, Mechanical or Mechatronics Engineering.\n2. 4+ years of Allen-Bradley ControlLogix programming in ladder logic.\n3. Willing to travel 20% and have AutoCAD skills for panel layouts.\n4. No prior CNC experience is needed; we will train on our machine tending cells.\n\nPreferred:\n1. Experience with SQL databases for production reporting.\n2. Python scripting for test automation.\n3. Exposure to predictive maintenance programs.\n4. Ability to travel internationally on short notice.\n\nWhat We Offer:\nCompetitive salary, profit sharing, and a paid Rockwell training seat each year.",
+  "resume_text": "Kevin Nguyen\nControls Engineer, Dayton, OH\n\nExperience\nControls Engineer, Miami Valley Integrators (2019 to present)\n- Programmed Allen-Bradley CompactLogix and ControlLogix PLCs for 25 palletizing lines\nwith zero safety-circuit findings at customer acceptance\n- Integrated FANUC robots with Cognex vision; never needed a return visit for the same fault\n- Wrote commissioning documentation and SQL queries for OEE reports\n- Drew panel layouts in AutoCAD Electrical\n- No experience with predictive maintenance programs; maintenance was customer-owned\n- Currently learning Python for test automation\n\nSkills\nLadder logic, structured text, pneumatics, CNC machine tending",
+  "expected": {
+    "required": [
+      "AutoCAD",
+      "PLC Programming"
+    ],
+    "preferred": [
+      "Predictive Maintenance",
+      "Python",
+      "SQL"
+    ],
+    "unscored": [
+      "Hydraulics/Pneumatics",
+      "Industrial Robotics",
+      "Technical Writing"
+    ],
+    "excluded": [],
+    "found": [
+      "AutoCAD",
+      "Hydraulics/Pneumatics",
+      "Industrial Robotics",
+      "PLC Programming",
+      "SQL",
+      "Technical Writing"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "commission PLC-based",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Allen-Bradley ControlLogix",
+      "section": "required"
+    },
+    {
+      "contains": "have AutoCAD skills",
+      "section": "required"
+    },
+    {
+      "contains": "SQL databases",
+      "section": "preferred"
+    },
+    {
+      "contains": "predictive maintenance programs",
+      "section": "preferred"
+    },
+    {
+      "contains": "Rockwell training seat",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "have AutoCAD skills",
+      "canonical": "AutoCAD",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "No prior CNC experience",
+      "canonical": "CNC Machining",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "PLCs for 25 palletizing",
+      "canonical": "PLC Programming",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never needed a return visit",
+      "canonical": "Industrial Robotics",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with predictive",
+      "canonical": "Predictive Maintenance",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning Python",
+      "canonical": "Python",
+      "status": "hypothetical"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "PLC Programming",
+      "posting_line_contains": "Allen-Bradley ControlLogix"
+    },
+    {
+      "canonical": "AutoCAD",
+      "posting_line_contains": "have AutoCAD skills"
+    },
+    {
+      "canonical": "Technical Writing",
+      "posting_line_contains": "commissioning documentation"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "No prior CNC experience",
+      "canonical": "CNC Machining",
+      "trap": "negated",
+      "must_not": "appear in any result group; resume CNC must not be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with predictive",
+      "canonical": "Predictive Maintenance",
+      "trap": "negated",
+      "must_not": "be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Currently learning Python",
+      "canonical": "Python",
+      "trap": "hypothetical",
+      "must_not": "be found"
+    }
+  ],
+  "binding_traps": [
+    {
+      "line_contains": "have AutoCAD skills",
+      "canonical": "AutoCAD",
+      "expected_importance": "required",
+      "why": "'willing to travel' does not make a later skill hypothetical"
+    }
+  ]
+}

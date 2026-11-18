@@ -1,0 +1,26 @@
+{
+  "id": "inl_a_plus",
+  "kind": "targeted",
+  "format": "inline cues",
+  "note": "'a plus' overrides a responsibilities section (-> preferred) and a required section, per clause.",
+  "posting_text": "Responsibilities:\n- Design fixtures in SolidWorks\n- CFD experience is a plus\nRequirements:\n- GD&T; Python a plus",
+  "resume_text": "Python",
+  "expected": {
+    "required": [
+      "GD&T"
+    ],
+    "preferred": [
+      "CFD",
+      "Python"
+    ],
+    "unscored": [
+      "SolidWorks"
+    ],
+    "excluded": [],
+    "found": [
+      "Python"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

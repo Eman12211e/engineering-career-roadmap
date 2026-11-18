@@ -1,0 +1,83 @@
+{
+  "id": "r5_desired_characteristics",
+  "kind": "regression",
+  "format": "large-industrial style: 'Job Description Summary', 'Roles and Responsibilities', 'Required Qualifications', 'Desired Characteristics', 'Additional Information'",
+  "note": "Same as review 5. 'Desired Characteristics' is Title Case followed by a list, so it is a structural heading (R2.2) and ends Required Qualifications. Relies on the vocabulary row 'desired characteristics' -> preferred (present at ccc9e91); without it the four skills are unscored (a Major drop, no longer an invention). 'Roles and Responsibilities' is a structural heading, unknown or responsibilities, both unscored. 'Job Description Summary' and 'Additional Information' are not followed by a blank line or list, so they are not headings unless listed. Neither affects a skill. Score 100*(0.8*0/1+0.2*3/4)=15. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "Job Description Summary\nAs a Mechanical Design Engineer you will design turbine hardware for commercial engines.\n\nRoles and Responsibilities\n- Develop CATIA V5 models and drawings for turbine hardware\n- Perform heat transfer analysis and structural analysis\n\nRequired Qualifications\n- Bachelor's degree in Mechanical Engineering from an accredited university\n- Minimum of 3 years of experience with CAD (CATIA or NX)\n\nDesired Characteristics\n- Experience with ANSYS Workbench\n- Lean manufacturing and Six Sigma knowledge\n- Strong technical writing skills\n\nAdditional Information\nRelocation Assistance Provided: Yes\n",
+  "resume_text": "MARCUS WEBB, P.E.\nHuntsville, AL | Active Secret Clearance | marcus.webb@proton.me\n\nSUMMARY\nSystems engineer with 7 years on DoD programs. Experienced with MBSE (Cameo/SysML), requirements decomposition and verification.\n\nEXPERIENCE\nSystems Engineer II - Redstone Dynamics (2019-present)\n- Built SysML models for a radar subsystem using model-based systems engineering practices\n- Wrote MATLAB scripts to post-process thermal analysis results from test\n- Authored technical reports for CDR and maintained configuration documentation under AS9100\nMechanical Engineer - Tennessee Valley Machining (2017-2019)\n- Ran stress analysis on welded frames using ANSYS Workbench\n- Not familiar with Simulink at the time; self-taught later\n\nCERTIFICATIONS\nLean Six Sigma Green Belt (2020)\nEIT / FE exam passed (2016)\n",
+  "expected": {
+    "required": [
+      "CATIA"
+    ],
+    "preferred": [
+      "ANSYS",
+      "Lean Manufacturing",
+      "Lean Six Sigma Green Belt",
+      "Technical Writing"
+    ],
+    "unscored": [
+      "Structural Analysis",
+      "Thermal Analysis"
+    ],
+    "excluded": [],
+    "found": [
+      "ANSYS",
+      "Lean Six Sigma Green Belt",
+      "Structural Analysis",
+      "Technical Writing",
+      "Thermal Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Minimum of 3 years",
+      "section": "required"
+    },
+    {
+      "contains": "Experience with ANSYS Workbench",
+      "section": "preferred"
+    },
+    {
+      "contains": "Strong technical writing skills",
+      "section": "preferred"
+    },
+    {
+      "contains": "As a Mechanical Design Engineer",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Lean manufacturing and Six Sigma",
+      "canonical": "Lean Six Sigma Green Belt",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Ran stress analysis",
+      "canonical": "Structural Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Authored technical reports",
+      "canonical": "Technical Writing",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "CATIA",
+      "posting_line_contains": "Minimum of 3 years"
+    },
+    {
+      "canonical": "ANSYS",
+      "posting_line_contains": "Experience with ANSYS Workbench"
+    },
+    {
+      "canonical": "Thermal Analysis",
+      "posting_line_contains": "heat transfer analysis"
+    }
+  ]
+}

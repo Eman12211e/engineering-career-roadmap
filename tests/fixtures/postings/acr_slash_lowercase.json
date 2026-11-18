@@ -1,0 +1,34 @@
+{
+  "id": "acr_slash_lowercase",
+  "kind": "targeted",
+  "format": "acronyms",
+  "note": "Slash forms in the posting; lowercase acronyms in the resume.",
+  "posting_text": "Requirements:\n- FEA/CFD experience\n- PLC/HMI programming\n- SQL/Python scripting",
+  "resume_text": "Skills: fea, cfd, sql",
+  "expected": {
+    "required": [
+      "CFD",
+      "Finite Element Analysis",
+      "PLC Programming",
+      "Python",
+      "SQL"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "CFD",
+      "Finite Element Analysis",
+      "SQL"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "resume",
+      "line_contains": "fea, cfd, sql",
+      "canonical": "CFD",
+      "status": "affirmed"
+    }
+  ]
+}

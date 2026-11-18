@@ -1,0 +1,28 @@
+{
+  "id": "neg_posting_basic",
+  "kind": "targeted",
+  "format": "negation (posting)",
+  "note": "Negated posting mentions create no entry in any set (judgement: not even unscored).",
+  "posting_text": "Requirements:\n- No FEA experience required\n- SolidWorks proficiency",
+  "resume_text": "FEA, SolidWorks",
+  "expected": {
+    "required": [
+      "SolidWorks"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "No FEA experience",
+      "canonical": "Finite Element Analysis",
+      "status": "negated"
+    }
+  ]
+}

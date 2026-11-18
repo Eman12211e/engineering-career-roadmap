@@ -1,0 +1,37 @@
+{
+  "id": "exc_benefits_bullets",
+  "kind": "targeted",
+  "format": "exclusion zones",
+  "note": "Benefits with bullet-character, middle-dot and dash bullets, incl. 'Free lunch'.",
+  "posting_text": "Requirements:\n- FEA\nBenefits:\n• Free lunch\n· Python lunch-and-learns\n- MATLAB license for home use",
+  "resume_text": "FEA, Python",
+  "expected": {
+    "required": [
+      "Finite Element Analysis"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [
+      "MATLAB",
+      "Python"
+    ],
+    "found": [
+      "Finite Element Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Free lunch",
+      "section": "excluded"
+    },
+    {
+      "contains": "Python lunch-and-learns",
+      "section": "excluded"
+    },
+    {
+      "contains": "MATLAB license",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": []
+}

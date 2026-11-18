@@ -1,0 +1,174 @@
+{
+  "id": "u6_culture_benefits_heavy",
+  "kind": "unseen",
+  "format": "culture- and benefits-heavy posting that names tools in company intro, culture list and perks",
+  "note": "Company intro (pre-heading) and 'Life at Fernwood' (Title Case with small word 'at', followed by a list: unknown heading) are culture text: Fusion 360, 3D Printing (additive manufacturing), CNC, Technical Writing ('a culture of documentation'), Python and Machine Learning are unscored and must never be required or preferred. 'What we offer' is excluded: MATLAB appears only there. SolidWorks and Composites win their scored tiers despite culture/benefit mentions; evidence must come from the scored lines. The resume avoids all culture-only skills except MATLAB (excluded, not found). Resume: composites really negated; injection molding wraps after a comma.",
+  "posting_text": "Mechanical Engineer, Product Development\nFernwood Outdoor Gear | Boulder, CO | Hybrid\n\nAt Fernwood we believe great gear comes from people who actually use it. Our engineers take every other Friday off to climb, ski and paddle, and our design studio runs on SolidWorks and Fusion 360.\n\nLife at Fernwood\n- Monthly build days where teams try additive manufacturing, CNC, or anything else they are curious about\n- A culture of documentation: every lesson learned gets written down\n- Lunch talks on topics like Python, machine learning and composites\n\nWhat you'll do\n- Design packs, frames and hardware from napkin sketch to production\n- Run FEA on load-bearing frames and buckles\n- Partner with overseas suppliers on injection molding and tooling\n\nWhat we're looking for\n- 4+ years of consumer product design experience\n- Expert in SolidWorks surfacing\n- Experience designing for injection molding with DFM in mind\n\nBonus points\n- Experience with carbon fiber or other composite materials\n- You've done test-to-failure work and fatigue analysis\n\nWhat we offer\n- 100% paid health premiums and a $1,500 gear allowance\n- Free SolidWorks and Fusion 360 licenses for personal projects\n- A Python and machine learning course stipend\n- A MATLAB Home license and 3D printer access",
+  "resume_text": "Hannah Cho\nBoulder, CO · hannah.cho@example.com\n\nExperience\nSenior Product Designer, Summit Hydration (2019 - present)\n- Designed 12 hydration packs in SolidWorks, including surfacing for molded back panels\n- Took 9 parts from concept to injection molding tooling with zero tool rework loops,\napplying DFM rules with our suppliers\n- Ran FEA on buckle and frame designs; never shipped a part that failed field\ndrop testing\n- Led fatigue analysis and cycle testing on shoulder strap anchors\nDesign Engineer, Front Range Bikes (2016 - 2019)\n- No experience with carbon fiber layup; designed aluminum and steel frames only\n- Used MATLAB for test-rig data reduction\n\nInterests\nBackcountry skiing, climbing, woodworking",
+  "expected": {
+    "required": [
+      "DFM/DFA",
+      "Injection Molding",
+      "SolidWorks"
+    ],
+    "preferred": [
+      "Composites",
+      "Fatigue Analysis"
+    ],
+    "unscored": [
+      "3D Printing",
+      "CNC Machining",
+      "Finite Element Analysis",
+      "Fusion 360",
+      "Machine Learning",
+      "Python",
+      "Technical Writing"
+    ],
+    "excluded": [
+      "MATLAB"
+    ],
+    "found": [
+      "DFM/DFA",
+      "Fatigue Analysis",
+      "Finite Element Analysis",
+      "Injection Molding",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "design studio runs on SolidWorks",
+      "section": "unknown"
+    },
+    {
+      "contains": "Monthly build days",
+      "section": "unknown"
+    },
+    {
+      "contains": "A culture of documentation",
+      "section": "unknown"
+    },
+    {
+      "contains": "Run FEA on load-bearing",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Expert in SolidWorks surfacing",
+      "section": "required"
+    },
+    {
+      "contains": "carbon fiber or other composite",
+      "section": "preferred"
+    },
+    {
+      "contains": "Free SolidWorks and Fusion 360",
+      "section": "excluded"
+    },
+    {
+      "contains": "MATLAB Home license",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Lunch talks",
+      "canonical": "Composites",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "applying DFM rules",
+      "canonical": "DFM/DFA",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "never shipped a part",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with carbon fiber",
+      "canonical": "Composites",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "Expert in SolidWorks surfacing"
+    },
+    {
+      "canonical": "Composites",
+      "posting_line_contains": "carbon fiber or other composite"
+    },
+    {
+      "canonical": "Injection Molding",
+      "posting_line_contains": "designing for injection molding"
+    },
+    {
+      "canonical": "Fusion 360",
+      "posting_line_contains": "design studio runs on SolidWorks"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "design studio runs on SolidWorks",
+      "canonical": "Fusion 360",
+      "trap": "company",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Monthly build days",
+      "canonical": "3D Printing",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Monthly build days",
+      "canonical": "CNC Machining",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "A culture of documentation",
+      "canonical": "Technical Writing",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Lunch talks",
+      "canonical": "Python",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Lunch talks",
+      "canonical": "Machine Learning",
+      "trap": "culture",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "MATLAB Home license",
+      "canonical": "MATLAB",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with carbon fiber",
+      "canonical": "Composites",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ]
+}

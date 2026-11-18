@@ -1,0 +1,23 @@
+{
+  "id": "email_no_cues",
+  "kind": "targeted",
+  "format": "headingless email",
+  "note": "No headings and no cues: every skill is unscored and the score is None.",
+  "posting_text": "Hi Jane,\nWe're a small shop building hydraulic presses. Our engineers use SolidWorks and ANSYS every day, and we're moving our ERP to SAP this year.\nLet me know if you're interested.",
+  "resume_text": "SolidWorks",
+  "expected": {
+    "required": [],
+    "preferred": [],
+    "unscored": [
+      "ANSYS",
+      "ERP Systems",
+      "SolidWorks"
+    ],
+    "excluded": [],
+    "found": [
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

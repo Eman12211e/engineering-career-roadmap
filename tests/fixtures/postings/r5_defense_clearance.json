@@ -1,0 +1,98 @@
+{
+  "id": "r5_defense_clearance",
+  "kind": "regression",
+  "format": "defense contractor: clearance header, 'Essential Duties and Responsibilities:', 'Required Skills and Education:', 'Desired Skills:', Clearance/Pay Transparency/EEO sections",
+  "note": "Same as review 5. Relies on the vocabulary row 'required skills and education' -> required (present at ccc9e91). Without it, R2.1 makes MATLAB and Systems Engineering unscored (a Major drop, not an invention). 'reviews as required' never binds (R2.4), so Structural and Thermal Analysis stay unscored. 'Essential Duties and Responsibilities:' is a heading (colon); unknown or responsibilities are both unscored, so its lines carry no section label. 'Clearance Information:' is an unknown heading that ends the Desired Skills section (R2.2). Résumé 'Not familiar with Simulink' is negated, but MATLAB is found through another line. Score 100*(0.8*2/2+0.2*2/3)=93.33. Re-checked against R2.8 (2026-11-07): expected sets unchanged.",
+  "posting_text": "Systems Engineer III - Missile Defense\nLocation: Huntsville, AL | Clearance: Active Secret required | Req ID: R10148832\n\nEssential Duties and Responsibilities:\n- Perform requirements decomposition and MBSE modeling in Cameo for interceptor subsystems\n- Support structural analysis and thermal analysis reviews as required\n- Maintain configuration documentation in accordance with AS9100\n\nRequired Skills and Education:\n- Bachelor's degree in Engineering with 5 years of experience, or Master's with 3 years\n- Experience with model-based systems engineering\n- Working knowledge of MATLAB/Simulink\n- Must possess an active DoD Secret clearance; U.S. citizenship is required\n\nDesired Skills:\n- Experience with DOORS and requirements management\n- Familiarity with FEA tools such as ANSYS Mechanical\n- Six Sigma Green Belt\n\nClearance Information:\nThis position requires an active Secret security clearance. Selected applicants will be subject to a government security investigation and must meet eligibility requirements for access to classified information.\n\nPay Transparency:\nThe salary range for this position is $95,000 - $140,000.\n\nEEO Statement:\nWe are an Equal Opportunity Employer. All qualified applicants will receive consideration without regard to race, color, religion, sex, national origin, disability or veteran status.\n",
+  "resume_text": "MARCUS WEBB, P.E.\nHuntsville, AL | Active Secret Clearance | marcus.webb@proton.me\n\nSUMMARY\nSystems engineer with 7 years on DoD programs. Experienced with MBSE (Cameo/SysML), requirements decomposition and verification.\n\nEXPERIENCE\nSystems Engineer II - Redstone Dynamics (2019-present)\n- Built SysML models for a radar subsystem using model-based systems engineering practices\n- Wrote MATLAB scripts to post-process thermal analysis results from test\n- Authored technical reports for CDR and maintained configuration documentation under AS9100\nMechanical Engineer - Tennessee Valley Machining (2017-2019)\n- Ran stress analysis on welded frames using ANSYS Workbench\n- Not familiar with Simulink at the time; self-taught later\n\nCERTIFICATIONS\nLean Six Sigma Green Belt (2020)\nEIT / FE exam passed (2016)\n",
+  "expected": {
+    "required": [
+      "MATLAB",
+      "Systems Engineering"
+    ],
+    "preferred": [
+      "ANSYS",
+      "Finite Element Analysis",
+      "Lean Six Sigma Green Belt"
+    ],
+    "unscored": [
+      "AS9100",
+      "Structural Analysis",
+      "Technical Writing",
+      "Thermal Analysis"
+    ],
+    "excluded": [],
+    "found": [
+      "ANSYS",
+      "AS9100",
+      "Lean Six Sigma Green Belt",
+      "MATLAB",
+      "Structural Analysis",
+      "Systems Engineering",
+      "Technical Writing",
+      "Thermal Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Experience with model-based systems engineering",
+      "section": "required"
+    },
+    {
+      "contains": "Working knowledge of MATLAB",
+      "section": "required"
+    },
+    {
+      "contains": "Six Sigma Green Belt",
+      "section": "preferred"
+    },
+    {
+      "contains": "Selected applicants will be subject",
+      "section": "unknown"
+    },
+    {
+      "contains": "All qualified applicants",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "reviews as required",
+      "canonical": "Structural Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Familiarity with FEA tools",
+      "canonical": "Finite Element Analysis",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Not familiar with Simulink",
+      "canonical": "MATLAB",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Ran stress analysis",
+      "canonical": "Structural Analysis",
+      "status": "affirmed"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "Systems Engineering",
+      "posting_line_contains": "Experience with model-based systems engineering"
+    },
+    {
+      "canonical": "MATLAB",
+      "posting_line_contains": "Working knowledge of MATLAB"
+    },
+    {
+      "canonical": "Structural Analysis",
+      "posting_line_contains": "reviews as required"
+    }
+  ]
+}

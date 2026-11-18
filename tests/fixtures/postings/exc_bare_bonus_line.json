@@ -1,0 +1,32 @@
+{
+  "id": "exc_bare_bonus_line",
+  "kind": "targeted",
+  "format": "exclusion zones",
+  "note": "'Bonus: 10% annual target' does not end with ':' so it is a body line of Compensation, not a preferred heading. SolidWorks stays excluded.",
+  "posting_text": "Requirements:\n- PLC programming\nCompensation:\nBase $90k\nBonus: 10% annual target\n- SolidWorks seat for home use",
+  "resume_text": "PLC, SolidWorks",
+  "expected": {
+    "required": [
+      "PLC Programming"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [
+      "SolidWorks"
+    ],
+    "found": [
+      "PLC Programming"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Bonus: 10%",
+      "section": "excluded"
+    },
+    {
+      "contains": "SolidWorks seat",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": []
+}

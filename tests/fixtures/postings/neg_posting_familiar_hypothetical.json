@@ -1,0 +1,42 @@
+{
+  "id": "neg_posting_familiar_hypothetical",
+  "kind": "targeted",
+  "format": "negation/hypothetical (posting)",
+  "note": "'Familiar with' is affirmed. 'Willingness to learn Python' is hypothetical (assumes 'learn' is a hypothetical cue) -> no requirement. 'Never ...;' is a separate clause from SPC.",
+  "posting_text": "Requirements:\n- Familiar with GD&T\n- Willingness to learn Python\n- Never compromise on quality; SPC experience",
+  "resume_text": "GD&T, SPC",
+  "expected": {
+    "required": [
+      "GD&T",
+      "Statistical Process Control"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [],
+    "found": [
+      "GD&T",
+      "Statistical Process Control"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Familiar with GD&T",
+      "canonical": "GD&T",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "learn Python",
+      "canonical": "Python",
+      "status": "hypothetical"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "SPC experience",
+      "canonical": "Statistical Process Control",
+      "status": "affirmed"
+    }
+  ]
+}

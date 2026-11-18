@@ -1,0 +1,150 @@
+{
+  "id": "u6_not_required_but_plus",
+  "kind": "unseen",
+  "format": "co-op posting with 'X is not required, but is a plus' / 'not required but nice to have' / 'X not required'",
+  "note": "R2.4: 'Python is not required, but is a plus' and 'MATLAB not required but nice to have' are preferred, even inside Requirements. 'Lean manufacturing not required' is negation_after with no plus clause: no group, so the resume's 5S is not found. 'CAD experience required (SolidWorks preferred)': the postfix cue after SolidWorks is 'preferred'; the earlier 'required' attaches to no skill -> SolidWorks preferred. 'Familiarity with GD&T is required' -> required. Perks: CNC and 3D printing excluded (resume CNC not found). Resume: MATLAB really negated; 'with no off-the-shelf fixtures', 'zero data dropouts', 'without new equipment' are not negations.",
+  "posting_text": "Manufacturing Engineering Co-op, Summer 2027\nHollis Medical Devices, Minneapolis, MN\n\nThe Role\n- Support process development for catheter assembly lines\n- Write validation protocols and test reports for new equipment\n- Assist with process FMEA updates and line layouts\n\nRequirements\n- Currently pursuing a B.S. in Mechanical, Biomedical or Manufacturing Engineering\n- Familiarity with GD&T is required\n- CAD experience required (SolidWorks preferred)\n- Python is not required, but is a plus\n- MATLAB not required but nice to have\n- Lean manufacturing not required\n- Must be available May through August\n\nPerks\n- Paid housing stipend and a summer mentor\n- Access to our machine shop, where co-ops get hands-on time with CNC and 3D printing",
+  "resume_text": "Jordan Alvarez\nMechanical Engineering student, University of Minnesota (expected May 2028)\n\nProjects\n- Senior design: built a peristaltic pump test rig in SolidWorks with no off-the-shelf\nfixtures\n- Wrote Python scripts to log flow data; zero data dropouts across 40 test runs\n- Applied GD&T to all detail drawings for the machine shop\n\nExperience\nProduction Associate, Twin Cities Plastics (Summer 2026)\n- Ran 5S audits and helped cut changeover time without new equipment\n- No experience with MATLAB outside of one homework assignment\n\nSkills\nSolidWorks, Python, Excel, CNC (basic mill)",
+  "expected": {
+    "required": [
+      "GD&T"
+    ],
+    "preferred": [
+      "MATLAB",
+      "Python",
+      "SolidWorks"
+    ],
+    "unscored": [
+      "DFMEA"
+    ],
+    "excluded": [
+      "3D Printing",
+      "CNC Machining"
+    ],
+    "found": [
+      "GD&T",
+      "Python",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "process FMEA updates",
+      "section": "responsibilities"
+    },
+    {
+      "contains": "Python is not required",
+      "section": "required"
+    },
+    {
+      "contains": "Lean manufacturing not required",
+      "section": "required"
+    },
+    {
+      "contains": "hands-on time with CNC",
+      "section": "excluded"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "Python is not required",
+      "canonical": "Python",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "MATLAB not required",
+      "canonical": "MATLAB",
+      "status": "affirmed"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Lean manufacturing not required",
+      "canonical": "Lean Manufacturing",
+      "status": "negated"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "with no off-the-shelf",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "Ran 5S audits",
+      "canonical": "Lean Manufacturing",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with MATLAB",
+      "canonical": "MATLAB",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "SolidWorks",
+      "posting_line_contains": "SolidWorks preferred"
+    },
+    {
+      "canonical": "Python",
+      "posting_line_contains": "Python is not required"
+    },
+    {
+      "canonical": "MATLAB",
+      "posting_line_contains": "MATLAB not required"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "Lean manufacturing not required",
+      "canonical": "Lean Manufacturing",
+      "trap": "negated",
+      "must_not": "appear in any result group; resume 5S must not be found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "hands-on time with CNC",
+      "canonical": "CNC Machining",
+      "trap": "benefits",
+      "must_not": "be required or preferred or found"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "hands-on time with CNC",
+      "canonical": "3D Printing",
+      "trap": "benefits",
+      "must_not": "be required or preferred"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with MATLAB",
+      "canonical": "MATLAB",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ],
+  "binding_traps": [
+    {
+      "line_contains": "Python is not required",
+      "canonical": "Python",
+      "expected_importance": "preferred",
+      "why": "R2.4 'not required, but is a plus'"
+    },
+    {
+      "line_contains": "MATLAB not required",
+      "canonical": "MATLAB",
+      "expected_importance": "preferred",
+      "why": "R2.4 'not required but nice to have'"
+    },
+    {
+      "line_contains": "SolidWorks preferred",
+      "canonical": "SolidWorks",
+      "expected_importance": "preferred",
+      "why": "postfix 'X preferred'; 'required' precedes the skill and binds nothing"
+    }
+  ]
+}

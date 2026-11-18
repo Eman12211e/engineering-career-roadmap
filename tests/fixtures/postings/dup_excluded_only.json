@@ -1,0 +1,23 @@
+{
+  "id": "dup_excluded_only",
+  "kind": "targeted",
+  "format": "duplicate skills",
+  "note": "SAP appears only in excluded sections (About Us, Benefits) -> excluded only. Assumes About Us -> excluded.",
+  "posting_text": "Requirements:\n- GD&T\nAbout Us:\nWe run SAP everywhere.\nBenefits:\n- SAP training",
+  "resume_text": "SAP, GD&T",
+  "expected": {
+    "required": [
+      "GD&T"
+    ],
+    "preferred": [],
+    "unscored": [],
+    "excluded": [
+      "ERP Systems"
+    ],
+    "found": [
+      "GD&T"
+    ]
+  },
+  "line_labels": [],
+  "mention_labels": []
+}

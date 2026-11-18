@@ -1,0 +1,88 @@
+{
+  "id": "u6_headingless_blurb",
+  "kind": "unseen",
+  "format": "short headingless blurb (social post), some skills with cues and some without",
+  "note": "Headingless, so every skill starts unscored; bound cues give positive evidence: 'Must have MATLAB' (modal prefix) -> required, 'Modal analysis experience is a plus' (postfix with fillers) -> preferred. SolidWorks and Python have no cue: unscored. 'No CATIA needed' is negated: no group, and the resume's CATIA is not found. Score is not None. Resume: Python is really negated; 'with no resonance below 2 kHz' is not a negation.",
+  "posting_text": "Hiring a test engineer for a 6-month contract in Dayton, OH.\nYou'll build fixtures in SolidWorks, write Python scripts for our DAQ, and support qualification testing on avionics boxes.\nMust have MATLAB. Modal analysis experience is a plus. No CATIA needed.\nDM me if interested, thanks!",
+  "resume_text": "Rachel Kim - Test Engineer\nSkills: SolidWorks, MATLAB/Simulink, LabVIEW, CATIA V5\n- Designed shaker fixtures in SolidWorks with no resonance below 2 kHz\n- Performed modal analysis and random vibration testing on avionics LRUs\n- No experience with Python; all scripting done in MATLAB",
+  "expected": {
+    "required": [
+      "MATLAB"
+    ],
+    "preferred": [
+      "Vibration Analysis"
+    ],
+    "unscored": [
+      "Python",
+      "SolidWorks"
+    ],
+    "excluded": [],
+    "found": [
+      "MATLAB",
+      "SolidWorks",
+      "Vibration Analysis"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "You'll build fixtures",
+      "section": "unknown"
+    },
+    {
+      "contains": "Must have MATLAB",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [
+    {
+      "doc": "posting",
+      "line_contains": "No CATIA needed",
+      "canonical": "CATIA",
+      "status": "negated"
+    },
+    {
+      "doc": "posting",
+      "line_contains": "Must have MATLAB",
+      "canonical": "MATLAB",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "with no resonance",
+      "canonical": "SolidWorks",
+      "status": "affirmed"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with Python",
+      "canonical": "Python",
+      "status": "negated"
+    }
+  ],
+  "evidence_labels": [
+    {
+      "canonical": "MATLAB",
+      "posting_line_contains": "Must have MATLAB"
+    },
+    {
+      "canonical": "Vibration Analysis",
+      "posting_line_contains": "Modal analysis experience"
+    }
+  ],
+  "critical_traps": [
+    {
+      "doc": "posting",
+      "line_contains": "No CATIA needed",
+      "canonical": "CATIA",
+      "trap": "negated",
+      "must_not": "appear in any result group; resume CATIA must not be found"
+    },
+    {
+      "doc": "resume",
+      "line_contains": "No experience with Python",
+      "canonical": "Python",
+      "trap": "negated",
+      "must_not": "be found"
+    }
+  ]
+}

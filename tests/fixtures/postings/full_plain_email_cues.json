@@ -1,0 +1,46 @@
+{
+  "id": "full_plain_email_cues",
+  "kind": "full",
+  "format": "plain-text recruiter email, no headings, inline cues",
+  "note": "Headingless: everything is unknown/unscored unless an inline cue in the clause applies. Assumes required_cues contains 'required' and preferred_cues contains 'a plus'. 'modal analysis' used instead of 'vibration analysis' because that alias is shared by two skills in keywords.json. The SolidWorks perk sentence has no cue, so SolidWorks is unscored (not excluded: no excluded section exists).",
+  "posting_text": "Hi, we're hiring a test engineer.\nYou will build test rigs and write Python and MATLAB scripts for modal analysis data.\nPython is required. FEA experience is required.\nCFD experience is a plus.\nPay is $90k-$110k plus bonus. We offer free lunch and a SolidWorks seat if you want to learn CAD.",
+  "resume_text": "Jane Doe, Mechanical Engineer\nSkills: SolidWorks, ANSYS (FEA), GD&T, MATLAB, Python, Minitab\n- Designed injection molded housings, applying DFM\n- Ran root cause analysis (8D) and SPC on assembly line\n- Wrote ladder logic for Allen-Bradley PLC test stand\n- Supported ISO 9001 audits",
+  "expected": {
+    "required": [
+      "Finite Element Analysis",
+      "Python"
+    ],
+    "preferred": [
+      "CFD"
+    ],
+    "unscored": [
+      "MATLAB",
+      "SolidWorks",
+      "Vibration Analysis"
+    ],
+    "excluded": [],
+    "found": [
+      "Finite Element Analysis",
+      "MATLAB",
+      "Python",
+      "SolidWorks"
+    ]
+  },
+  "line_labels": [
+    {
+      "contains": "Python is required",
+      "section": "unknown"
+    },
+    {
+      "contains": "CFD experience is a plus",
+      "section": "unknown"
+    }
+  ],
+  "mention_labels": [],
+  "evidence_labels": [
+    {
+      "canonical": "Python",
+      "posting_line_contains": "Python is required"
+    }
+  ]
+}
