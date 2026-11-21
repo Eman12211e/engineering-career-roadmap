@@ -219,7 +219,7 @@
     },
     {
       "canonical": "Predictive Maintenance",
-      "aliases": ["predictive maintenance", "condition monitoring", "vibration analysis"],
+      "aliases": ["predictive maintenance", "condition monitoring"],
       "category": "controls",
       "industries": ["Factory Automation"]
     },

@@ -4,13 +4,12 @@ import streamlit as st
 import pandas as pd
 from typing import Dict, List
 from engine.gap_analysis import analyze_gap, compute_gap_score
-from engine.pdf_extractor import pdf_to_clean_text
+from ui.uploads import read_text_input
 from ui.charts import gap_donut
 
 
 def render_gap_tab(
     ranked_df: pd.DataFrame,
-    patterns: Dict[str, list],
     top_n: int = 20,
 ) -> None:
     """Resume upload/paste → gap analysis → visual comparison."""
@@ -24,14 +23,13 @@ def render_gap_tab(
         "Paste your resume text here:",
         height=200,
         placeholder="Copy and paste the text content of your resume...",
+        key="gap_resume_input",
     )
 
     uploaded = st.file_uploader("Or upload a resume file", type=["pdf", "txt"])
-    if uploaded is not None:
-        if uploaded.name.lower().endswith(".pdf"):
-            resume_text = pdf_to_clean_text(uploaded.read())
-        else:
-            resume_text = uploaded.read().decode("utf-8")
+    resume_text = read_text_input(resume_text, uploaded)
+    if resume_text is None:
+        return
 
     if not resume_text:
         st.info("Enter your resume text above to start the analysis.")
@@ -43,7 +41,7 @@ def render_gap_tab(
             return
 
     # Run analysis
-    present, missing = analyze_gap(resume_text, ranked_df, patterns, top_n=top_n)
+    present, missing = analyze_gap(resume_text, ranked_df, top_n=top_n)
     gap_pct = compute_gap_score(present, missing)
 
     # Save for cross-tab use and PDF export

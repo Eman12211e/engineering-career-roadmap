@@ -13,8 +13,8 @@ import streamlit as st
 import pandas as pd
 from typing import Dict, List
 
-from engine.keyword_extractor import extract_skills_from_text
-from engine.pdf_extractor import pdf_to_clean_text
+from engine.job_match import resume_skills
+from ui.uploads import read_text_input
 from config.settings import DATA_DIR
 
 
@@ -37,7 +37,6 @@ def _load_projects() -> List[dict]:
 def _check_resume_gaps(
     resume_text: str,
     ranked_df: pd.DataFrame,
-    patterns: dict,
     top_n: int = 15,
 ) -> dict:
     """Run the gap check and return structured results.
@@ -45,7 +44,7 @@ def _check_resume_gaps(
     Returns dict with: match_score, found_skills, missing_skills,
     top_missing (the highest-priority missing skill).
     """
-    user_skills = set(extract_skills_from_text(resume_text, patterns))
+    user_skills = resume_skills(resume_text)
     top_skills = ranked_df.head(top_n)
 
     found = []
@@ -80,7 +79,6 @@ def _check_resume_gaps(
 
 def render_audit_tab(
     ranked_df: pd.DataFrame,
-    patterns: dict,
     user_config: dict,
 ) -> None:
     """Render the Two-Step Career Audit tab."""
@@ -151,11 +149,9 @@ def render_audit_tab(
         type=["pdf", "txt"],
         key="audit_file_upload",
     )
-    if uploaded is not None:
-        if uploaded.name.lower().endswith(".pdf"):
-            resume_text = pdf_to_clean_text(uploaded.read())
-        else:
-            resume_text = uploaded.read().decode("utf-8")
+    resume_text = read_text_input(resume_text, uploaded)
+    if resume_text is None:
+        return
 
     # Number of skills to check
     check_n = st.slider(
@@ -180,7 +176,7 @@ def render_audit_tab(
             return
 
     # Run the gap check
-    results = _check_resume_gaps(resume_text, ranked_df, patterns, top_n=check_n)
+    results = _check_resume_gaps(resume_text, ranked_df, top_n=check_n)
     st.session_state["audit_results"] = results
     # Also store in gap_results for cross-tab use (Learning Paths tab reads this)
     st.session_state["gap_results"] = {

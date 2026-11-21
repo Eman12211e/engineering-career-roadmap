@@ -3,18 +3,17 @@
 import pandas as pd
 from typing import Dict, List, Tuple
 
-from engine.keyword_extractor import extract_skills_from_text
+from engine.job_match import resume_skills
 
 
 def analyze_gap(
     resume_text: str,
     ranked_df: pd.DataFrame,
-    patterns: Dict[str, list],
     top_n: int = 20,
 ) -> Tuple[List[Dict], List[Dict]]:
     """Compare user's resume skills against the top ranked skills.
 
-    1. Extracts skills found in resume_text using regex patterns
+    1. Extracts skills found in resume_text
     2. Takes the top_n skills from ranked_df
     3. Splits into skills the user has vs. skills they're missing
 
@@ -22,7 +21,7 @@ def analyze_gap(
         (skills_present, skills_missing) — each a list of dicts with
         keys: canonical, priority_score, rank
     """
-    user_skills = set(extract_skills_from_text(resume_text, patterns))
+    user_skills = resume_skills(resume_text)
     top_skills = ranked_df.head(top_n)
 
     skills_present = []

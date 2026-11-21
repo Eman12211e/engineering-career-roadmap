@@ -18,3 +18,9 @@ def test_app_runs_without_errors_or_deprecations(caplog):
     assert not [r for r in caplog.records if r.name == "streamlit.deprecation_util"]
     assert not [r for r in caplog.records if "use_container_width" in r.getMessage()]
     assert not [x for x in at.warning if "deprecat" in str(x.value).lower()]
+
+
+def test_pdf_export_non_latin1_text():
+    from export.pdf_export import generate_pdf
+    out = generate_pdf({"background": "x"}, [], bullets=["Led — ✓ “x” • team"])
+    assert out[:4] == b"%PDF"
