@@ -13,6 +13,17 @@ from fpdf import FPDF
 from typing import Dict, List, Optional
 
 
+_ASCII = str.maketrans({
+    "—": "-", "–": "-", "•": "-", "…": "...", " ": " ",
+    "‘": "'", "’": "'", "“": '"', "”": '"',
+})
+
+
+def _t(text) -> str:
+    """Make text safe for core Helvetica: typographic chars to ASCII, the rest to '?'."""
+    return str(text).translate(_ASCII).encode("latin-1", errors="replace").decode("latin-1")
+
+
 class RoadmapPDF(FPDF):
     """Custom PDF with header and footer."""
 
@@ -50,9 +61,9 @@ def generate_pdf(
     pdf.set_font("Helvetica", "B", 12)
     pdf.cell(0, 8, "Your Profile", ln=True)
     pdf.set_font("Helvetica", "", 10)
-    pdf.cell(0, 6, f"Background: {user_config.get('background', 'N/A')}", ln=True)
+    pdf.cell(0, 6, _t(f"Background: {user_config.get('background', 'N/A')}"), ln=True)
     industries = ", ".join(user_config.get("industries", []))
-    pdf.cell(0, 6, f"Target Industries: {industries}", ln=True)
+    pdf.cell(0, 6, _t(f"Target Industries: {industries}"), ln=True)
     pdf.ln(5)
 
     # ── Section 2: Top Ranked Skills ──────────────────────────────────
@@ -77,11 +88,11 @@ def generate_pdf(
         fill = i % 2 == 0
         if fill:
             pdf.set_fill_color(240, 242, 246)
-        pdf.cell(15, 6, str(skill.get("rank", i + 1)), border=1, fill=fill, align="C")
-        pdf.cell(65, 6, str(skill.get("canonical", "")), border=1, fill=fill)
-        pdf.cell(40, 6, str(skill.get("category", "")), border=1, fill=fill)
-        pdf.cell(25, 6, str(skill.get("mention_count", "")), border=1, fill=fill, align="C")
-        pdf.cell(30, 6, str(skill.get("priority_score", "")), border=1, fill=fill, align="C")
+        pdf.cell(15, 6, _t(str(skill.get("rank", i + 1))), border=1, fill=fill, align="C")
+        pdf.cell(65, 6, _t(str(skill.get("canonical", ""))), border=1, fill=fill)
+        pdf.cell(40, 6, _t(str(skill.get("category", ""))), border=1, fill=fill)
+        pdf.cell(25, 6, _t(str(skill.get("mention_count", ""))), border=1, fill=fill, align="C")
+        pdf.cell(30, 6, _t(str(skill.get("priority_score", ""))), border=1, fill=fill, align="C")
         pdf.ln()
 
     pdf.ln(5)
@@ -91,7 +102,7 @@ def generate_pdf(
         pdf.set_font("Helvetica", "B", 12)
         pdf.cell(0, 8, "Skills Gap Analysis", ln=True)
         pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 6, f"Coverage Score: {gap_results.get('score', 0)}%", ln=True)
+        pdf.cell(0, 6, _t(f"Coverage Score: {gap_results.get('score', 0)}%"), ln=True)
         pdf.ln(3)
 
         present = gap_results.get("present", [])
@@ -102,7 +113,7 @@ def generate_pdf(
             pdf.cell(0, 6, "Skills You Have:", ln=True)
             pdf.set_font("Helvetica", "", 9)
             for s in present:
-                pdf.cell(0, 5, f"  - {s['canonical']} ({s['priority_score']}%)", ln=True)
+                pdf.cell(0, 5, _t(f"  - {s['canonical']} ({s['priority_score']}%)"), ln=True)
             pdf.ln(3)
 
         if missing:
@@ -110,7 +121,7 @@ def generate_pdf(
             pdf.cell(0, 6, "Skills to Develop:", ln=True)
             pdf.set_font("Helvetica", "", 9)
             for s in missing:
-                pdf.cell(0, 5, f"  - {s['canonical']} ({s['priority_score']}%)", ln=True)
+                pdf.cell(0, 5, _t(f"  - {s['canonical']} ({s['priority_score']}%)"), ln=True)
             pdf.ln(3)
 
     # ── Section 4: Resume Bullets ─────────────────────────────────────
@@ -121,7 +132,7 @@ def generate_pdf(
         pdf.set_font("Helvetica", "", 9)
         for bullet in bullets:
             # Use multi_cell for wrapping
-            pdf.multi_cell(0, 5, f"* {bullet}")
+            pdf.multi_cell(0, 5, _t(f"* {bullet}"))
             pdf.ln(1)
 
     # ── Section 5: Disclaimer ─────────────────────────────────────────

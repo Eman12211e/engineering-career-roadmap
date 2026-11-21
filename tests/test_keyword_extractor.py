@@ -192,3 +192,23 @@ if __name__ == "__main__":
             traceback.print_exc()
             failed += 1
     print(f"\n{passed} passed, {failed} failed out of {passed + failed} tests")
+
+
+def test_resume_skills_honor_keyword_rules():
+    """Case-sensitive / needs-context / exclude rules apply to resume detection."""
+    from engine.job_match import resume_skills
+    text = "The inventor of a new hinge. Pumped 5 ml of fluid. Ros Smith, reference."
+    assert resume_skills(text) == set()
+    assert "SolidWorks" in resume_skills("Designed parts in SolidWorks.")
+
+
+def test_vibration_analysis_detected_and_aliases_unique():
+    import json
+    from collections import Counter
+    from config.settings import DATA_DIR
+    from engine.job_match import resume_skills
+    assert "Vibration Analysis" in resume_skills("Performed vibration analysis.")
+    data = json.loads((DATA_DIR / "keywords.json").read_text(encoding="utf-8"))
+    skills = data if isinstance(data, list) else data["skills"]
+    counts = Counter(a for s in skills for a in {x.lower() for x in s["aliases"]})
+    assert [a for a, n in counts.items() if n > 1] == []

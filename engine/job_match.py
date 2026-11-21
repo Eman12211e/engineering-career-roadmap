@@ -77,6 +77,11 @@ def _mentions(text: str, doc: str) -> list[tuple[Mention, str]]:
     return out
 
 
+def resume_skills(text: str) -> set[str]:
+    """Canonical skills a resume affirms, honoring keywords.json case/context/exclusion rules."""
+    return {m.canonical for m, _ in _mentions(text, "resume")}
+
+
 def match_posting(posting: str, resume: str) -> MatchResult:
     """Compare the skills a posting asks for with those a resume shows.
 
